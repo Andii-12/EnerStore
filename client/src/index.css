@@ -1,0 +1,12 @@
+:root {
+  --color-accent: #f8991b;
+  --color-dark: #080f46;
+  --color-light: #f6f6f6;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--color-light);
+} 

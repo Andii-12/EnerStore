@@ -1,0 +1,25 @@
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-dark);
+  padding: 4px 32px;
+  font-size: 0.95rem;
+  color: var(--color-light);
+  border-bottom: 1px solid #eee;
+}
+
+.header-contact span {
+  margin-right: 18px;
+}
+
+.header-links span {
+  margin-left: 18px;
+  cursor: pointer;
+  color: var(--color-light);
+  font-weight: 500;
+}
+
+.header-links span:hover {
+  color: var(--color-accent);
+} 
