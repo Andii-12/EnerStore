@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
 // Create a new product
 router.post('/', async (req, res) => {
   try {
-    const { name, price, description, thumbnail, images, categories, companyId, soldCount, piece, brand } = req.body;
+    const { name, price, description, specifications, thumbnail, images, categories, companyId, soldCount, piece, brand } = req.body;
     let brandName = brand;
     if (brand && mongoose.Types.ObjectId.isValid(brand)) {
       const brandDoc = await Brand.findById(brand);
@@ -46,6 +46,7 @@ router.post('/', async (req, res) => {
       name,
       price,
       description,
+      specifications,
       image: thumbnail || '', // Always set image field for frontend
       thumbnail,
       images,
@@ -82,11 +83,12 @@ router.post('/sell', async (req, res) => {
 // Update a product by id
 router.put('/:id', async (req, res) => {
   try {
-    const { name, price, description, thumbnail, images, categories, companyId, saleEnd, originalPrice, piece, brand } = req.body;
+    const { name, price, description, specifications, thumbnail, images, categories, companyId, saleEnd, originalPrice, piece, brand } = req.body;
     const update = {
       name,
       price,
       description,
+      specifications,
       image: thumbnail || '', // Always set image field for frontend
       thumbnail,
       images,
@@ -125,6 +127,19 @@ router.get('/company/:companyId', async (req, res) => {
   try {
     const products = await Product.find({ company: req.params.companyId }).populate('brand', 'name logo');
     res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get a single product by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id)
+      .populate('company', 'name logo address contact email')
+      .populate('brand', 'name logo description');
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+    res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

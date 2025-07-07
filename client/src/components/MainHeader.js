@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './MainHeader.css';
 import logo1 from './assets/logo2.png';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,42 @@ function MainHeader() {
   const [registerType, setRegisterType] = useState('user');
   const [companyReg, setCompanyReg] = useState({ name: '', email: '', password: '', address: '', contact: '', logo: '' });
   const [companyLogoPreview, setCompanyLogoPreview] = useState('');
+  const [cartCount, setCartCount] = useState(0);
+  const [favCount, setFavCount] = useState(0);
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  const [loggedInCompany, setLoggedInCompany] = useState(null);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  useEffect(() => {
+    const updateCounts = () => {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      setCartCount(cart.length);
+      const favs = JSON.parse(localStorage.getItem('favorites') || '[]');
+      setFavCount(favs.length);
+    };
+    updateCounts();
+    window.addEventListener('storage', updateCounts);
+    
+    // Check for logged in user/company
+    const user = JSON.parse(localStorage.getItem('user'));
+    const company = JSON.parse(localStorage.getItem('company'));
+    if (user) setLoggedInUser(user);
+    if (company) setLoggedInCompany(company);
+    
+    return () => window.removeEventListener('storage', updateCounts);
+  }, []);
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showProfileMenu && !event.target.closest('[data-profile-menu]')) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showProfileMenu]);
 
   const handleLogin = async () => {
     setLoginError('');
@@ -27,6 +63,7 @@ function MainHeader() {
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem('company', JSON.stringify(data.company));
+        setLoggedInCompany(data.company);
         setShowLogin(false);
         setLoginEmail('');
         setLoginPassword('');
@@ -35,9 +72,39 @@ function MainHeader() {
         setLoginError('Имэйл эсвэл нууц үг буруу байна.');
       }
     } else {
-      // User login (not implemented)
-      setLoginError('User login is not implemented yet.');
+      // User login
+      const res = await fetch('http://localhost:5000/api/customer-users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword })
+      });
+      if (res.ok) {
+        const user = await res.json();
+        localStorage.setItem('user', JSON.stringify(user));
+        setLoggedInUser(user);
+        setShowLogin(false);
+        setLoginEmail('');
+        setLoginPassword('');
+        // Stay on current page or navigate to home
+        navigate('/');
+      } else {
+        const data = await res.json();
+        setLoginError(data.error || 'Имэйл эсвэл нууц үг буруу байна.');
+      }
     }
+  };
+
+  const handleLogout = () => {
+    if (loggedInUser) {
+      localStorage.removeItem('user');
+      setLoggedInUser(null);
+    }
+    if (loggedInCompany) {
+      localStorage.removeItem('company');
+      setLoggedInCompany(null);
+    }
+    setShowProfileMenu(false);
+    navigate('/');
   };
 
   const handleCompanyLogoChange = e => {
@@ -60,9 +127,118 @@ function MainHeader() {
         </div>
         <input className="search-bar" placeholder="Хайх" style={{ flex: 1, margin: '0 32px' }} />
         <div className="header-icons" style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', gap: 18 }}>
-          <span className="icon-heart">♡</span>
-          <span className="icon-cart">🛒</span>
-          <button className="profile-btn" onClick={() => setShowLogin(true)}>Нэвтрэх</button>
+          <span className="icon-heart" style={{ position: 'relative', cursor: 'pointer' }}>♡
+            {favCount > 0 && <span style={{ position: 'absolute', top: -8, right: -10, background: '#f8991b', color: '#fff', borderRadius: '50%', fontSize: 12, padding: '2px 6px', fontWeight: 700 }}>{favCount}</span>}
+          </span>
+          <span className="icon-cart" style={{ position: 'relative', cursor: 'pointer' }} onClick={() => navigate('/cart')}>🛒
+            {cartCount > 0 && <span style={{ position: 'absolute', top: -8, right: -10, background: '#f8991b', color: '#fff', borderRadius: '50%', fontSize: 12, padding: '2px 6px', fontWeight: 700 }}>{cartCount}</span>}
+          </span>
+          
+          {loggedInUser || loggedInCompany ? (
+            <div style={{ position: 'relative' }} data-profile-menu>
+              <button 
+                className="profile-btn" 
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                style={{ 
+                  background: '#f8991b', 
+                  color: '#fff', 
+                  border: 'none', 
+                  borderRadius: 6, 
+                  padding: '8px 16px', 
+                  fontWeight: 600, 
+                  fontSize: 14, 
+                  cursor: 'pointer'
+                }}
+                data-profile-menu
+              >
+                {loggedInUser ? `${loggedInUser.firstName} ${loggedInUser.lastName}` : loggedInCompany?.name} 👤
+              </button>
+              
+              {showProfileMenu && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  background: '#fff',
+                  border: '1px solid #eee',
+                  borderRadius: 8,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  minWidth: 200,
+                  zIndex: 1000,
+                  marginTop: 8
+                }} data-profile-menu>
+                  <div style={{ padding: '12px 16px', borderBottom: '1px solid #eee' }}>
+                    <div style={{ fontWeight: 600, color: '#222' }}>
+                      {loggedInUser ? `${loggedInUser.firstName} ${loggedInUser.lastName}` : loggedInCompany?.name}
+                    </div>
+                    <div style={{ fontSize: 14, color: '#666', marginTop: 2 }}>
+                      {loggedInUser ? loggedInUser.email : loggedInCompany?.email}
+                    </div>
+                  </div>
+                  
+                  {loggedInUser && (
+                    <button
+                      onClick={() => { 
+                        console.log('User edit clicked'); 
+                        setShowProfileMenu(false); 
+                        navigate('/user/edit'); 
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'none',
+                        border: 'none',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        fontSize: 14,
+                        color: '#222',
+                        borderBottom: '1px solid #eee'
+                      }}
+                    >
+                      ✏️ Мэдээлэл засах
+                    </button>
+                  )}
+                  
+                  <button
+                    onClick={handleLogout}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      background: 'none',
+                      border: 'none',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      fontSize: 14,
+                      color: '#dc3545'
+                    }}
+                  >
+                    🚪 Гарах
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <button className="profile-btn" onClick={() => setShowLogin(true)}>Нэвтрэх</button>
+              <button 
+                className="profile-btn" 
+                onClick={() => navigate('/register')}
+                style={{ 
+                  background: '#f8991b', 
+                  color: '#fff', 
+                  border: 'none', 
+                  borderRadius: 6, 
+                  padding: '8px 16px', 
+                  fontWeight: 600, 
+                  fontSize: 14, 
+                  cursor: 'pointer',
+                  marginLeft: 8
+                }}
+              >
+                Бүртгүүлэх
+              </button>
+            </>
+          )}
         </div>
       </div>
       {showLogin && (
@@ -132,14 +308,6 @@ function MainHeader() {
             >
               Болих
             </button>
-            {loginType === 'user' && (
-              <button
-                style={{ width: '100%', marginTop: 10, background: '#fff', color: 'var(--color-accent)', border: '1.5px solid var(--color-accent)', borderRadius: 4, padding: '8px 0', fontWeight: 'bold', fontSize: 15, transition: 'background 0.18s', cursor: 'pointer' }}
-                onClick={() => { setShowRegister(true); setRegisterType('user'); }}
-              >
-                Бүртгүүлэх
-              </button>
-            )}
           </div>
         </div>
       )}

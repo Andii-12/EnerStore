@@ -68,11 +68,15 @@ function AllProductsPage() {
           setProducts([]);
           return;
         }
-        const mapped = data.map(p => ({
+        let mapped = data.map(p => ({
           ...p,
           companyLogo: p.company && p.company.logo ? p.company.logo : '',
           companyName: p.company && p.company.name ? p.company.name : '',
         }));
+        if (sort === 'sale') {
+          const now = new Date();
+          mapped = mapped.filter(p => p.originalPrice && p.price < p.originalPrice && p.saleEnd && new Date(p.saleEnd) > now);
+        }
         setProducts(mapped);
       });
   }, [ready, selectedCategory, selectedBrand, selectedCompany, sort]);
@@ -101,26 +105,6 @@ function AllProductsPage() {
           </div>
           <div style={{ fontWeight: 700, fontSize: 18, margin: '32px 0 8px 32px', color: '#222' }}>Дэлгүүрүүд</div>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            <button
-              onClick={() => setSelectedCompany('')}
-              style={{
-                background: selectedCompany === '' ? '#f8f3ed' : 'none',
-                color: selectedCompany === '' ? 'var(--color-accent)' : '#222',
-                border: 'none',
-                textAlign: 'left',
-                padding: '10px 32px',
-                fontWeight: selectedCompany === '' ? 700 : 500,
-                fontSize: 15,
-                cursor: 'pointer',
-                borderLeft: selectedCompany === '' ? '4px solid var(--color-accent)' : '4px solid transparent',
-                outline: 'none',
-                transition: 'background 0.18s, color 0.18s',
-                width: '100%',
-                marginBottom: 2
-              }}
-            >
-              Бүх дэлгүүр
-            </button>
             {companies.map(company => (
               <button
                 key={company._id}

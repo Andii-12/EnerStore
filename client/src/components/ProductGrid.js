@@ -1,7 +1,11 @@
 import React from 'react';
 import './ProductGrid.css';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 function ProductGrid({ products }) {
+  const navigate = useNavigate();
+  // Remove cart and favorite state and handlers
   return (
     <div style={{
       display: 'grid',
@@ -42,6 +46,7 @@ function ProductGrid({ products }) {
               margin: '0 auto',
               overflow: 'hidden',
             }}
+            onClick={() => navigate(`/products/${product._id}`)}
           >
             {/* Top row: brand logo and discount badge */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '12px 12px 0 12px', minHeight: 36 }}>
@@ -81,13 +86,19 @@ function ProductGrid({ products }) {
               </div>
             )}
             {/* Price */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '12px 12px 0 12px', minHeight: 28 }}>
-              <span style={{ color: '#f8991b', fontWeight: 700, fontSize: 22 }}>
-                {new Intl.NumberFormat('mn-MN').format(product.price)} ₮
-              </span>
-              {onSale && (
-                <span style={{ color: '#888', fontWeight: 600, fontSize: 16, textDecoration: 'line-through' }}>
-                  {new Intl.NumberFormat('mn-MN').format(product.originalPrice)} ₮
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '12px 12px 0 12px', minHeight: 28, justifyContent: onSale ? 'space-between' : 'flex-start' }}>
+              {onSale ? (
+                <>
+                  <span style={{ color: '#888', fontWeight: 600, fontSize: 16, textDecoration: 'line-through' }}>
+                    {new Intl.NumberFormat('mn-MN').format(product.originalPrice)} ₮
+                  </span>
+                  <span style={{ color: '#f8991b', fontWeight: 700, fontSize: 22, marginLeft: 'auto' }}>
+                    {new Intl.NumberFormat('mn-MN').format(product.price)} ₮
+                  </span>
+                </>
+              ) : (
+                <span style={{ color: '#f8991b', fontWeight: 700, fontSize: 22 }}>
+                  {new Intl.NumberFormat('mn-MN').format(product.price)} ₮
                 </span>
               )}
             </div>

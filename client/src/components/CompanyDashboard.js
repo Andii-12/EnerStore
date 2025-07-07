@@ -14,6 +14,7 @@ function CompanyDashboard() {
     name: '', 
     price: '', 
     description: '', 
+    specifications: '', // Add specifications field
     thumbnail: '', 
     images: [], 
     categories: [],
@@ -25,7 +26,7 @@ function CompanyDashboard() {
   const [categories, setCategories] = useState([]);
   const [productMsg, setProductMsg] = useState('');
   const [editProduct, setEditProduct] = useState(null);
-  const [editForm, setEditForm] = useState({ name: '', price: '', description: '', thumbnail: '', categories: [], piece: '', brand: '' });
+  const [editForm, setEditForm] = useState({ name: '', price: '', description: '', specifications: '', thumbnail: '', categories: [], piece: '', brand: '' });
   const [editImagePreview, setEditImagePreview] = useState('');
   const [editImagesPreview, setEditImagesPreview] = useState([]);
   const [saleProduct, setSaleProduct] = useState(null);
@@ -204,6 +205,7 @@ function CompanyDashboard() {
       name: product.name || '',
       price: product.price || '',
       description: product.description || '',
+      specifications: product.specifications || '',
       thumbnail: product.thumbnail || product.image || '',
       images: Array.isArray(product.images) ? product.images : [],
       categories: Array.isArray(product.categories) ? product.categories.map(cat => cat._id || cat) : [],
@@ -776,7 +778,18 @@ function CompanyDashboard() {
                   name="description" 
                   value={productForm.description} 
                   onChange={handleProductChange} 
-                  required 
+                  placeholder="Тайлбар (сонгох боломжтой)"
+                  style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', width: '100%', boxSizing: 'border-box', minHeight: 80, resize: 'vertical' }} 
+                />
+              </div>
+              
+              <div>
+                <label style={{ fontWeight: 600, marginBottom: 4, display: 'block' }}>Техникийн тодорхойлолт</label>
+                <textarea 
+                  name="specifications" 
+                  value={productForm.specifications} 
+                  onChange={handleProductChange} 
+                  placeholder="Техникийн үзүүлэлт (сонгох боломжтой)"
                   style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', width: '100%', boxSizing: 'border-box', minHeight: 80, resize: 'vertical' }} 
                 />
               </div>
@@ -870,6 +883,7 @@ function CompanyDashboard() {
                       name: '', 
                       price: '', 
                       description: '', 
+                      specifications: '', // Reset specifications
                       thumbnail: '', 
                       images: [], 
                       categories: allProductsCategory ? [allProductsCategory._id] : [],
@@ -1046,7 +1060,8 @@ function CompanyDashboard() {
                   ))}
                 </select>
               </div>
-              <textarea name="description" value={editForm.description} onChange={handleEditFormChange} required placeholder="Тайлбар" style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', minHeight: 80, resize: 'vertical' }} />
+              <textarea name="description" value={editForm.description} onChange={handleEditFormChange} placeholder="Тайлбар (сонгох боломжтой)" style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', minHeight: 80, resize: 'vertical' }} />
+              <textarea name="specifications" value={editForm.specifications} onChange={handleEditFormChange} placeholder="Техникийн үзүүлэлт (сонгох боломжтой)" style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', minHeight: 80, resize: 'vertical' }} />
               <button type="submit" style={{ background: 'var(--color-accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 0', fontWeight: 'bold', fontSize: 16, cursor: 'pointer', marginTop: 12 }}>Хадгалах</button>
             </form>
           </div>

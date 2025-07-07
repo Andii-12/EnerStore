@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const ProductSchema = new mongoose.Schema({
   name: String,
   description: String,
+  specifications: String, // Add specifications field
   price: Number,
   image: String, // main image
   images: [String], // additional images
