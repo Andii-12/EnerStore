@@ -4,6 +4,34 @@ const Product = require('../models/Product');
 const Brand = require('../models/Brand');
 const mongoose = require('mongoose');
 
+// Search products
+router.get('/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.trim() === '') {
+      return res.json([]);
+    }
+
+    const searchRegex = new RegExp(q, 'i');
+    const products = await Product.find({
+      $or: [
+        { name: searchRegex },
+        { description: searchRegex },
+        { category: searchRegex },
+        { brand: searchRegex }
+      ]
+    })
+    .populate('company', 'name logo')
+    .populate('brand', 'name logo')
+    .limit(10)
+    .sort({ createdAt: -1 });
+
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Get all products (with optional category filter and sorting)
 router.get('/', async (req, res) => {
   try {

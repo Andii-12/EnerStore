@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './MainHeader.css';
 import logo1 from './assets/logo2.png';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,11 @@ function MainHeader() {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [loggedInCompany, setLoggedInCompany] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchTimeout = useRef(null);
 
   useEffect(() => {
     const updateCounts = () => {
@@ -107,6 +112,44 @@ function MainHeader() {
     navigate('/');
   };
 
+  const handleSearch = async (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/products/search?q=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      setSearchResults(data);
+      setShowSearchResults(true);
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearchInputChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    // Debounce search
+    clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(() => {
+      handleSearch(query);
+    }, 300);
+  };
+
+  const handleSearchResultClick = (product) => {
+    setShowSearchResults(false);
+    setSearchQuery('');
+    navigate(`/products/${product._id}`);
+  };
+
   const handleCompanyLogoChange = e => {
     const file = e.target.files[0];
     if (file) {
@@ -121,11 +164,101 @@ function MainHeader() {
 
   return (
     <div style={{ background: '#fff', borderBottom: '1px solid #eee' }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'center', height: 72, padding: '0 32px' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'center', height: 72, padding: '0 32px', position: 'relative' }}>
         <div className="logo-area" style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={logo1} alt="logo" className="logo-img" />
+          <img 
+            src={logo1} 
+            alt="logo" 
+            className="logo-img" 
+            onClick={() => navigate('/')}
+            style={{ cursor: 'pointer' }}
+          />
         </div>
-        <input className="search-bar" placeholder="Хайх" style={{ flex: 1, margin: '0 32px' }} />
+        <div style={{ flex: 1, margin: '0 32px', position: 'relative' }}>
+          <input 
+            className="search-bar" 
+            placeholder={isSearching ? "Хайж байна..." : "Хайх"} 
+            style={{ 
+              width: '100%', 
+              zIndex: 1,
+              padding: '8px 14px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              fontSize: '1rem',
+              outline: 'none'
+            }} 
+            value={searchQuery}
+            onChange={handleSearchInputChange}
+            onFocus={() => searchQuery.trim() && setShowSearchResults(true)}
+            onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
+          />
+        
+          {/* Search Results Dropdown */}
+          {showSearchResults && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              background: '#fff',
+              border: '1px solid #eee',
+              borderRadius: 8,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              maxHeight: 400,
+              overflowY: 'auto',
+              zIndex: 9999,
+              marginTop: 8
+            }}>
+            {isSearching ? (
+              <div style={{ padding: 16, textAlign: 'center', color: '#666' }}>
+                Хайж байна...
+              </div>
+            ) : searchResults.length > 0 ? (
+              searchResults.map(product => (
+                <div
+                  key={product._id}
+                  onClick={() => handleSearchResultClick(product)}
+                  style={{
+                    padding: '12px 16px',
+                    borderBottom: '1px solid #eee',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = '#f8f9fa'}
+                  onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                >
+                  <img 
+                    src={product.image || product.thumbnail} 
+                    alt={product.name}
+                    style={{ 
+                      width: 40, 
+                      height: 40, 
+                      objectFit: 'contain', 
+                      borderRadius: 4,
+                      background: '#f8f8f8'
+                    }}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: '#222', marginBottom: 2 }}>
+                      {product.name}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#666' }}>
+                      {product.price?.toLocaleString()} ₮
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : searchQuery.trim() ? (
+              <div style={{ padding: 16, textAlign: 'center', color: '#666' }}>
+                Хайлтын үр дүн олдсонгүй
+              </div>
+            ) : null}
+          </div>
+        )}
+        </div>
         <div className="header-icons" style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', gap: 18 }}>
           <span className="icon-heart" style={{ position: 'relative', cursor: 'pointer' }}>♡
             {favCount > 0 && <span style={{ position: 'absolute', top: -8, right: -10, background: '#f8991b', color: '#fff', borderRadius: '50%', fontSize: 12, padding: '2px 6px', fontWeight: 700 }}>{favCount}</span>}
