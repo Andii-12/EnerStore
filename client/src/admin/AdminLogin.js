@@ -36,83 +36,109 @@ function AdminLogin() {
 
       const data = await res.json();
 
-      if (res.ok && data.success) {
-        // Use the context login function
-        const loginSuccess = login(data.user);
-        
-        if (loginSuccess) {
-          console.log('Admin login successful:', data.user);
-          // Navigate after successful login
-          navigate('/admin/dashboard');
-        } else {
-          setError('Login failed. Please try again.');
-        }
+      if (res.ok) {
+        await login(data.user);
+        navigate('/admin/dashboard');
       } else {
-        setError(data.message || 'Invalid credentials');
+        setError(data.message || 'Нэвтрэх нэр эсвэл нууц үг буруу байна');
       }
-    } catch (err) {
-      console.error('Admin login error:', err);
-      setError('Login failed. Please check your connection.');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Серверт холбогдоход алдаа гарлаа');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Don't render if already authenticated
-  if (isAuthenticated) {
-    return null;
-  }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: '#f6f6f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: 340, background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(8,15,70,0.10)', padding: 36, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h2 style={{ fontWeight: 700, fontSize: 26, marginBottom: 28, color: 'var(--color-dark)', letterSpacing: 0.5 }}>Админ нэвтрэх</h2>
-        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-          <input
-            type="text"
-            placeholder="Нэвтрэх нэр"
-            value={formData.username}
-            onChange={e => setFormData(prev => ({ ...prev, username: e.target.value }))}
-            style={{ width: '100%', boxSizing: 'border-box', padding: '14px 0', marginBottom: 18, borderRadius: 8, border: '2px solid #e1e5e9', fontSize: 16, outline: 'none', transition: 'border-color 0.2s', textIndent: 16 }}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Нууц үг"
-            value={formData.password}
-            onChange={e => setFormData(prev => ({ ...prev, password: e.target.value }))}
-            style={{ width: '100%', boxSizing: 'border-box', padding: '14px 0', marginBottom: 24, borderRadius: 8, border: '2px solid #e1e5e9', fontSize: 16, outline: 'none', transition: 'border-color 0.2s', textIndent: 16 }}
-            required
-          />
-          <button 
-            type="submit" 
+      <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 20px rgba(8,15,70,0.12)', padding: '40px', width: '100%', maxWidth: 400 }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: 'var(--color-dark)', marginBottom: 8 }}>Админ нэвтрэх</h1>
+          <p style={{ color: '#666', fontSize: 16 }}>Системд нэвтрэхийн тулд нэвтрэх нэр болон нууц үгээ оруулна уу</p>
+        </div>
+
+        {error && (
+          <div style={{ background: '#fee', border: '1px solid #fcc', borderRadius: 8, padding: 16, marginBottom: 24, color: '#c33' }}>
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: 8, color: '#333' }}>
+              Нэвтрэх нэр
+            </label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                border: '2px solid #e1e5e9',
+                borderRadius: 8,
+                fontSize: '16px',
+                outline: 'none',
+                transition: 'border-color 0.2s'
+              }}
+              placeholder="Нэвтрэх нэрээ оруулна уу"
+            />
+          </div>
+
+          <div style={{ marginBottom: 24 }}>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: 8, color: '#333' }}>
+              Нууц үг
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                border: '2px solid #e1e5e9',
+                borderRadius: 8,
+                fontSize: '16px',
+                outline: 'none',
+                transition: 'border-color 0.2s'
+              }}
+              placeholder="Нууц үгээ оруулна уу"
+            />
+          </div>
+
+          <button
+            type="submit"
             disabled={isLoading}
-            style={{ 
-              width: '100%', 
-              padding: '14px 0', 
-              background: isLoading ? '#ccc' : 'var(--color-accent)', 
-              color: '#fff', 
-              border: 'none', 
-              borderRadius: 8, 
-              fontWeight: 'bold', 
-              fontSize: 17, 
-              letterSpacing: 0.5, 
-              boxShadow: '0 1px 4px rgba(8,15,70,0.06)', 
-              cursor: isLoading ? 'not-allowed' : 'pointer', 
-              transition: 'background 0.2s' 
+            style={{
+              width: '100%',
+              background: 'var(--color-accent)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 8,
+              padding: '14px',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s',
+              opacity: isLoading ? 0.7 : 1
             }}
           >
             {isLoading ? 'Нэвтэрч байна...' : 'Нэвтрэх'}
           </button>
-          {error && <div style={{ color: 'red', marginTop: 16, textAlign: 'center', fontWeight: 500 }}>{error}</div>}
         </form>
-        
-        {/* Default credentials info */}
-        <div style={{ marginTop: 24, padding: 16, background: '#f8f9fa', borderRadius: 8, fontSize: 14, color: '#666', textAlign: 'center' }}>
-          <strong>Default Admin Credentials:</strong><br/>
-          Username: <code>admin</code><br/>
-          Password: <code>admin123</code>
-        </div>
       </div>
     </div>
   );
