@@ -4,6 +4,7 @@ import Header from './Header';
 import MainHeader from './MainHeader';
 import NavBar from './NavBar';
 import Footer from './Footer';
+import { API_ENDPOINTS } from '../config/api';
 
 function UserRegistration() {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ function UserRegistration() {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/customer-users/register', {
+      const response = await fetch(API_ENDPOINTS.CUSTOMER_USERS, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

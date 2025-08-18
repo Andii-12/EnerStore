@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 
 function CompanyDashboard() {
   const [products, setProducts] = useState([]);
@@ -38,30 +39,25 @@ function CompanyDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get company info from localStorage (after login)
-    const companyData = JSON.parse(localStorage.getItem('company'));
-    setCompany(companyData);
-    if (companyData) {
-      setSettingsForm({ name: companyData.name, email: companyData.email, password: '', logo: companyData.logo });
-      setLogoPreview(companyData.logo);
-      fetch(`http://localhost:5000/api/products/company/${companyData._id}`)
+    const company = JSON.parse(localStorage.getItem('company'));
+    if (company) {
+      setCompany(company);
+      // Fetch company products
+      fetch(`${API_ENDPOINTS.PRODUCTS}/company/${company._id}`)
         .then(res => res.json())
         .then(data => setProducts(data));
-      
-      // Fetch categories for product form
-      fetch('http://localhost:5000/api/categories')
-        .then(res => res.json())
-        .then(data => {
-          setCategories(data);
-          // Automatically select "Бүх бараа" category
-          const allProductsCategory = data.find(cat => cat.name === 'Бүх бараа');
-          if (allProductsCategory) {
-            setProductForm(prev => ({ ...prev, categories: [allProductsCategory._id] }));
-          }
-        });
     }
+    // Fetch categories for product form
+    axios.get(API_ENDPOINTS.CATEGORIES).then(res => {
+      setCategories(res.data);
+      // Automatically select "Бүх бараа" category
+      const allProductsCategory = res.data.find(cat => cat.name === 'Бүх бараа');
+      if (allProductsCategory) {
+        setProductForm(prev => ({ ...prev, categories: [allProductsCategory._id] }));
+      }
+    });
     // Fetch brands for product form
-    axios.get('http://localhost:5000/api/brands').then(res => setBrands(res.data));
+    axios.get(API_ENDPOINTS.BRANDS).then(res => setBrands(res.data));
   }, []);
 
   if (!company) return <div style={{ padding: 40 }}>Та эхлээд нэвтэрнэ үү.</div>;
@@ -83,7 +79,7 @@ function CompanyDashboard() {
   const handleSettingsSave = async e => {
     e.preventDefault();
     setSettingsMsg('');
-    const res = await fetch(`http://localhost:5000/api/companies/${company._id}`, {
+    const res = await fetch(`${API_ENDPOINTS.COMPANIES}/${company._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(settingsForm)
@@ -158,7 +154,7 @@ function CompanyDashboard() {
       soldCount: 0
     };
 
-    const res = await fetch('http://localhost:5000/api/products', {
+    const res = await fetch(API_ENDPOINTS.PRODUCTS, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newProduct)
@@ -193,7 +189,7 @@ function CompanyDashboard() {
   // Delete product handler
   const handleDeleteProduct = async (productId) => {
     if (!window.confirm('Та энэ бүтээгдэхүүнийг устгахдаа итгэлтэй байна уу?')) return;
-    const res = await fetch(`http://localhost:5000/api/products/${productId}`, { method: 'DELETE' });
+    const res = await fetch(`${API_ENDPOINTS.PRODUCTS}/${productId}`, { method: 'DELETE' });
     if (res.ok) {
       setProducts(products.filter(p => p._id !== productId));
     }
@@ -222,7 +218,7 @@ function CompanyDashboard() {
 
   async function handleEditFormSubmit(e) {
     e.preventDefault();
-    const res = await fetch(`http://localhost:5000/api/products/${editProduct._id}`, {
+    const res = await fetch(`${API_ENDPOINTS.PRODUCTS}/${editProduct._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...editProduct, ...editForm, price: Number(editForm.price) })
@@ -292,7 +288,7 @@ function CompanyDashboard() {
   async function handleSaleProduct(product) {
     if (!window.confirm('Энэ барааны үнийг 10%-иар бууруулах уу?')) return;
     const newPrice = Math.round(product.price * 0.9);
-    const res = await fetch(`http://localhost:5000/api/products/${product._id}`, {
+    const res = await fetch(`${API_ENDPOINTS.PRODUCTS}/${product._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...product, price: newPrice })
@@ -355,7 +351,7 @@ function CompanyDashboard() {
       saleEnd: end,
       originalPrice: saleProduct.originalPrice || saleProduct.price,
     };
-    const res = await fetch(`http://localhost:5000/api/products/${saleProduct._id}`, {
+    const res = await fetch(`${API_ENDPOINTS.PRODUCTS}/${saleProduct._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -379,7 +375,7 @@ function CompanyDashboard() {
       saleEnd: null,
       originalPrice: null,
     };
-    const res = await fetch(`http://localhost:5000/api/products/${saleProduct._id}`, {
+    const res = await fetch(`${API_ENDPOINTS.PRODUCTS}/${saleProduct._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)

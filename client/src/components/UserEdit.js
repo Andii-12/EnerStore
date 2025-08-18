@@ -4,6 +4,7 @@ import Header from './Header';
 import MainHeader from './MainHeader';
 import NavBar from './NavBar';
 import Footer from './Footer';
+import { API_ENDPOINTS } from '../config/api';
 
 function UserEdit() {
   const navigate = useNavigate();
@@ -122,7 +123,7 @@ function UserEdit() {
     setMessage('');
 
     try {
-      const response = await fetch(`http://localhost:5000/api/customer-users/${user._id}`, {
+      const response = await fetch(`${API_ENDPOINTS.CUSTOMER_USERS}/${user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +159,7 @@ function UserEdit() {
     setMessage('');
 
     try {
-      const response = await fetch(`http://localhost:5000/api/customer-users/${user._id}/change-password`, {
+      const response = await fetch(`${API_ENDPOINTS.CUSTOMER_USERS}/${user._id}/change-password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

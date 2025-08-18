@@ -4,6 +4,7 @@ import Header from './Header';
 import MainHeader from './MainHeader';
 import NavBar from './NavBar';
 import Footer from './Footer';
+import { API_ENDPOINTS } from '../config/api';
 
 const paymentOptions = [
   { name: 'Голомт банк', desc: 'Хэрэглээний зээл' },
@@ -30,11 +31,11 @@ function ProductDetail() {
   const [saleCountdown, setSaleCountdown] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/products/${id}`)
+    fetch(`${API_ENDPOINTS.PRODUCTS}/${id}`)
       .then(res => res.json())
       .then(data => setProduct(data));
     // Fetch all products for similar section
-    fetch('http://localhost:5000/api/products')
+    fetch(API_ENDPOINTS.PRODUCTS)
       .then(res => res.json())
       .then(data => setAllProducts(data));
   }, [id]);

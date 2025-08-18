@@ -1,0 +1,21 @@
+[
+  {
+    "address": {
+      "street": "zaisan",
+      "city": "ulaanbaatar",
+      "district": "han uul",
+      "zipCode": "11000"
+    },
+    "_id": "686b63eef3593624a08bee11",
+    "firstName": "Хүрэлбаатар",
+    "lastName": "Билгүүн",
+    "email": "test@gmail.com",
+    "phone": "99112233",
+    "password": "andii0817@",
+    "isActive": true,
+    "createdAt": "2025-07-07T06:06:38.676Z",
+    "updatedAt": "2025-07-07T06:26:08.729Z",
+    "__v": 0,
+    "lastLogin": "2025-07-07T06:07:29.597Z"
+  }
+]

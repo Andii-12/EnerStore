@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import axios from 'axios';
+import { API_ENDPOINTS, SOCKET_CONFIG } from '../config/api';
 
 function AdminDashboard() {
   const [productCount, setProductCount] = useState(0);
@@ -18,18 +19,18 @@ function AdminDashboard() {
   const [editLogoPreview, setEditLogoPreview] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
+    fetch(API_ENDPOINTS.PRODUCTS)
       .then(res => res.json())
       .then(data => setProductCount(data.length));
-    fetch('http://localhost:5000/api/categories')
+    fetch(API_ENDPOINTS.CATEGORIES)
       .then(res => res.json())
       .then(data => setCategoryCount(data.length));
-    const socket = io('http://localhost:5000');
+    const socket = io(SOCKET_CONFIG.url, SOCKET_CONFIG.options);
     socket.on('viewerCount', (count) => {
       setViewerCount(count);
     });
     // Fetch brands
-    axios.get('http://localhost:5000/api/brands').then(res => setBrands(res.data));
+    axios.get(API_ENDPOINTS.BRANDS).then(res => setBrands(res.data));
     return () => socket.disconnect();
   }, []);
 
@@ -51,16 +52,16 @@ function AdminDashboard() {
   const handleAddBrand = async e => {
     e.preventDefault();
     setBrandLoading(true);
-    await axios.post('http://localhost:5000/api/brands', brandForm);
+    await axios.post(API_ENDPOINTS.BRANDS, brandForm);
     setBrandForm({ name: '', logo: '', description: '' });
     setLogoPreview('');
-    const res = await axios.get('http://localhost:5000/api/brands');
+    const res = await axios.get(API_ENDPOINTS.BRANDS);
     setBrands(res.data);
     setBrandLoading(false);
   };
 
   const handleDeleteBrand = async id => {
-    await axios.delete(`http://localhost:5000/api/brands/${id}`);
+    await axios.delete(`${API_ENDPOINTS.BRANDS}/${id}`);
     setBrands(brands.filter(b => b._id !== id));
   };
 
@@ -87,11 +88,11 @@ function AdminDashboard() {
 
   const handleUpdateBrand = async e => {
     e.preventDefault();
-    await axios.put(`http://localhost:5000/api/brands/${editBrandId}`, editBrandForm);
+    await axios.put(`${API_ENDPOINTS.BRANDS}/${editBrandId}`, editBrandForm);
     setEditBrandId(null);
     setEditBrandForm({ name: '', logo: '', description: '' });
     setEditLogoPreview('');
-    const res = await axios.get('http://localhost:5000/api/brands');
+    const res = await axios.get(API_ENDPOINTS.BRANDS);
     setBrands(res.data);
   };
 
