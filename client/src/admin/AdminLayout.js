@@ -1,18 +1,30 @@
 import React from 'react';
-import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useAdminAuth } from './AdminAuthContext';
 
 function AdminLayout() {
-  const navigate = useNavigate();
   const location = useLocation();
-  React.useEffect(() => {
-    if (localStorage.getItem('admin') !== 'true') {
-      navigate('/admin/login');
-    }
-  }, [navigate]);
+  const { adminUser, isAuthenticated, isLoading, logout } = useAdminAuth();
+
+  // Show loading while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#f6f6f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: 'var(--color-dark)', marginBottom: 16 }}>Checking Authentication...</div>
+          <div style={{ fontSize: 16, color: '#666' }}>Please wait</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const handleLogout = () => {
-    localStorage.removeItem('admin');
-    navigate('/admin/login');
+    logout();
   };
 
   return (
@@ -41,7 +53,7 @@ function AdminLayout() {
           <div style={{ height: 64, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 36px', boxShadow: '0 2px 8px rgba(8,15,70,0.04)' }}>
             <div style={{ fontWeight: 600, fontSize: 22 }}>Админ Самбар</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <span style={{ fontWeight: 500 }}>Админ</span>
+              <span style={{ fontWeight: 500 }}>{adminUser?.username || 'Admin'}</span>
               <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 18 }}>A</div>
               <button onClick={handleLogout} style={{ background: 'var(--color-accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 18px', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Гарах</button>
             </div>

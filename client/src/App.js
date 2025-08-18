@@ -17,6 +17,8 @@ import AdminLayout from './admin/AdminLayout';
 import CompaniesAdmin from './admin/CompaniesAdmin';
 import UsersAdmin from './admin/UsersAdmin';
 import HeaderMenuAdmin from './admin/HeaderMenuAdmin';
+import { AdminAuthProvider } from './admin/AdminAuthContext';
+import AdminRoute from './admin/AdminRoute';
 import CompanyDashboard from './components/CompanyDashboard';
 import AllProductsPage from './components/AllProductsPage';
 import BrandCarousel from './components/BrandCarousel';
@@ -300,8 +302,18 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin/login" element={
+          <AdminAuthProvider>
+            <AdminLogin />
+          </AdminAuthProvider>
+        } />
+        <Route path="/admin" element={
+          <AdminAuthProvider>
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          </AdminAuthProvider>
+        }>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<ProductsAdmin />} />
           <Route path="categories" element={<CategoriesAdmin />} />

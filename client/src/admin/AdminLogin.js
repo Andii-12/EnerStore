@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../config/api';
+import { useAdminAuth } from './AdminAuthContext';
 
 function AdminLogin() {
   const [formData, setFormData] = useState({
@@ -10,6 +11,14 @@ function AdminLogin() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAdminAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,11 +37,16 @@ function AdminLogin() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        // Store admin user info
-        localStorage.setItem('adminUser', JSON.stringify(data.user));
-        localStorage.setItem('adminToken', 'admin-logged-in'); // Simple token for now
-        console.log('Admin login successful:', data.user);
-        navigate('/admin/dashboard');
+        // Use the context login function
+        const loginSuccess = login(data.user);
+        
+        if (loginSuccess) {
+          console.log('Admin login successful:', data.user);
+          // Navigate after successful login
+          navigate('/admin/dashboard');
+        } else {
+          setError('Login failed. Please try again.');
+        }
       } else {
         setError(data.message || 'Invalid credentials');
       }
@@ -43,6 +57,11 @@ function AdminLogin() {
       setIsLoading(false);
     }
   };
+
+  // Don't render if already authenticated
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#f6f6f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
