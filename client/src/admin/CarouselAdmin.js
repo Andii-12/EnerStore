@@ -1,84 +1,67 @@
 import React, { useState, useEffect } from 'react';
+import { API_ENDPOINTS } from '../config/api';
 
 function CarouselAdmin() {
   const [slides, setSlides] = useState([]);
-  const [form, setForm] = useState({ image: '', title: '', subtitle: '', link: '' });
-  const [imagePreview, setImagePreview] = useState('');
+  const [formData, setFormData] = useState({ title: '', image: '', description: '' });
   const [editId, setEditId] = useState(null);
+  const [editForm, setEditForm] = useState({ title: '', image: '', description: '' });
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/carousel')
+    fetch(API_ENDPOINTS.CAROUSEL)
       .then(res => res.json())
       .then(data => setSlides(data));
   }, []);
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleImageChange = e => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setForm({ ...form, image: e.target.result });
-        setImagePreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleAdd = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch('http://localhost:5000/api/carousel', {
+    const res = await fetch(API_ENDPOINTS.CAROUSEL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+      body: JSON.stringify(formData)
     });
     if (res.ok) {
+      setFormData({ title: '', image: '', description: '' });
       const newSlide = await res.json();
       setSlides([...slides, newSlide]);
-      setForm({ image: '', title: '', subtitle: '', link: '' });
-      setImagePreview('');
     }
   };
 
-  const handleDelete = async id => {
-    await fetch(`http://localhost:5000/api/carousel/${id}`, { method: 'DELETE' });
-    setSlides(slides.filter(s => s._id !== id));
+  const handleDelete = async (id) => {
+    await fetch(`${API_ENDPOINTS.CAROUSEL}/${id}`, { method: 'DELETE' });
+    setSlides(slides.filter(slide => slide._id !== id));
   };
 
   const handleEdit = (slide) => {
     setEditId(slide._id);
-    setForm({ image: slide.image, title: slide.title, subtitle: slide.subtitle, link: slide.link || '' });
-    setImagePreview(slide.image);
+    setEditForm({ title: slide.title, image: slide.image, description: slide.description });
   };
 
-  const handleUpdate = async e => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:5000/api/carousel/${editId}`, {
+    const res = await fetch(`${API_ENDPOINTS.CAROUSEL}/${editId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+      body: JSON.stringify(editForm)
     });
     if (res.ok) {
-      const updated = await res.json();
-      setSlides(slides.map(s => s._id === editId ? updated : s));
+      const updatedSlide = await res.json();
+      setSlides(slides.map(slide => slide._id === editId ? updatedSlide : slide));
       setEditId(null);
-      setForm({ image: '', title: '', subtitle: '', link: '' });
-      setImagePreview('');
+      setEditForm({ title: '', image: '', description: '' });
     }
   };
 
   const clearForm = () => {
     setEditId(null);
-    setForm({ image: '', title: '', subtitle: '', link: '' });
-    setImagePreview('');
+    setFormData({ title: '', image: '', description: '' });
   };
 
   return (
     <div style={{ maxWidth: 1100, margin: '40px auto', padding: 32, background: '#f6f6f6', borderRadius: 16 }}>
       <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(8,15,70,0.08)', padding: 32, marginBottom: 40 }}>
         <h2 style={{ fontWeight: 700, fontSize: 24, marginBottom: 24, color: 'var(--color-dark)' }}>Карусель удирдах</h2>
-        <form onSubmit={editId ? handleUpdate : handleAdd} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'end', marginBottom: 24 }}>
+        <form onSubmit={editId ? handleUpdate : handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'end', marginBottom: 24 }}>
           <div>
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Зураг</label>
             <label style={{ display: 'inline-block', padding: '12px 24px', background: 'var(--color-accent)', color: '#fff', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', transition: 'background-color 0.2s', border: 'none', textAlign: 'center', minWidth: '120px' }}>
@@ -93,11 +76,11 @@ function CarouselAdmin() {
           </div>
           <div>
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Гарчиг</label>
-            <input name="title" placeholder="Гарчиг" value={form.title} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+            <input name="title" placeholder="Гарчиг" value={formData.title} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 16 }}>Дэд гарчиг</label>
-            <input name="subtitle" placeholder="Дэд гарчиг" value={form.subtitle} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+            <input name="subtitle" placeholder="Дэд гарчиг" value={formData.subtitle} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 16 }}>Холбоос</label>
-            <input name="link" placeholder="/products/123 эсвэл https://..." value={form.link} onChange={handleChange} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+            <input name="link" placeholder="/products/123 эсвэл https://..." value={formData.link} onChange={handleChange} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
           </div>
           <div style={{ gridColumn: '1 / span 2', display: 'flex', gap: 16, marginTop: 8 }}>
             <button type="submit" style={{ background: 'var(--color-accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 32px', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px', transition: 'background-color 0.2s', minWidth: '120px' }}>{editId ? 'Шинэчлэх' : 'Нэмэх'}</button>

@@ -1,62 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_ENDPOINTS } from '../config/api';
 
 function UsersAdmin() {
   const [users, setUsers] = useState([]);
-  const [form, setForm] = useState({ username: '', password: '', email: '' });
   const [editId, setEditId] = useState(null);
+  const [editForm, setEditForm] = useState({ firstName: '', lastName: '', email: '', phone: '' });
 
-  const fetchUsers = () => {
-    fetch('http://localhost:5000/api/customer-users')
+  useEffect(() => {
+    fetch(API_ENDPOINTS.CUSTOMER_USERS)
       .then(res => res.json())
       .then(data => setUsers(data));
-  };
+  }, []);
 
-  useEffect(() => { fetchUsers(); }, []);
-
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleAdd = e => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    fetch('http://localhost:5000/api/customer-users', {
+    const res = await fetch(API_ENDPOINTS.CUSTOMER_USERS, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    })
-      .then(res => res.json())
-      .then(() => {
-        setForm({ username: '', password: '', email: '' });
-        fetchUsers();
-      });
+      body: JSON.stringify(editForm)
+    });
+    if (res.ok) {
+      const newUser = await res.json();
+      setUsers([...users, newUser]);
+      setEditForm({ firstName: '', lastName: '', email: '', phone: '' });
+    }
   };
 
-  const handleDelete = id => {
-    fetch(`http://localhost:5000/api/customer-users/${id}`, { method: 'DELETE' })
-      .then(() => fetchUsers());
+  const handleDelete = async (id) => {
+    await fetch(`${API_ENDPOINTS.CUSTOMER_USERS}/${id}`, { method: 'DELETE' });
+    setUsers(users.filter(user => user._id !== id));
   };
 
-  const handleEdit = user => {
+  const handleEdit = (user) => {
     setEditId(user._id);
-    setForm({ username: user.username, password: user.password, email: user.email });
+    setEditForm({ firstName: user.firstName, lastName: user.lastName, email: user.email, phone: user.phone });
   };
 
-  const handleUpdate = e => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/api/customer-users/${editId}`, {
+    const res = await fetch(`${API_ENDPOINTS.CUSTOMER_USERS}/${editId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    })
-      .then(res => res.json())
-      .then(() => {
-        setEditId(null);
-        setForm({ username: '', password: '', email: '' });
-        fetchUsers();
-      });
+      body: JSON.stringify(editForm)
+    });
+    if (res.ok) {
+      const updatedUser = await res.json();
+      setUsers(users.map(user => user._id === editId ? updatedUser : user));
+      setEditId(null);
+      setEditForm({ firstName: '', lastName: '', email: '', phone: '' });
+    }
   };
 
   const clearForm = () => {
     setEditId(null);
-    setForm({ username: '', password: '', email: '' });
+    setEditForm({ firstName: '', lastName: '', email: '', phone: '' });
   };
 
   return (
@@ -66,27 +63,27 @@ function UsersAdmin() {
         <form onSubmit={editId ? handleUpdate : handleAdd} style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'end', marginBottom: 0 }}>
           <div>
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Нэр</label>
-            <input name="name" placeholder="Нэр" value={form.name} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+            <input name="name" placeholder="Нэр" value={editForm.firstName} onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
           </div>
           <div>
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Имэйл</label>
-            <input name="email" placeholder="Имэйл" value={form.email} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+            <input name="email" placeholder="Имэйл" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
           </div>
           <div>
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Нууц үг</label>
-            <input name="password" type="password" placeholder="Нууц үг" value={form.password} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+            <input name="password" type="password" placeholder="Нууц үг" value={editForm.password} onChange={(e) => setEditForm({ ...editForm, password: e.target.value })} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
           </div>
           <div>
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Утас</label>
-            <input name="phone" placeholder="Утас" value={form.phone} onChange={handleChange} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+            <input name="phone" placeholder="Утас" value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
           </div>
           <div>
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Хаяг</label>
-            <input name="address" placeholder="Хаяг" value={form.address} onChange={handleChange} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+            <input name="address" placeholder="Хаяг" value={editForm.address} onChange={(e) => setEditForm({ ...editForm, address: e.target.value })} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
           </div>
           <div>
             <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Эрх</label>
-            <select name="role" value={form.role} onChange={handleChange} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s', background: '#fff' }}>
+            <select name="role" value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value })} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s', background: '#fff' }}>
               <option value="customer">Хэрэглэгч</option>
               <option value="admin">Админ</option>
             </select>

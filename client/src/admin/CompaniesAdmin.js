@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_ENDPOINTS } from '../config/api';
 
 function CompaniesAdmin() {
   const [companies, setCompanies] = useState([]);
@@ -6,13 +7,11 @@ function CompaniesAdmin() {
   const [editId, setEditId] = useState(null);
   const [logoPreview, setLogoPreview] = useState('');
 
-  const fetchCompanies = () => {
-    fetch('http://localhost:5000/api/companies')
+  useEffect(() => {
+    fetch(API_ENDPOINTS.COMPANIES)
       .then(res => res.json())
       .then(data => setCompanies(data));
-  };
-
-  useEffect(() => { fetchCompanies(); }, []);
+  }, []);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -28,46 +27,46 @@ function CompaniesAdmin() {
     }
   };
 
-  const handleAdd = e => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    fetch('http://localhost:5000/api/companies', {
+    const res = await fetch(API_ENDPOINTS.COMPANIES, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
-    })
-      .then(res => res.json())
-      .then(() => {
-        setForm({ name: '', logo: '', address: '', contact: '', email: '', password: '' });
-        setLogoPreview('');
-        fetchCompanies();
-      });
+    });
+    if (res.ok) {
+      const newCompany = await res.json();
+      setCompanies([...companies, newCompany]);
+      setForm({ name: '', logo: '', address: '', contact: '', email: '', password: '' });
+      setLogoPreview('');
+    }
   };
 
-  const handleDelete = id => {
-    fetch(`http://localhost:5000/api/companies/${id}`, { method: 'DELETE' })
-      .then(() => fetchCompanies());
+  const handleDelete = async (id) => {
+    await fetch(`${API_ENDPOINTS.COMPANIES}/${id}`, { method: 'DELETE' });
+    setCompanies(companies.filter(company => company._id !== id));
   };
 
-  const handleEdit = company => {
+  const handleEdit = (company) => {
     setEditId(company._id);
     setForm({ name: company.name, logo: company.logo, address: company.address, contact: company.contact, email: company.email || '', password: '' });
     setLogoPreview(company.logo);
   };
 
-  const handleUpdate = e => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/api/companies/${editId}`, {
+    const res = await fetch(`${API_ENDPOINTS.COMPANIES}/${editId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
-    })
-      .then(res => res.json())
-      .then(() => {
-        setEditId(null);
-        setForm({ name: '', logo: '', address: '', contact: '', email: '', password: '' });
-        setLogoPreview('');
-        fetchCompanies();
-      });
+    });
+    if (res.ok) {
+      const updatedCompany = await res.json();
+      setCompanies(companies.map(company => company._id === editId ? updatedCompany : company));
+      setEditId(null);
+      setForm({ name: '', logo: '', address: '', contact: '', email: '', password: '' });
+      setLogoPreview('');
+    }
   };
 
   const clearForm = () => {

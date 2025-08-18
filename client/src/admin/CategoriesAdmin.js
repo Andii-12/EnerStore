@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_ENDPOINTS } from '../config/api';
 
 function CategoriesAdmin() {
   const [categories, setCategories] = useState([]);
@@ -6,13 +7,11 @@ function CategoriesAdmin() {
   const [editId, setEditId] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
 
-  const fetchCategories = () => {
-    fetch('http://localhost:5000/api/categories')
+  useEffect(() => {
+    fetch(API_ENDPOINTS.CATEGORIES)
       .then(res => res.json())
       .then(data => setCategories(data));
-  };
-
-  useEffect(() => { fetchCategories(); }, []);
+  }, []);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -28,46 +27,46 @@ function CategoriesAdmin() {
     }
   };
 
-  const handleAdd = e => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    fetch('http://localhost:5000/api/categories', {
+    const res = await fetch(API_ENDPOINTS.CATEGORIES, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
-    })
-      .then(res => res.json())
-      .then(() => {
-        setForm({ name: '', image: '' });
-        setImagePreview('');
-        fetchCategories();
-      });
+    });
+    if (res.ok) {
+      const newCategory = await res.json();
+      setCategories([...categories, newCategory]);
+      setForm({ name: '', image: '' });
+      setImagePreview('');
+    }
   };
 
-  const handleDelete = id => {
-    fetch(`http://localhost:5000/api/categories/${id}`, { method: 'DELETE' })
-      .then(() => fetchCategories());
+  const handleDelete = async (id) => {
+    await fetch(`${API_ENDPOINTS.CATEGORIES}/${id}`, { method: 'DELETE' });
+    setCategories(categories.filter(category => category._id !== id));
   };
 
-  const handleEdit = cat => {
+  const handleEdit = (cat) => {
     setEditId(cat._id);
     setForm({ name: cat.name, image: cat.image });
     setImagePreview(cat.image);
   };
 
-  const handleUpdate = e => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/api/categories/${editId}`, {
+    const res = await fetch(`${API_ENDPOINTS.CATEGORIES}/${editId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
-    })
-      .then(res => res.json())
-      .then(() => {
-        setEditId(null);
-        setForm({ name: '', image: '' });
-        setImagePreview('');
-        fetchCategories();
-      });
+    });
+    if (res.ok) {
+      const updatedCategory = await res.json();
+      setCategories(categories.map(category => category._id === editId ? updatedCategory : category));
+      setEditId(null);
+      setForm({ name: '', image: '' });
+      setImagePreview('');
+    }
   };
 
   const clearForm = () => {

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 function ProductsAdmin() {
   const [products, setProducts] = useState([]);
@@ -7,9 +8,10 @@ function ProductsAdmin() {
   const [selectedBrand, setSelectedBrand] = useState('');
   const [form, setForm] = useState({ name: '', description: '', price: '', image: '', category: '', brand: '' });
   const [editId, setEditId] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', price: '', brand: '' });
 
   const fetchProducts = (brandId = '') => {
-    let url = 'http://localhost:5000/api/products';
+    let url = API_ENDPOINTS.PRODUCTS;
     if (brandId) url += `?brand=${brandId}`;
     fetch(url)
       .then(res => res.json())
@@ -18,18 +20,28 @@ function ProductsAdmin() {
 
   useEffect(() => {
     fetchProducts();
-    axios.get('http://localhost:5000/api/brands').then(res => setBrands(res.data));
+    axios.get(API_ENDPOINTS.BRANDS).then(res => setBrands(res.data));
   }, []);
 
   useEffect(() => {
     fetchProducts(selectedBrand);
   }, [selectedBrand]);
 
+  useEffect(() => {
+    let url = API_ENDPOINTS.PRODUCTS;
+    if (editId) {
+      url += `?edit=${editId}`;
+    }
+    fetch(url)
+      .then(res => res.json())
+      .then(data => setProducts(data));
+  }, [editId]);
+
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleAdd = e => {
     e.preventDefault();
-    fetch('http://localhost:5000/api/products', {
+    fetch(API_ENDPOINTS.PRODUCTS, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, price: Number(form.price), brand: form.brand })
@@ -41,29 +53,34 @@ function ProductsAdmin() {
       });
   };
 
-  const handleDelete = id => {
-    fetch(`http://localhost:5000/api/products/${id}`, { method: 'DELETE' })
-      .then(() => fetchProducts());
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure?')) {
+      fetch(`${API_ENDPOINTS.PRODUCTS}/${id}`, { method: 'DELETE' })
+        .then(() => {
+          setProducts(products.filter(p => p._id !== id));
+        });
+    }
   };
 
-  const handleEdit = product => {
+  const handleEdit = (product) => {
     setEditId(product._id);
-    setForm({ name: product.name, description: product.description, price: product.price, image: product.image, category: product.category, brand: product.brand?._id || product.brand || '' });
+    setEditForm({ name: product.name, price: product.price, brand: product.brand });
   };
 
-  const handleUpdate = e => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/api/products/${editId}`, {
+    fetch(`${API_ENDPOINTS.PRODUCTS}/${editId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, price: Number(form.price), brand: form.brand })
-    })
-      .then(res => res.json())
-      .then(() => {
-        setEditId(null);
-        setForm({ name: '', description: '', price: '', image: '', category: '', brand: '' });
-        fetchProducts();
-      });
+      body: JSON.stringify(editForm)
+    }).then(() => {
+      setEditId(null);
+      setEditForm({ name: '', price: '', brand: '' });
+      // Refresh products
+      fetch(API_ENDPOINTS.PRODUCTS)
+        .then(res => res.json())
+        .then(data => setProducts(data));
+    });
   };
 
   const formatPrice = (price) => {
