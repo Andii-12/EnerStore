@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
   
   // Admin
   ADMIN: `${API_BASE_URL}/api/admin`,
+  ADMIN_LOGIN: `${API_BASE_URL}/api/admin/login`,
   
   // Header Menu
   HEADER_MENU_ITEMS: `${API_BASE_URL}/api/header-menu-items`,
@@ -36,6 +37,13 @@ export const SOCKET_CONFIG = {
   options: {
     transports: ['websocket', 'polling'],
     autoConnect: true,
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
+    timeout: 20000,
+    forceNew: true,
+    upgrade: true,
+    rememberUpgrade: false
   }
 };
 

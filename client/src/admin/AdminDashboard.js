@@ -4,9 +4,10 @@ import axios from 'axios';
 import { API_ENDPOINTS, SOCKET_CONFIG } from '../config/api';
 
 function AdminDashboard() {
-  const [productCount, setProductCount] = useState(0);
+  const [productCount, setProductCount] => useState(0);
   const [categoryCount, setCategoryCount] = useState(0);
   const [viewerCount, setViewerCount] = useState(0);
+  const [socketStatus, setSocketStatus] = useState('disconnected');
 
   // Brand management state
   const [brands, setBrands] = useState([]);
@@ -19,19 +20,73 @@ function AdminDashboard() {
   const [editLogoPreview, setEditLogoPreview] = useState('');
 
   useEffect(() => {
-    fetch(API_ENDPOINTS.PRODUCTS)
-      .then(res => res.json())
-      .then(data => setProductCount(data.length));
-    fetch(API_ENDPOINTS.CATEGORIES)
-      .then(res => res.json())
-      .then(data => setCategoryCount(data.length));
-    const socket = io(SOCKET_CONFIG.url, SOCKET_CONFIG.options);
-    socket.on('viewerCount', (count) => {
-      setViewerCount(count);
-    });
-    // Fetch brands
-    axios.get(API_ENDPOINTS.BRANDS).then(res => setBrands(res.data));
-    return () => socket.disconnect();
+    // Fetch basic data
+    const fetchData = async () => {
+      try {
+        const [productsRes, categoriesRes] = await Promise.all([
+          fetch(API_ENDPOINTS.PRODUCTS),
+          fetch(API_ENDPOINTS.CATEGORIES)
+        ]);
+        
+        if (productsRes.ok) {
+          const products = await productsRes.json();
+          setProductCount(products.length);
+        }
+        
+        if (categoriesRes.ok) {
+          const categories = await categoriesRes.json();
+          setCategoryCount(categories.length);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+
+    // Socket.IO connection with better error handling
+    let socket;
+    try {
+      socket = io(SOCKET_CONFIG.url, {
+        ...SOCKET_CONFIG.options,
+        timeout: 10000,
+        forceNew: true
+      });
+
+      socket.on('connect', () => {
+        console.log('Socket connected:', socket.id);
+        setSocketStatus('connected');
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Socket disconnected');
+        setSocketStatus('disconnected');
+      });
+
+      socket.on('connect_error', (error) => {
+        console.error('Socket connection error:', error);
+        setSocketStatus('error');
+      });
+
+      socket.on('viewerCount', (count) => {
+        setViewerCount(count);
+      });
+
+      // Fetch brands
+      axios.get(API_ENDPOINTS.BRANDS)
+        .then(res => setBrands(res.data))
+        .catch(err => console.error('Error fetching brands:', err));
+
+    } catch (error) {
+      console.error('Socket initialization error:', error);
+      setSocketStatus('error');
+    }
+
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
   }, []);
 
   const handleBrandInput = e => {
@@ -52,17 +107,26 @@ function AdminDashboard() {
   const handleAddBrand = async e => {
     e.preventDefault();
     setBrandLoading(true);
-    await axios.post(API_ENDPOINTS.BRANDS, brandForm);
-    setBrandForm({ name: '', logo: '', description: '' });
-    setLogoPreview('');
-    const res = await axios.get(API_ENDPOINTS.BRANDS);
-    setBrands(res.data);
-    setBrandLoading(false);
+    try {
+      await axios.post(API_ENDPOINTS.BRANDS, brandForm);
+      setBrandForm({ name: '', logo: '', description: '' });
+      setLogoPreview('');
+      const res = await axios.get(API_ENDPOINTS.BRANDS);
+      setBrands(res.data);
+    } catch (error) {
+      console.error('Error adding brand:', error);
+    } finally {
+      setBrandLoading(false);
+    }
   };
 
   const handleDeleteBrand = async id => {
-    await axios.delete(`${API_ENDPOINTS.BRANDS}/${id}`);
-    setBrands(brands.filter(b => b._id !== id));
+    try {
+      await axios.delete(`${API_ENDPOINTS.BRANDS}/${id}`);
+      setBrands(brands.filter(b => b._id !== id));
+    } catch (error) {
+      console.error('Error deleting brand:', error);
+    }
   };
 
   const handleEditBrandInput = e => {
@@ -88,18 +152,40 @@ function AdminDashboard() {
 
   const handleUpdateBrand = async e => {
     e.preventDefault();
-    await axios.put(`${API_ENDPOINTS.BRANDS}/${editBrandId}`, editBrandForm);
-    setEditBrandId(null);
-    setEditBrandForm({ name: '', logo: '', description: '' });
-    setEditLogoPreview('');
-    const res = await axios.get(API_ENDPOINTS.BRANDS);
-    setBrands(res.data);
+    try {
+      await axios.put(`${API_ENDPOINTS.BRANDS}/${editBrandId}`, editBrandForm);
+      setEditBrandId(null);
+      setEditBrandForm({ name: '', logo: '', description: '' });
+      setEditLogoPreview('');
+      const res = await axios.get(API_ENDPOINTS.BRANDS);
+      setBrands(res.data);
+    } catch (error) {
+      console.error('Error updating brand:', error);
+    }
   };
 
   const handleCancelEdit = () => {
     setEditBrandId(null);
     setEditBrandForm({ name: '', logo: '', description: '' });
     setEditLogoPreview('');
+  };
+
+  const getSocketStatusColor = () => {
+    switch (socketStatus) {
+      case 'connected': return '#22c55e';
+      case 'disconnected': return '#f59e0b';
+      case 'error': return '#ef4444';
+      default: return '#6b7280';
+    }
+  };
+
+  const getSocketStatusText = () => {
+    switch (socketStatus) {
+      case 'connected': return 'Connected';
+      case 'disconnected': return 'Disconnected';
+      case 'error': return 'Error';
+      default: return 'Unknown';
+    }
   };
 
   return (
@@ -119,7 +205,20 @@ function AdminDashboard() {
             <div style={{ fontSize: 15, color: 'var(--color-dark)', marginBottom: 8 }}>Хандалт</div>
             <div style={{ fontWeight: 700, fontSize: 28, color: 'var(--color-accent)' }}>{viewerCount}</div>
           </div>
+          <div style={{ flex: 1, minWidth: 220, background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 2px 8px rgba(8,15,70,0.06)', padding: 28, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <div style={{ fontSize: 15, color: 'var(--color-dark)', marginBottom: 8 }}>Socket Status</div>
+            <div style={{ fontWeight: 700, fontSize: 28, color: getSocketStatusColor() }}>{getSocketStatusText()}</div>
+          </div>
         </div>
+
+        {/* Socket Status Info */}
+        {socketStatus === 'error' && (
+          <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: 16, marginBottom: 24, color: '#dc2626' }}>
+            <strong>Socket.IO Connection Issue:</strong> The real-time features may not work properly. 
+            This is likely due to Railway's WebSocket configuration. The admin dashboard will still function for basic operations.
+          </div>
+        )}
+
         {/* Chart Placeholder */}
         <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 2px 8px rgba(8,15,70,0.06)', padding: 32, minHeight: 260, marginBottom: 48 }}>
           <div style={{ fontWeight: 600, fontSize: 18, color: 'var(--color-dark)', marginBottom: 16 }}>Статистик (placeholder)</div>
@@ -127,6 +226,7 @@ function AdminDashboard() {
             Chart.js or Recharts here
           </div>
         </div>
+
         {/* Brand Management Section */}
         <section style={{ background: '#fff', border: '1px solid #eee', borderRadius: 8, margin: '32px 0', padding: 24 }}>
           <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>Брэндүүд</h2>

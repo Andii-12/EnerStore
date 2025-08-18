@@ -8,14 +8,16 @@ function AdminLogin() {
     password: ''
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
-      const res = await fetch(API_ENDPOINTS.ADMIN + '/login', {
+      const res = await fetch(API_ENDPOINTS.ADMIN_LOGIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,15 +25,22 @@ function AdminLogin() {
         body: JSON.stringify(formData),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem('adminToken', data.token);
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        // Store admin user info
+        localStorage.setItem('adminUser', JSON.stringify(data.user));
+        localStorage.setItem('adminToken', 'admin-logged-in'); // Simple token for now
+        console.log('Admin login successful:', data.user);
         navigate('/admin/dashboard');
       } else {
-        setError('Invalid credentials');
+        setError(data.message || 'Invalid credentials');
       }
     } catch (err) {
-      setError('Login failed');
+      console.error('Admin login error:', err);
+      setError('Login failed. Please check your connection.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,6 +55,7 @@ function AdminLogin() {
             value={formData.username}
             onChange={e => setFormData(prev => ({ ...prev, username: e.target.value }))}
             style={{ width: '100%', boxSizing: 'border-box', padding: '14px 0', marginBottom: 18, borderRadius: 8, border: '2px solid #e1e5e9', fontSize: 16, outline: 'none', transition: 'border-color 0.2s', textIndent: 16 }}
+            required
           />
           <input
             type="password"
@@ -53,10 +63,37 @@ function AdminLogin() {
             value={formData.password}
             onChange={e => setFormData(prev => ({ ...prev, password: e.target.value }))}
             style={{ width: '100%', boxSizing: 'border-box', padding: '14px 0', marginBottom: 24, borderRadius: 8, border: '2px solid #e1e5e9', fontSize: 16, outline: 'none', transition: 'border-color 0.2s', textIndent: 16 }}
+            required
           />
-          <button type="submit" style={{ width: '100%', padding: '14px 0', background: 'var(--color-accent)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 'bold', fontSize: 17, letterSpacing: 0.5, boxShadow: '0 1px 4px rgba(8,15,70,0.06)', cursor: 'pointer', transition: 'background 0.2s' }}>Нэвтрэх</button>
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            style={{ 
+              width: '100%', 
+              padding: '14px 0', 
+              background: isLoading ? '#ccc' : 'var(--color-accent)', 
+              color: '#fff', 
+              border: 'none', 
+              borderRadius: 8, 
+              fontWeight: 'bold', 
+              fontSize: 17, 
+              letterSpacing: 0.5, 
+              boxShadow: '0 1px 4px rgba(8,15,70,0.06)', 
+              cursor: isLoading ? 'not-allowed' : 'pointer', 
+              transition: 'background 0.2s' 
+            }}
+          >
+            {isLoading ? 'Нэвтэрч байна...' : 'Нэвтрэх'}
+          </button>
           {error && <div style={{ color: 'red', marginTop: 16, textAlign: 'center', fontWeight: 500 }}>{error}</div>}
         </form>
+        
+        {/* Default credentials info */}
+        <div style={{ marginTop: 24, padding: 16, background: '#f8f9fa', borderRadius: 8, fontSize: 14, color: '#666', textAlign: 'center' }}>
+          <strong>Default Admin Credentials:</strong><br/>
+          Username: <code>admin</code><br/>
+          Password: <code>admin123</code>
+        </div>
       </div>
     </div>
   );

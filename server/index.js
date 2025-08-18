@@ -20,23 +20,47 @@ app.use(express.json({ limit: '10mb' }));
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
+
+// Enhanced Socket.IO configuration for Railway
 const io = new Server(server, { 
   cors: { 
     origin: process.env.CORS_ORIGINS 
       ? process.env.CORS_ORIGINS.split(',') 
       : ['http://localhost:3000'],
-    credentials: true 
-  } 
+    credentials: true,
+    methods: ["GET", "POST"]
+  },
+  transports: ['websocket', 'polling'],
+  allowEIO3: true,
+  pingTimeout: 60000,
+  pingInterval: 25000
 });
 
 let viewerCount = 0;
+
+// Enhanced Socket.IO connection handling
 io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
   viewerCount++;
   io.emit('viewerCount', viewerCount);
+  
   socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
     viewerCount = Math.max(0, viewerCount - 1);
     io.emit('viewerCount', viewerCount);
   });
+
+  // Handle admin authentication
+  socket.on('adminAuth', (data) => {
+    console.log('Admin auth attempt:', data.username);
+    // You can add admin verification here if needed
+    socket.emit('adminAuthResponse', { success: true });
+  });
+});
+
+// Socket.IO error handling
+io.engine.on('connection_error', (err) => {
+  console.log('Socket.IO connection error:', err);
 });
 
 // Connect to MongoDB Atlas
@@ -58,7 +82,18 @@ app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    socketConnections: io.engine.clientsCount,
+    viewerCount: viewerCount
+  });
+});
+
+// Socket.IO status endpoint
+app.get('/socket-status', (req, res) => {
+  res.json({
+    connected: io.engine.clientsCount,
+    viewerCount: viewerCount,
+    transports: io.engine.transports
   });
 });
 
@@ -87,4 +122,8 @@ const brandRoutes = require('./routes/brands');
 app.use('/api/brands', brandRoutes);
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server started on port ${PORT}`)); 
+server.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
+  console.log(`Socket.IO server running`);
+  console.log(`CORS origins:`, process.env.CORS_ORIGINS || 'http://localhost:3000');
+}); 
