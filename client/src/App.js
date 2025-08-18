@@ -38,61 +38,194 @@ function NewProductsSection({ products }) {
   const navigate = useNavigate();
   const newProducts = [...products].slice(-9).reverse();
   return (
-    <div style={{ margin: '48px 0' }}>
-      <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 18, boxShadow: '0 2px 12px rgba(8,15,70,0.06)', padding: 32, marginBottom: 48 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ fontWeight: 700, fontSize: '2rem', color: 'var(--color-dark)', margin: 0 }}>Шинэ бараа</h2>
+    <div style={{ margin: 'clamp(32px, 8vw, 48px) 0' }}>
+      <div style={{ 
+          background: '#fff', 
+          border: '1px solid #e5e7eb', 
+          borderRadius: 'clamp(12px, 3vw, 18px)', 
+          boxShadow: '0 2px 12px rgba(8,15,70,0.06)', 
+          padding: 'clamp(20px, 4vw, 32px)', 
+          marginBottom: 'clamp(32px, 8vw, 48px)' 
+        }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: 'clamp(20px, 4vw, 24px)',
+          flexWrap: 'wrap',
+          gap: 'clamp(12px, 3vw, 16px)'
+        }}>
+          <h2 style={{ 
+            fontWeight: 700, 
+            fontSize: 'clamp(20px, 5vw, 2rem)', 
+            color: 'var(--color-dark)', 
+            margin: 0 
+          }}>Шинэ бараа</h2>
           <button
-            style={{ background: 'var(--color-accent)', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: 8, fontSize: 16, fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }}
+            style={{ 
+              background: 'var(--color-accent)', 
+              color: '#fff', 
+              border: 'none', 
+              padding: 'clamp(10px, 2.5vw, 12px) clamp(20px, 5vw, 32px)', 
+              borderRadius: 'clamp(6px, 1.5vw, 8px)', 
+              fontSize: 'clamp(14px, 3.5vw, 16px)', 
+              fontWeight: 600, 
+              cursor: 'pointer', 
+              transition: 'background 0.2s',
+              minHeight: 'clamp(40px, 10vw, 44px)',
+              whiteSpace: 'nowrap'
+            }}
             onClick={() => navigate('/products?sort=newest')}
           >
             Бүгдийг үзэх
           </button>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+          gap: 'clamp(16px, 3vw, 24px)',
+          '@media (max-width: 768px)': {
+            gridTemplateColumns: '1fr'
+          }
+        }}>
           {newProducts.map(product => (
             <div
               key={product._id}
               className="new-product-card"
-              style={{ background: '#fff', border: '1px solid #eee', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', padding: 18, minHeight: 280, position: 'relative', cursor: 'pointer', transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s' }}
+              style={{ 
+                background: '#fff', 
+                border: '1px solid #eee', 
+                borderRadius: 'clamp(8px, 2vw, 12px)', 
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                padding: 'clamp(16px, 3vw, 18px)', 
+                minHeight: 'clamp(250px, 60vw, 280px)', 
+                position: 'relative', 
+                cursor: 'pointer', 
+                transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s' 
+              }}
               onClick={() => navigate(`/products/${product._id}`)}
             >
               {/* Product image */}
-              <img src={product.image || product.thumbnail} alt={product.name} style={{ width: '100%', height: 160, objectFit: 'contain', borderRadius: 8, background: '#f8f8f8', marginBottom: 16 }} />
+              <img 
+                src={product.image || product.thumbnail} 
+                alt={product.name} 
+                style={{ 
+                  width: '100%', 
+                  height: 'clamp(120px, 30vw, 160px)', 
+                  objectFit: 'contain', 
+                  borderRadius: 'clamp(6px, 1.5vw, 8px)', 
+                  background: '#f8f8f8', 
+                  marginBottom: 'clamp(12px, 3vw, 16px)' 
+                }} 
+              />
               {/* Details */}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ color: '#888', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>
+                <div style={{ 
+                  color: '#888', 
+                  fontSize: 'clamp(12px, 3vw, 14px)', 
+                  fontWeight: 500, 
+                  marginBottom: 4 
+                }}>
                   {product.processor || product.spec || ''}
                 </div>
-                <div style={{ fontWeight: 700, fontSize: 16, color: '#222', marginBottom: 8, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                <div style={{ 
+                  fontWeight: 700, 
+                  fontSize: 'clamp(14px, 3.5vw, 16px)', 
+                  color: '#222', 
+                  marginBottom: 'clamp(6px, 1.5vw, 8px)', 
+                  lineHeight: 1.3, 
+                  display: '-webkit-box', 
+                  WebkitLineClamp: 2, 
+                  WebkitBoxOrient: 'vertical', 
+                  overflow: 'hidden' 
+                }}>
                   {product.name}
                 </div>
-                <div style={{ color: '#666', fontSize: 14, marginBottom: 8, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1 }}>
+                <div style={{ 
+                  color: '#666', 
+                  fontSize: 'clamp(12px, 3vw, 14px)', 
+                  marginBottom: 'clamp(6px, 1.5vw, 8px)', 
+                  lineHeight: 1.4, 
+                  display: '-webkit-box', 
+                  WebkitLineClamp: 2, 
+                  WebkitBoxOrient: 'vertical', 
+                  overflow: 'hidden', 
+                  flex: 1 
+                }}>
                   {product.description}
                 </div>
                 {product.company && (product.company.logo || product.company.name) && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#888', fontSize: 13, marginBottom: 8 }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 'clamp(6px, 1.5vw, 8px)', 
+                    color: '#888', 
+                    fontSize: 'clamp(11px, 2.5vw, 13px)', 
+                    marginBottom: 'clamp(6px, 1.5vw, 8px)' 
+                  }}>
                     {product.company.logo && (
-                      <img src={product.company.logo} alt={product.company.name} style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', background: '#fff', border: '1.5px solid #eee' }} />
+                      <img 
+                        src={product.company.logo} 
+                        alt={product.company.name} 
+                        style={{ 
+                          width: 'clamp(20px, 5vw, 24px)', 
+                          height: 'clamp(20px, 5vw, 24px)', 
+                          borderRadius: '50%', 
+                          objectFit: 'cover', 
+                          background: '#fff', 
+                          border: '1.5px solid #eee' 
+                        }} 
+                      />
                     )}
-                    <span style={{ color: '#222', fontWeight: 600 }}>{product.company.name}</span>
+                    <span style={{ 
+                      color: '#222', 
+                      fontWeight: 600,
+                      fontSize: 'clamp(11px, 2.5vw, 13px)'
+                    }}>
+                      {product.company.name}
+                    </span>
                   </div>
                 )}
                 {product.originalPrice && product.price < product.originalPrice ? (
                   <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
-                    <span style={{ color: '#aaa', fontWeight: 500, fontSize: 15, textDecoration: 'line-through', marginBottom: 2 }}>
+                    <span style={{ 
+                      color: '#aaa', 
+                      fontWeight: 500, 
+                      fontSize: 'clamp(13px, 3vw, 15px)', 
+                      textDecoration: 'line-through', 
+                      marginBottom: 2 
+                    }}>
                       {formatPrice(product.originalPrice)} ₮
                     </span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ color: 'var(--color-accent)', fontWeight: 700, fontSize: 22 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(6px, 1.5vw, 8px)', flexWrap: 'wrap' }}>
+                      <span style={{ 
+                        color: 'var(--color-accent)', 
+                        fontWeight: 700, 
+                        fontSize: 'clamp(18px, 4.5vw, 22px)' 
+                      }}>
                         {formatPrice(product.price)} ₮
                       </span>
-                      <span style={{ color: '#22c55e', fontWeight: 700, fontSize: 15, background: 'rgba(34,197,94,0.10)', borderRadius: 8, padding: '2px 10px', marginLeft: 2 }}>
+                      <span style={{ 
+                        color: '#22c55e', 
+                        fontWeight: 700, 
+                        fontSize: 'clamp(12px, 3vw, 15px)', 
+                        background: 'rgba(34,197,94,0.10)', 
+                        borderRadius: 'clamp(6px, 1.5vw, 8px)', 
+                        padding: 'clamp(2px, 0.5vw, 4px) clamp(8px, 2vw, 10px)', 
+                        marginLeft: 2 
+                      }}>
                         -{Math.round(100 - (product.price / product.originalPrice) * 100)}%
                       </span>
                     </div>
                     {product.saleEnd && (
-                      <span style={{ color: '#f59e42', fontWeight: 600, fontSize: 14, marginTop: 2 }}>
+                      <span style={{ 
+                        color: '#f59e42', 
+                        fontWeight: 600, 
+                        fontSize: 'clamp(12px, 3vw, 14px)', 
+                        marginTop: 2 
+                      }}>
                         {(() => {
                           const now = new Date();
                           const end = new Date(product.saleEnd);
@@ -103,7 +236,12 @@ function NewProductsSection({ products }) {
                     )}
                   </div>
                 ) : (
-                  <div style={{ color: 'var(--color-accent)', fontWeight: 700, fontSize: 20, marginTop: 'auto' }}>
+                  <div style={{ 
+                    color: 'var(--color-accent)', 
+                    fontWeight: 700, 
+                    fontSize: 'clamp(16px, 4vw, 20px)', 
+                    marginTop: 'auto' 
+                  }}>
                     {formatPrice(product.price)} ₮
                   </div>
                 )}
@@ -154,18 +292,56 @@ function SaleProductsSection({ products }) {
   })());
   if (saleProducts.length === 0) return null;
   return (
-    <div style={{ margin: '48px 0' }}>
-      <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 18, boxShadow: '0 2px 12px rgba(8,15,70,0.06)', padding: 32, marginBottom: 48 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ fontWeight: 700, fontSize: '2rem', color: 'var(--color-dark)', margin: 0 }}>Хямдралтай бараа</h2>
+    <div style={{ margin: 'clamp(32px, 8vw, 48px) 0' }}>
+      <div style={{ 
+        background: '#fff', 
+        border: '1px solid #e5e7eb', 
+        borderRadius: 'clamp(12px, 3vw, 18px)', 
+        boxShadow: '0 2px 12px rgba(8,15,70,0.06)', 
+        padding: 'clamp(20px, 4vw, 32px)', 
+        marginBottom: 'clamp(32px, 8vw, 48px)' 
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: 'clamp(20px, 4vw, 24px)',
+          flexWrap: 'wrap',
+          gap: 'clamp(12px, 3vw, 16px)'
+        }}>
+          <h2 style={{ 
+            fontWeight: 700, 
+            fontSize: 'clamp(20px, 5vw, 2rem)', 
+            color: 'var(--color-dark)', 
+            margin: 0 
+          }}>Хямдралтай бараа</h2>
           <button
-            style={{ background: 'var(--color-accent)', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: 8, fontSize: 16, fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }}
+            style={{ 
+              background: 'var(--color-accent)', 
+              color: '#fff', 
+              border: 'none', 
+              padding: 'clamp(10px, 2.5vw, 12px) clamp(20px, 5vw, 32px)', 
+              borderRadius: 'clamp(6px, 1.5vw, 8px)', 
+              fontSize: 'clamp(14px, 3.5vw, 16px)', 
+              fontWeight: 600, 
+              cursor: 'pointer', 
+              transition: 'background 0.2s',
+              minHeight: 'clamp(40px, 10vw, 44px)',
+              whiteSpace: 'nowrap'
+            }}
             onClick={() => navigate('/products?sort=sale')}
           >
             Бүгдийг үзэх
           </button>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+          gap: 'clamp(16px, 3vw, 24px)',
+          '@media (max-width: 768px)': {
+            gridTemplateColumns: '1fr'
+          }
+        }}>
           {saleProducts.map(product => {
             const now = new Date();
             const end = new Date(product.saleEnd);
@@ -175,48 +351,147 @@ function SaleProductsSection({ products }) {
               <div
                 key={product._id}
                 className="new-product-card"
-                style={{ background: '#fff', border: '1px solid #eee', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', padding: 18, minHeight: 280, position: 'relative', cursor: 'pointer', transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s' }}
+                style={{ 
+                  background: '#fff', 
+                  border: '1px solid #eee', 
+                  borderRadius: 'clamp(8px, 2vw, 12px)', 
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  padding: 'clamp(16px, 3vw, 18px)', 
+                  minHeight: 'clamp(250px, 60vw, 280px)', 
+                  position: 'relative', 
+                  cursor: 'pointer', 
+                  transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s' 
+                }}
                 onClick={() => navigate(`/products/${product._id}`)}
               >
                 {/* Product image */}
-                <img src={product.image || product.thumbnail} alt={product.name} style={{ width: '100%', height: 160, objectFit: 'contain', borderRadius: 8, background: '#f8f8f8', marginBottom: 16 }} />
+                <img 
+                  src={product.image || product.thumbnail} 
+                  alt={product.name} 
+                  style={{ 
+                    width: '100%', 
+                    height: 'clamp(120px, 30vw, 160px)', 
+                    objectFit: 'contain', 
+                    borderRadius: 'clamp(6px, 1.5vw, 8px)', 
+                    background: '#f8f8f8', 
+                    marginBottom: 'clamp(12px, 3vw, 16px)' 
+                  }} 
+                />
                 {/* Details */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ color: '#888', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>
+                  <div style={{ 
+                    color: '#888', 
+                    fontSize: 'clamp(12px, 3vw, 14px)', 
+                    fontWeight: 500, 
+                    marginBottom: 4 
+                  }}>
                     {product.processor || product.spec || ''}
                   </div>
-                  <div style={{ fontWeight: 700, fontSize: 16, color: '#222', marginBottom: 8, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <div style={{ 
+                    fontWeight: 700, 
+                    fontSize: 'clamp(14px, 3.5vw, 16px)', 
+                    color: '#222', 
+                    marginBottom: 'clamp(6px, 1.5vw, 8px)', 
+                    lineHeight: 1.3, 
+                    display: '-webkit-box', 
+                    WebkitLineClamp: 2, 
+                    WebkitBoxOrient: 'vertical', 
+                    overflow: 'hidden' 
+                  }}>
                     {product.name}
                   </div>
-                  <div style={{ color: '#666', fontSize: 14, marginBottom: 8, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1 }}>
+                  <div style={{ 
+                    color: '#666', 
+                    fontSize: 'clamp(12px, 3vw, 14px)', 
+                    marginBottom: 'clamp(6px, 1.5vw, 8px)', 
+                    lineHeight: 1.4, 
+                    display: '-webkit-box', 
+                    WebkitLineClamp: 2, 
+                    WebkitBoxOrient: 'vertical', 
+                    overflow: 'hidden', 
+                    flex: 1 
+                  }}>
                     {product.description}
                   </div>
                   {product.company && (product.company.logo || product.company.name) && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#888', fontSize: 13, marginBottom: 8 }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 'clamp(6px, 1.5vw, 8px)', 
+                      color: '#888', 
+                      fontSize: 'clamp(11px, 2.5vw, 13px)', 
+                      marginBottom: 'clamp(6px, 1.5vw, 8px)' 
+                    }}>
                       {product.company.logo && (
-                        <img src={product.company.logo} alt={product.company.name} style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', background: '#fff', border: '1.5px solid #eee' }} />
+                        <img 
+                          src={product.company.logo} 
+                          alt={product.company.name} 
+                          style={{ 
+                            width: 'clamp(20px, 5vw, 24px)', 
+                            height: 'clamp(20px, 5vw, 24px)', 
+                            borderRadius: '50%', 
+                            objectFit: 'cover', 
+                            background: '#fff', 
+                            border: '1.5px solid #eee' 
+                          }} 
+                        />
                       )}
-                      <span style={{ color: '#222', fontWeight: 600 }}>{product.company.name}</span>
+                      <span style={{ 
+                        color: '#222', 
+                        fontWeight: 600,
+                        fontSize: 'clamp(11px, 2.5vw, 13px)'
+                      }}>
+                        {product.company.name}
+                      </span>
                     </div>
                   )}
                   <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
                     {isSale ? (
                       <>
-                        <span style={{ color: '#aaa', fontWeight: 500, fontSize: 15, textDecoration: 'line-through', marginBottom: 2 }}>
+                        <span style={{ 
+                          color: '#aaa', 
+                          fontWeight: 500, 
+                          fontSize: 'clamp(13px, 3vw, 15px)', 
+                          textDecoration: 'line-through', 
+                          marginBottom: 2 
+                        }}>
                           {formatPrice(product.originalPrice)} ₮
                         </span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ color: 'var(--color-accent)', fontWeight: 700, fontSize: 22 }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 'clamp(6px, 1.5vw, 8px)', 
+                          flexWrap: 'wrap' 
+                        }}>
+                          <span style={{ 
+                            color: 'var(--color-accent)', 
+                            fontWeight: 700, 
+                            fontSize: 'clamp(18px, 4.5vw, 22px)' 
+                          }}>
                             {formatPrice(product.price)} ₮
                           </span>
-                          <span style={{ color: '#22c55e', fontWeight: 700, fontSize: 15, background: 'rgba(34,197,94,0.10)', borderRadius: 8, padding: '2px 10px', marginLeft: 2 }}>
+                          <span style={{ 
+                            color: '#22c55e', 
+                            fontWeight: 700, 
+                            fontSize: 'clamp(12px, 3vw, 15px)', 
+                            background: 'rgba(34,197,94,0.10)', 
+                            borderRadius: 'clamp(6px, 1.5vw, 8px)', 
+                            padding: 'clamp(2px, 0.5vw, 4px) clamp(8px, 2vw, 10px)', 
+                            marginLeft: 2 
+                          }}>
                             -{Math.round(100 - (product.price / product.originalPrice) * 100)}%
                           </span>
                         </div>
                         <SaleCountdown saleEnd={product.saleEnd} />
                       </>
                     ) : (
-                      <span style={{ color: 'var(--color-accent)', fontWeight: 700, fontSize: 20 }}>
+                      <span style={{ 
+                        color: 'var(--color-accent)', 
+                        fontWeight: 700, 
+                        fontSize: 'clamp(16px, 4vw, 20px)' 
+                      }}>
                         {formatPrice(product.price)} ₮
                       </span>
                     )}
@@ -238,15 +513,64 @@ function BestSellerSection({ products }) {
     .slice(0, 8);
   if (bestSellers.length === 0) return null;
   return (
-    <div style={{ margin: '48px 0' }}>
-      <h2 style={{ fontWeight: 700, fontSize: '2rem', marginBottom: 24, color: 'var(--color-dark)' }}>Best Seller</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, justifyContent: 'flex-start' }}>
+    <div style={{ margin: 'clamp(32px, 8vw, 48px) 0' }}>
+      <h2 style={{ 
+        fontWeight: 700, 
+        fontSize: 'clamp(20px, 5vw, 2rem)', 
+        marginBottom: 'clamp(20px, 4vw, 24px)', 
+        color: 'var(--color-dark)' 
+      }}>Best Seller</h2>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+        gap: 'clamp(16px, 3vw, 32px)', 
+        justifyContent: 'flex-start' 
+      }}>
         {bestSellers.map(product => (
-          <div key={product._id} style={{ background: '#fff', border: '1px solid #eee', borderRadius: 8, width: 220, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 16 }}>
-            <img src={product.image} alt={product.name} style={{ width: 120, height: 120, objectFit: 'contain', marginBottom: 12 }} />
-            <div style={{ fontWeight: 500, fontSize: 16, marginBottom: 6, textAlign: 'center', color: 'var(--color-dark)' }}>{product.name}</div>
-            <div style={{ color: 'var(--color-accent)', fontWeight: 700, fontSize: 18 }}>{product.price} ₮</div>
-            <div style={{ color: '#888', fontSize: 13, marginTop: 4 }}>Зарагдсан: {product.soldCount}</div>
+          <div key={product._id} style={{ 
+            background: '#fff', 
+            border: '1px solid #eee', 
+            borderRadius: 'clamp(6px, 1.5vw, 8px)', 
+            width: '100%', 
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            padding: 'clamp(12px, 3vw, 16px)' 
+          }}>
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              style={{ 
+                width: 'clamp(80px, 20vw, 120px)', 
+                height: 'clamp(80px, 20vw, 120px)', 
+                objectFit: 'contain', 
+                marginBottom: 'clamp(8px, 2vw, 12px)' 
+              }} 
+            />
+            <div style={{ 
+              fontWeight: 500, 
+              fontSize: 'clamp(14px, 3.5vw, 16px)', 
+              marginBottom: 'clamp(4px, 1vw, 6px)', 
+              textAlign: 'center', 
+              color: 'var(--color-dark)' 
+            }}>
+              {product.name}
+            </div>
+            <div style={{ 
+              color: 'var(--color-accent)', 
+              fontWeight: 700, 
+              fontSize: 'clamp(16px, 4vw, 18px)' 
+            }}>
+              {product.price} ₮
+            </div>
+            <div style={{ 
+              color: '#888', 
+              fontSize: 'clamp(11px, 2.5vw, 13px)', 
+              marginTop: 'clamp(2px, 1vw, 4px)' 
+            }}>
+              Зарагдсан: {product.soldCount}
+            </div>
           </div>
         ))}
       </div>

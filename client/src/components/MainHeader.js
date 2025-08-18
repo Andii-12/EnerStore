@@ -24,6 +24,7 @@ function MainHeader() {
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const searchTimeout = useRef(null);
 
   useEffect(() => {
@@ -163,30 +164,81 @@ function MainHeader() {
     }
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <div style={{ background: '#fff', borderBottom: '1px solid #eee' }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'center', height: 72, padding: '0 32px', position: 'relative' }}>
-        <div className="logo-area" style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ 
+        maxWidth: 1400, 
+        margin: '0 auto', 
+        display: 'flex', 
+        alignItems: 'center', 
+        minHeight: 'clamp(60px, 15vw, 72px)', 
+        padding: '0 clamp(16px, 4vw, 32px)', 
+        position: 'relative',
+        flexWrap: 'wrap',
+        gap: 'clamp(12px, 3vw, 16px)'
+      }}>
+        {/* Mobile Menu Button */}
+        <button
+          onClick={toggleMobileMenu}
+          style={{
+            background: 'none',
+            border: 'none',
+            fontSize: 'clamp(20px, 5vw, 24px)',
+            cursor: 'pointer',
+            padding: 'clamp(6px, 1.5vw, 8px)',
+            borderRadius: 6,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--color-dark)',
+            '@media (min-width: 768px)': { display: 'none' }
+          }}
+        >
+          ☰
+        </button>
+
+        {/* Logo */}
+        <div className="logo-area" style={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          flexShrink: 0
+        }}>
           <img 
             src={logo1} 
             alt="logo" 
             className="logo-img" 
             onClick={() => navigate('/')}
-            style={{ cursor: 'pointer' }}
+            style={{ 
+              cursor: 'pointer',
+              width: 'clamp(120px, 30vw, 160px)',
+              height: 'auto'
+            }}
           />
         </div>
-        <div style={{ flex: 1, margin: '0 32px', position: 'relative' }}>
+
+        {/* Search Bar */}
+        <div style={{ 
+          flex: 1, 
+          margin: '0 clamp(16px, 4vw, 32px)', 
+          position: 'relative',
+          minWidth: 'clamp(200px, 50vw, 300px)'
+        }}>
           <input 
             className="search-bar" 
             placeholder={isSearching ? "Хайж байна..." : "Хайх"} 
             style={{ 
               width: '100%', 
               zIndex: 1,
-              padding: '8px 14px',
+              padding: 'clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)',
               border: '1px solid #ddd',
-              borderRadius: '4px',
-              fontSize: '1rem',
-              outline: 'none'
+              borderRadius: 'clamp(4px, 1vw, 6px)',
+              fontSize: 'clamp(14px, 3.5vw, 16px)',
+              outline: 'none',
+              boxSizing: 'border-box'
             }} 
             value={searchQuery}
             onChange={handleSearchInputChange}
@@ -211,7 +263,7 @@ function MainHeader() {
               marginTop: 8
             }}>
             {isSearching ? (
-              <div style={{ padding: 16, textAlign: 'center', color: '#666' }}>
+              <div style={{ padding: 'clamp(12px, 3vw, 16px)', textAlign: 'center', color: '#666', fontSize: 'clamp(13px, 3vw, 14px)' }}>
                 Хайж байна...
               </div>
             ) : searchResults.length > 0 ? (
@@ -220,12 +272,12 @@ function MainHeader() {
                   key={product._id}
                   onClick={() => handleSearchResultClick(product)}
                   style={{
-                    padding: '12px 16px',
+                    padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)',
                     borderBottom: '1px solid #eee',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 12,
+                    gap: 'clamp(8px, 2vw, 12px)',
                     transition: 'background 0.2s'
                   }}
                   onMouseEnter={(e) => e.target.style.background = '#f8f9fa'}
@@ -235,37 +287,86 @@ function MainHeader() {
                     src={product.image || product.thumbnail} 
                     alt={product.name}
                     style={{ 
-                      width: 40, 
-                      height: 40, 
+                      width: 'clamp(32px, 8vw, 40px)', 
+                      height: 'clamp(32px, 8vw, 40px)', 
                       objectFit: 'contain', 
                       borderRadius: 4,
                       background: '#f8f8f8'
                     }}
                   />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: 14, color: '#222', marginBottom: 2 }}>
+                    <div style={{ 
+                      fontWeight: 600, 
+                      fontSize: 'clamp(12px, 3vw, 14px)', 
+                      color: '#222', 
+                      marginBottom: 2 
+                    }}>
                       {product.name}
                     </div>
-                    <div style={{ fontSize: 12, color: '#666' }}>
+                    <div style={{ 
+                      fontSize: 'clamp(11px, 2.5vw, 12px)', 
+                      color: '#666' 
+                    }}>
                       {product.price?.toLocaleString()} ₮
                     </div>
                   </div>
                 </div>
               ))
             ) : searchQuery.trim() ? (
-              <div style={{ padding: 16, textAlign: 'center', color: '#666' }}>
+              <div style={{ 
+                padding: 'clamp(12px, 3vw, 16px)', 
+                textAlign: 'center', 
+                color: '#666',
+                fontSize: 'clamp(13px, 3vw, 14px)'
+              }}>
                 Хайлтын үр дүн олдсонгүй
               </div>
             ) : null}
           </div>
         )}
         </div>
-        <div className="header-icons" style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', gap: 18 }}>
-          <span className="icon-heart" style={{ position: 'relative', cursor: 'pointer' }}>♡
-            {favCount > 0 && <span style={{ position: 'absolute', top: -8, right: -10, background: '#f8991b', color: '#fff', borderRadius: '50%', fontSize: 12, padding: '2px 6px', fontWeight: 700 }}>{favCount}</span>}
+
+        {/* Header Icons */}
+        <div className="header-icons" style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          marginLeft: 'auto', 
+          gap: 'clamp(12px, 3vw, 18px)',
+          flexWrap: 'wrap'
+        }}>
+          <span className="icon-heart" style={{ 
+            position: 'relative', 
+            cursor: 'pointer',
+            fontSize: 'clamp(16px, 4vw, 20px)'
+          }}>♡
+            {favCount > 0 && <span style={{ 
+              position: 'absolute', 
+              top: -8, 
+              right: -10, 
+              background: '#f8991b', 
+              color: '#fff', 
+              borderRadius: '50%', 
+              fontSize: 'clamp(10px, 2.5vw, 12px)', 
+              padding: '2px 6px', 
+              fontWeight: 700 
+            }}>{favCount}</span>}
           </span>
-          <span className="icon-cart" style={{ position: 'relative', cursor: 'pointer' }} onClick={() => navigate('/cart')}>🛒
-            {cartCount > 0 && <span style={{ position: 'absolute', top: -8, right: -10, background: '#f8991b', color: '#fff', borderRadius: '50%', fontSize: 12, padding: '2px 6px', fontWeight: 700 }}>{cartCount}</span>}
+          <span className="icon-cart" style={{ 
+            position: 'relative', 
+            cursor: 'pointer',
+            fontSize: 'clamp(16px, 4vw, 20px)'
+          }} onClick={() => navigate('/cart')}>🛒
+            {cartCount > 0 && <span style={{ 
+              position: 'absolute', 
+              top: -8, 
+              right: -10, 
+              background: '#f8991b', 
+              color: '#fff', 
+              borderRadius: '50%', 
+              fontSize: 'clamp(10px, 2.5vw, 12px)', 
+              padding: '2px 6px', 
+              fontWeight: 700 
+            }}>{cartCount}</span>}
           </span>
           
           {loggedInUser || loggedInCompany ? (
@@ -278,10 +379,11 @@ function MainHeader() {
                   color: '#fff', 
                   border: 'none', 
                   borderRadius: 6, 
-                  padding: '8px 16px', 
+                  padding: 'clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px)', 
                   fontWeight: 600, 
-                  fontSize: 14, 
-                  cursor: 'pointer'
+                  fontSize: 'clamp(12px, 3vw, 14px)', 
+                  cursor: 'pointer',
+                  minHeight: 'clamp(32px, 8vw, 36px)'
                 }}
                 data-profile-menu
               >
@@ -297,15 +399,26 @@ function MainHeader() {
                   border: '1px solid #eee',
                   borderRadius: 8,
                   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  minWidth: 200,
+                  minWidth: 'clamp(180px, 45vw, 200px)',
                   zIndex: 1000,
                   marginTop: 8
                 }} data-profile-menu>
-                  <div style={{ padding: '12px 16px', borderBottom: '1px solid #eee' }}>
-                    <div style={{ fontWeight: 600, color: '#222' }}>
+                  <div style={{ 
+                    padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)', 
+                    borderBottom: '1px solid #eee' 
+                  }}>
+                    <div style={{ 
+                      fontWeight: 600, 
+                      color: '#222',
+                      fontSize: 'clamp(13px, 3vw, 14px)'
+                    }}>
                       {loggedInUser ? `${loggedInUser.firstName} ${loggedInUser.lastName}` : loggedInCompany?.name}
                     </div>
-                    <div style={{ fontSize: 14, color: '#666', marginTop: 2 }}>
+                    <div style={{ 
+                      fontSize: 'clamp(12px, 3vw, 13px)', 
+                      color: '#666', 
+                      marginTop: 2 
+                    }}>
                       {loggedInUser ? loggedInUser.email : loggedInCompany?.email}
                     </div>
                   </div>
@@ -319,12 +432,12 @@ function MainHeader() {
                       }}
                       style={{
                         width: '100%',
-                        padding: '12px 16px',
+                        padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)',
                         background: 'none',
                         border: 'none',
                         textAlign: 'left',
                         cursor: 'pointer',
-                        fontSize: 14,
+                        fontSize: 'clamp(12px, 3vw, 14px)',
                         color: '#222',
                         borderBottom: '1px solid #eee'
                       }}
@@ -337,12 +450,12 @@ function MainHeader() {
                     onClick={handleLogout}
                     style={{
                       width: '100%',
-                      padding: '12px 16px',
+                      padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)',
                       background: 'none',
                       border: 'none',
                       textAlign: 'left',
                       cursor: 'pointer',
-                      fontSize: 14,
+                      fontSize: 'clamp(12px, 3vw, 14px)',
                       color: '#dc3545'
                     }}
                   >
@@ -353,7 +466,23 @@ function MainHeader() {
             </div>
           ) : (
             <>
-              <button className="profile-btn" onClick={() => setShowLogin(true)}>Нэвтрэх</button>
+              <button 
+                className="profile-btn" 
+                onClick={() => setShowLogin(true)}
+                style={{
+                  background: 'none',
+                  color: '#333',
+                  border: '1px solid #ddd',
+                  borderRadius: 6,
+                  padding: 'clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px)',
+                  fontWeight: 600,
+                  fontSize: 'clamp(12px, 3vw, 14px)',
+                  cursor: 'pointer',
+                  minHeight: 'clamp(32px, 8vw, 36px)'
+                }}
+              >
+                Нэвтрэх
+              </button>
               <button 
                 className="profile-btn" 
                 onClick={() => navigate('/register')}
@@ -362,11 +491,11 @@ function MainHeader() {
                   color: '#fff', 
                   border: 'none', 
                   borderRadius: 6, 
-                  padding: '8px 16px', 
+                  padding: 'clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px)', 
                   fontWeight: 600, 
-                  fontSize: 14, 
+                  fontSize: 'clamp(12px, 3vw, 14px)', 
                   cursor: 'pointer',
-                  marginLeft: 8
+                  minHeight: 'clamp(32px, 8vw, 36px)'
                 }}
               >
                 Бүртгүүлэх
@@ -375,6 +504,103 @@ function MainHeader() {
           )}
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          onClick={() => setIsMobileMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 999,
+            display: 'block',
+            '@media (min-width: 768px)': { display: 'none' }
+          }}
+        />
+      )}
+
+      {/* Mobile Menu */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: isMobileMenuOpen ? 0 : '-100%',
+        width: 'clamp(250px, 70vw, 300px)',
+        height: '100vh',
+        background: '#fff',
+        zIndex: 1000,
+        transition: 'left 0.3s ease',
+        padding: 'clamp(20px, 5vw, 32px)',
+        boxShadow: '2px 0 8px rgba(0,0,0,0.15)',
+        overflowY: 'auto',
+        '@media (min-width: 768px)': { display: 'none' }
+      }}>
+        <div style={{ marginBottom: 'clamp(24px, 6vw, 32px)' }}>
+          <h3 style={{ 
+            fontSize: 'clamp(18px, 4.5vw, 20px)', 
+            fontWeight: 600, 
+            color: 'var(--color-dark)',
+            marginBottom: 'clamp(16px, 4vw, 20px)'
+          }}>
+            Цэс
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(8px, 2vw, 12px)' }}>
+            <button
+              onClick={() => { navigate('/'); setIsMobileMenuOpen(false); }}
+              style={{
+                background: 'none',
+                border: 'none',
+                textAlign: 'left',
+                padding: 'clamp(10px, 2.5vw, 12px)',
+                fontSize: 'clamp(14px, 3.5vw, 16px)',
+                color: '#333',
+                cursor: 'pointer',
+                borderRadius: 6,
+                transition: 'background 0.2s'
+              }}
+            >
+              🏠 Нүүр
+            </button>
+            <button
+              onClick={() => { navigate('/products'); setIsMobileMenuOpen(false); }}
+              style={{
+                background: 'none',
+                border: 'none',
+                textAlign: 'left',
+                padding: 'clamp(10px, 2.5vw, 12px)',
+                fontSize: 'clamp(14px, 3.5vw, 16px)',
+                color: '#333',
+                cursor: 'pointer',
+                borderRadius: 6,
+                transition: 'background 0.2s'
+              }}
+            >
+              📦 Бүх бараа
+            </button>
+            <button
+              onClick={() => { navigate('/cart'); setIsMobileMenuOpen(false); }}
+              style={{
+                background: 'none',
+                border: 'none',
+                textAlign: 'left',
+                padding: 'clamp(10px, 2.5vw, 12px)',
+                fontSize: 'clamp(14px, 3.5vw, 16px)',
+                color: '#333',
+                cursor: 'pointer',
+                borderRadius: 6,
+                transition: 'background 0.2s'
+              }}
+            >
+              🛒 Сагс
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Login Modal */}
       {showLogin && (
         <div className="login-modal-bg" onClick={() => setShowLogin(false)}>
           <div className="login-modal" onClick={e => e.stopPropagation()}>
@@ -389,7 +615,7 @@ function MainHeader() {
                   borderRadius: 8,
                   padding: '10px 0',
                   fontWeight: 700,
-                  fontSize: 15,
+                  fontSize: 'clamp(13px, 3vw, 15px)',
                   cursor: 'pointer',
                   transition: 'background 0.18s',
                 }}
@@ -406,7 +632,7 @@ function MainHeader() {
                   borderRadius: 8,
                   padding: '10px 0',
                   fontWeight: 700,
-                  fontSize: 15,
+                  fontSize: 'clamp(13px, 3vw, 15px)',
                   cursor: 'pointer',
                   transition: 'background 0.18s',
                 }}
@@ -414,30 +640,74 @@ function MainHeader() {
                 Компани
               </button>
             </div>
-            <h2 style={{ marginBottom: 18 }}>{loginType === 'company' ? 'Компани нэвтрэх' : 'Хэрэглэгч нэвтрэх'}</h2>
+            <h2 style={{ 
+              marginBottom: 18,
+              fontSize: 'clamp(18px, 4.5vw, 20px)'
+            }}>{loginType === 'company' ? 'Компани нэвтрэх' : 'Хэрэглэгч нэвтрэх'}</h2>
             <input
               type="text"
               placeholder={loginType === 'company' ? 'Компани и-мэйл эсвэл нэр' : 'Имэйл эсвэл утас'}
-              style={{ width: '90%', margin: '0 auto 12px auto', display: 'block', padding: 8, borderRadius: 4, border: '1px solid #ddd' }}
+              style={{ 
+                width: '90%', 
+                margin: '0 auto 12px auto', 
+                display: 'block', 
+                padding: 'clamp(8px, 2vw, 10px)', 
+                borderRadius: 4, 
+                border: '1px solid #ddd',
+                fontSize: 'clamp(13px, 3vw, 14px)'
+              }}
               value={loginEmail}
               onChange={e => setLoginEmail(e.target.value)}
             />
             <input
               type="password"
               placeholder="Нууц үг"
-              style={{ width: '90%', margin: '0 auto 16px auto', display: 'block', padding: 8, borderRadius: 4, border: '1px solid #ddd' }}
+              style={{ 
+                width: '90%', 
+                margin: '0 auto 16px auto', 
+                display: 'block', 
+                padding: 'clamp(8px, 2vw, 10px)', 
+                borderRadius: 4, 
+                border: '1px solid #ddd',
+                fontSize: 'clamp(13px, 3vw, 14px)'
+              }}
               value={loginPassword}
               onChange={e => setLoginPassword(e.target.value)}
             />
-            {loginError && <div style={{ color: 'red', marginBottom: 10 }}>{loginError}</div>}
+            {loginError && <div style={{ 
+              color: 'red', 
+              marginBottom: 10,
+              fontSize: 'clamp(12px, 3vw, 13px)'
+            }}>{loginError}</div>}
             <button
-              style={{ width: '100%', background: 'var(--color-accent)', color: '#fff', border: 'none', borderRadius: 4, padding: '10px 0', fontWeight: 'bold', fontSize: 16 }}
+              style={{ 
+                width: '100%', 
+                background: 'var(--color-accent)', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: 4, 
+                padding: 'clamp(10px, 2.5vw, 12px) 0', 
+                fontWeight: 'bold', 
+                fontSize: 'clamp(14px, 3.5vw, 16px)',
+                cursor: 'pointer'
+              }}
               onClick={handleLogin}
             >
               Нэвтрэх
             </button>
             <button
-              style={{ width: '100%', marginTop: 10, background: '#eee', color: '#222', border: 'none', borderRadius: 4, padding: '8px 0', fontWeight: 'bold' }}
+              style={{ 
+                width: '100%', 
+                marginTop: 10, 
+                background: '#eee', 
+                color: '#222', 
+                border: 'none', 
+                borderRadius: 4, 
+                padding: 'clamp(8px, 2vw, 10px) 0', 
+                fontWeight: 'bold',
+                fontSize: 'clamp(13px, 3vw, 14px)',
+                cursor: 'pointer'
+              }}
               onClick={() => setShowLogin(false)}
             >
               Болих
@@ -445,22 +715,133 @@ function MainHeader() {
           </div>
         </div>
       )}
+
+      {/* Company Registration Modal */}
       {showRegister && registerType === 'company' && (
         <div className="login-modal-bg" onClick={() => setShowRegister(false)}>
           <div className="login-modal" onClick={e => e.stopPropagation()}>
-            <h2 style={{ marginBottom: 18 }}>Компани бүртгүүлэх</h2>
-            <input type="text" placeholder="Компани нэр" value={companyReg.name} onChange={e => setCompanyReg({ ...companyReg, name: e.target.value })} style={{ width: '100%', marginBottom: 12, padding: 8, borderRadius: 4, border: '1px solid #ddd' }} />
-            <input type="email" placeholder="Имэйл" value={companyReg.email} onChange={e => setCompanyReg({ ...companyReg, email: e.target.value })} style={{ width: '100%', marginBottom: 12, padding: 8, borderRadius: 4, border: '1px solid #ddd' }} />
-            <input type="password" placeholder="Нууц үг" value={companyReg.password} onChange={e => setCompanyReg({ ...companyReg, password: e.target.value })} style={{ width: '100%', marginBottom: 12, padding: 8, borderRadius: 4, border: '1px solid #ddd' }} />
-            <input type="text" placeholder="Хаяг" value={companyReg.address} onChange={e => setCompanyReg({ ...companyReg, address: e.target.value })} style={{ width: '100%', marginBottom: 12, padding: 8, borderRadius: 4, border: '1px solid #ddd' }} />
-            <input type="text" placeholder="Холбоо барих" value={companyReg.contact} onChange={e => setCompanyReg({ ...companyReg, contact: e.target.value })} style={{ width: '100%', marginBottom: 12, padding: 8, borderRadius: 4, border: '1px solid #ddd' }} />
-            <label style={{ display: 'inline-block', padding: '10px 18px', background: 'var(--color-accent)', color: '#fff', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', marginBottom: 12 }}>
+            <h2 style={{ 
+              marginBottom: 18,
+              fontSize: 'clamp(18px, 4.5vw, 20px)'
+            }}>Компани бүртгүүлэх</h2>
+            <input 
+              type="text" 
+              placeholder="Компани нэр" 
+              value={companyReg.name} 
+              onChange={e => setCompanyReg({ ...companyReg, name: e.target.value })} 
+              style={{ 
+                width: '100%', 
+                marginBottom: 12, 
+                padding: 'clamp(8px, 2vw, 10px)', 
+                borderRadius: 4, 
+                border: '1px solid #ddd',
+                fontSize: 'clamp(13px, 3vw, 14px)'
+              }} 
+            />
+            <input 
+              type="email" 
+              placeholder="Имэйл" 
+              value={companyReg.email} 
+              onChange={e => setCompanyReg({ ...companyReg, email: e.target.value })} 
+              style={{ 
+                width: '100%', 
+                marginBottom: 12, 
+                padding: 'clamp(8px, 2vw, 10px)', 
+                borderRadius: 4, 
+                border: '1px solid #ddd',
+                fontSize: 'clamp(13px, 3vw, 14px)'
+              }} 
+            />
+            <input 
+              type="password" 
+              placeholder="Нууц үг" 
+              value={companyReg.password} 
+              onChange={e => setCompanyReg({ ...companyReg, password: e.target.value })} 
+              style={{ 
+                width: '100%', 
+                marginBottom: 12, 
+                padding: 'clamp(8px, 2vw, 10px)', 
+                borderRadius: 4, 
+                border: '1px solid #ddd',
+                fontSize: 'clamp(13px, 3vw, 14px)'
+              }} 
+            />
+            <input 
+              type="text" 
+              placeholder="Хаяг" 
+              value={companyReg.address} 
+              onChange={e => setCompanyReg({ ...companyReg, address: e.target.value })} 
+              style={{ 
+                width: '100%', 
+                marginBottom: 12, 
+                padding: 'clamp(8px, 2vw, 10px)', 
+                borderRadius: 4, 
+                border: '1px solid #ddd',
+                fontSize: 'clamp(13px, 3vw, 14px)'
+              }} 
+            />
+            <input 
+              type="text" 
+              placeholder="Холбоо барих" 
+              value={companyReg.contact} 
+              onChange={e => setCompanyReg({ ...companyReg, contact: e.target.value })} 
+              style={{ 
+                width: '100%', 
+                marginBottom: 12, 
+                padding: 'clamp(8px, 2vw, 10px)', 
+                borderRadius: 4, 
+                border: '1px solid #ddd',
+                fontSize: 'clamp(13px, 3vw, 14px)'
+              }} 
+            />
+            <label style={{ 
+              display: 'inline-block', 
+              padding: 'clamp(8px, 2vw, 10px) clamp(16px, 4vw, 18px)', 
+              background: 'var(--color-accent)', 
+              color: '#fff', 
+              borderRadius: 8, 
+              cursor: 'pointer', 
+              fontWeight: 'bold', 
+              fontSize: 'clamp(12px, 3vw, 14px)', 
+              marginBottom: 12,
+              textAlign: 'center',
+              width: '100%',
+              boxSizing: 'border-box'
+            }}>
               📷 Лого оруулах
               <input type="file" accept="image/*" onChange={handleCompanyLogoChange} style={{ display: 'none' }} />
             </label>
-            {companyLogoPreview && <img src={companyLogoPreview} alt="logo preview" style={{ maxWidth: 120, maxHeight: 80, borderRadius: 8, marginBottom: 12, display: 'block' }} />}
-            <button style={{ width: '100%', background: 'var(--color-accent)', color: '#fff', border: 'none', borderRadius: 4, padding: '10px 0', fontWeight: 'bold', fontSize: 16 }}>Бүртгүүлэх</button>
-            <button onClick={() => setShowRegister(false)} style={{ width: '100%', marginTop: 10, background: '#eee', color: '#222', border: 'none', borderRadius: 4, padding: '8px 0', fontWeight: 'bold' }}>Болих</button>
+            {companyLogoPreview && <img src={companyLogoPreview} alt="logo preview" style={{ 
+              maxWidth: 120, 
+              maxHeight: 80, 
+              borderRadius: 8, 
+              marginBottom: 12, 
+              display: 'block',
+              margin: '0 auto 12px auto'
+            }} />}
+            <button style={{ 
+              width: '100%', 
+              background: 'var(--color-accent)', 
+              color: '#fff', 
+              border: 'none', 
+              borderRadius: 4, 
+              padding: 'clamp(10px, 2.5vw, 12px) 0', 
+              fontWeight: 'bold', 
+              fontSize: 'clamp(14px, 3.5vw, 16px)',
+              cursor: 'pointer'
+            }}>Бүртгүүлэх</button>
+            <button onClick={() => setShowRegister(false)} style={{ 
+              width: '100%', 
+              marginTop: 10, 
+              background: '#eee', 
+              color: '#222', 
+              border: 'none', 
+              borderRadius: 4, 
+              padding: 'clamp(8px, 2vw, 10px) 0', 
+              fontWeight: 'bold',
+              fontSize: 'clamp(13px, 3vw, 14px)',
+              cursor: 'pointer'
+            }}>Болих</button>
           </div>
         </div>
       )}
