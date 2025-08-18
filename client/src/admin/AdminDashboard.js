@@ -4,7 +4,7 @@ import axios from 'axios';
 import { API_ENDPOINTS, SOCKET_CONFIG } from '../config/api';
 
 function AdminDashboard() {
-  const [productCount, setProductCount] => useState(0);
+  const [productCount, setProductCount] = useState(0);
   const [categoryCount, setCategoryCount] = useState(0);
   const [viewerCount, setViewerCount] = useState(0);
   const [socketStatus, setSocketStatus] = useState('disconnected');
@@ -89,11 +89,11 @@ function AdminDashboard() {
     };
   }, []);
 
-  const handleBrandInput = e => {
+  const handleBrandInput = (e) => {
     setBrandForm({ ...brandForm, [e.target.name]: e.target.value });
   };
 
-  const handleLogoUpload = e => {
+  const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -104,7 +104,7 @@ function AdminDashboard() {
     reader.readAsDataURL(file);
   };
 
-  const handleAddBrand = async e => {
+  const handleAddBrand = async (e) => {
     e.preventDefault();
     setBrandLoading(true);
     try {
@@ -120,7 +120,7 @@ function AdminDashboard() {
     }
   };
 
-  const handleDeleteBrand = async id => {
+  const handleDeleteBrand = async (id) => {
     try {
       await axios.delete(`${API_ENDPOINTS.BRANDS}/${id}`);
       setBrands(brands.filter(b => b._id !== id));
@@ -129,11 +129,11 @@ function AdminDashboard() {
     }
   };
 
-  const handleEditBrandInput = e => {
+  const handleEditBrandInput = (e) => {
     setEditBrandForm({ ...editBrandForm, [e.target.name]: e.target.value });
   };
 
-  const handleEditLogoUpload = e => {
+  const handleEditLogoUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -144,13 +144,13 @@ function AdminDashboard() {
     reader.readAsDataURL(file);
   };
 
-  const handleEditBrand = brand => {
+  const handleEditBrand = (brand) => {
     setEditBrandId(brand._id);
     setEditBrandForm({ name: brand.name, logo: brand.logo, description: brand.description });
     setEditLogoPreview(brand.logo);
   };
 
-  const handleUpdateBrand = async e => {
+  const handleUpdateBrand = async (e) => {
     e.preventDefault();
     try {
       await axios.put(`${API_ENDPOINTS.BRANDS}/${editBrandId}`, editBrandForm);
