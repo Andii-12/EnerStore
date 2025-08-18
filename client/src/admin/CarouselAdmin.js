@@ -177,11 +177,24 @@ function CarouselAdmin() {
   console.log('CarouselAdmin render - slides:', slides, 'isLoading:', isLoading, 'error:', error);
 
   return (
-    <div style={{ maxWidth: 1100, margin: '40px auto', padding: 32, background: '#f6f6f6', borderRadius: 16 }}>
+    <div style={{ 
+      maxWidth: 1200, 
+      margin: '0 auto', 
+      padding: 'clamp(16px, 4vw, 32px)', 
+      background: '#f6f6f6', 
+      minHeight: '100vh',
+      boxSizing: 'border-box'
+    }}>
       {/* Debug Info */}
-      <div style={{ background: '#fff', borderRadius: 8, padding: 16, marginBottom: 16, border: '1px solid #ddd' }}>
-        <h4 style={{ margin: '0 0 8px 0', color: '#666' }}>Debug Info:</h4>
-        <div style={{ fontSize: '12px', color: '#888' }}>
+      <div style={{ 
+        background: '#fff', 
+        borderRadius: 8, 
+        padding: 'clamp(12px, 3vw, 16px)', 
+        marginBottom: 16, 
+        border: '1px solid #ddd' 
+      }}>
+        <h4 style={{ margin: '0 0 8px 0', color: '#666', fontSize: 'clamp(14px, 3.5vw, 16px)' }}>Debug Info:</h4>
+        <div style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#888' }}>
           <div>API Endpoint: {API_ENDPOINTS.CAROUSEL}</div>
           <div>Slides Count: {slides.length}</div>
           <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
@@ -189,21 +202,64 @@ function CarouselAdmin() {
         </div>
       </div>
 
-      <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(8,15,70,0.08)', padding: 32, marginBottom: 40 }}>
-        <h2 style={{ fontWeight: 700, fontSize: 24, marginBottom: 24, color: 'var(--color-dark)' }}>Карусель удирдах</h2>
+      <div style={{ 
+        background: '#fff', 
+        borderRadius: 16, 
+        boxShadow: '0 2px 12px rgba(8,15,70,0.08)', 
+        padding: 'clamp(20px, 4vw, 32px)', 
+        marginBottom: 'clamp(24px, 5vw, 40px)' 
+      }}>
+        <h2 style={{ 
+          fontWeight: 700, 
+          fontSize: 'clamp(20px, 5vw, 24px)', 
+          marginBottom: 'clamp(20px, 4vw, 32px)', 
+          color: 'var(--color-dark)',
+          textAlign: 'center'
+        }}>
+          Карусель удирдах
+        </h2>
         
         {error && (
-          <div style={{ background: '#fee', border: '1px solid #fcc', borderRadius: 8, padding: 16, marginBottom: 24, color: '#c33' }}>
+          <div style={{ 
+            background: '#fee', 
+            border: '1px solid #fcc', 
+            borderRadius: 8, 
+            padding: 'clamp(12px, 3vw, 16px)', 
+            marginBottom: 'clamp(20px, 4vw, 32px)', 
+            color: '#c33',
+            fontSize: 'clamp(13px, 3vw, 14px)',
+            lineHeight: 1.4
+          }}>
             <strong>Error:</strong> {error}
           </div>
         )}
         
         {editId ? (
           // Edit Form
-          <form onSubmit={handleUpdate} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'end', marginBottom: 24 }}>
+          <form onSubmit={handleUpdate} style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+            gap: 'clamp(16px, 3vw, 24px)', 
+            alignItems: 'end',
+            marginBottom: 24
+          }}>
             <div>
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Зураг</label>
-              <label style={{ display: 'inline-block', padding: '12px 24px', background: 'var(--color-accent)', color: '#fff', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', transition: 'background-color 0.2s', border: 'none', textAlign: 'center', minWidth: '120px' }}>
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', fontSize: 'clamp(13px, 3vw, 14px)' }}>Зураг</label>
+              <label style={{ 
+                display: 'inline-block', 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(20px, 5vw, 24px)', 
+                background: 'var(--color-accent)', 
+                color: '#fff', 
+                borderRadius: 8, 
+                cursor: 'pointer', 
+                fontWeight: 'bold', 
+                fontSize: 'clamp(12px, 3vw, 14px)', 
+                transition: 'background-color 0.2s', 
+                border: 'none', 
+                textAlign: 'center', 
+                minWidth: 'clamp(100px, 25vw, 120px)',
+                boxSizing: 'border-box'
+              }}>
                 📷 Зураг сонгох
                 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
               </label>
@@ -214,26 +270,106 @@ function CarouselAdmin() {
               )}
             </div>
             <div>
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Гарчиг</label>
-              <input name="title" placeholder="Гарчиг" value={editForm.title} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 16 }}>Дэд гарчиг</label>
-              <input name="subtitle" placeholder="Дэд гарчиг" value={editForm.subtitle} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 16 }}>Холбоос</label>
-              <input name="link" placeholder="/products/123 эсвэл https://..." value={editForm.link} onChange={handleChange} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', fontSize: 'clamp(13px, 3vw, 14px)' }}>Гарчиг</label>
+              <input name="title" placeholder="Гарчиг" value={editForm.title} onChange={handleChange} required style={{ 
+                width: '100%', 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)', 
+                border: '2px solid #e1e5e9', 
+                borderRadius: 8, 
+                fontSize: 'clamp(14px, 3.5vw, 15px)', 
+                outline: 'none', 
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }} />
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 'clamp(12px, 3vw, 16px)', fontSize: 'clamp(13px, 3vw, 14px)' }}>Дэд гарчиг</label>
+              <input name="subtitle" placeholder="Дэд гарчиг" value={editForm.subtitle} onChange={handleChange} required style={{ 
+                width: '100%', 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)', 
+                border: '2px solid #e1e5e9', 
+                borderRadius: 8, 
+                fontSize: 'clamp(14px, 3.5vw, 15px)', 
+                outline: 'none', 
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }} />
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 'clamp(12px, 3vw, 16px)', fontSize: 'clamp(13px, 3vw, 14px)' }}>Холбоос</label>
+              <input name="link" placeholder="/products/123 эсвэл https://..." value={editForm.link} onChange={handleChange} style={{ 
+                width: '100%', 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)', 
+                border: '2px solid #e1e5e9', 
+                borderRadius: 8, 
+                fontSize: 'clamp(14px, 3.5vw, 15px)', 
+                outline: 'none', 
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }} />
             </div>
-            <div style={{ gridColumn: '1 / span 2', display: 'flex', gap: 16, marginTop: 8 }}>
-              <button type="submit" disabled={isLoading} style={{ background: 'var(--color-accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 32px', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px', transition: 'background-color 0.2s', minWidth: '120px' }}>
+            <div style={{ 
+              gridColumn: '1 / span 2', 
+              display: 'flex', 
+              gap: 'clamp(12px, 3vw, 16px)', 
+              marginTop: 8,
+              flexWrap: 'wrap',
+              justifyContent: 'center'
+            }}>
+              <button type="submit" disabled={isLoading} style={{ 
+                background: 'var(--color-accent)', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: 8, 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(24px, 6vw, 32px)', 
+                fontWeight: 'bold', 
+                cursor: 'pointer', 
+                fontSize: 'clamp(13px, 3vw, 15px)', 
+                transition: 'background-color 0.2s', 
+                minWidth: 'clamp(100px, 25vw, 120px)',
+                minHeight: '44px'
+              }}>
                 {isLoading ? 'Шинэчлэж байна...' : 'Шинэчлэх'}
               </button>
-              <button type="button" onClick={clearForm} style={{ background: '#f8f9fa', color: '#6c757d', border: '2px solid #e1e5e9', borderRadius: 8, padding: '12px 32px', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px', transition: 'all 0.2s', minWidth: '120px' }}>Болих</button>
+              <button type="button" onClick={clearForm} style={{ 
+                background: '#f8f9fa', 
+                color: '#6c757d', 
+                border: '2px solid #e1e5e9', 
+                borderRadius: 8, 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(24px, 6vw, 32px)', 
+                fontWeight: 'bold', 
+                cursor: 'pointer', 
+                fontSize: 'clamp(13px, 3vw, 15px)', 
+                transition: 'all 0.2s', 
+                minWidth: 'clamp(100px, 25vw, 120px)',
+                minHeight: '44px'
+              }}>
+                Болих
+              </button>
             </div>
           </form>
         ) : (
           // Add Form
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'end', marginBottom: 24 }}>
+          <form onSubmit={handleSubmit} style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+            gap: 'clamp(16px, 3vw, 24px)', 
+            alignItems: 'end',
+            marginBottom: 24
+          }}>
             <div>
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Зураг</label>
-              <label style={{ display: 'inline-block', padding: '12px 24px', background: 'var(--color-accent)', color: '#fff', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', transition: 'background-color 0.2s', border: 'none', textAlign: 'center', minWidth: '120px' }}>
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', fontSize: 'clamp(13px, 3vw, 14px)' }}>Зураг</label>
+              <label style={{ 
+                display: 'inline-block', 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(20px, 5vw, 24px)', 
+                background: 'var(--color-accent)', 
+                color: '#fff', 
+                borderRadius: 8, 
+                cursor: 'pointer', 
+                fontWeight: 'bold', 
+                fontSize: 'clamp(12px, 3vw, 14px)', 
+                transition: 'background-color 0.2s', 
+                border: 'none', 
+                textAlign: 'center', 
+                minWidth: 'clamp(100px, 25vw, 120px)',
+                boxSizing: 'border-box'
+              }}>
                 📷 Зураг оруулах
                 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
               </label>
@@ -244,15 +380,60 @@ function CarouselAdmin() {
               )}
             </div>
             <div>
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block' }}>Гарчиг</label>
-              <input name="title" placeholder="Гарчиг" value={formData.title} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 16 }}>Дэд гарчиг</label>
-              <input name="subtitle" placeholder="Дэд гарчиг" value={formData.subtitle} onChange={handleChange} required style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
-              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 16 }}>Холбоос</label>
-              <input name="link" placeholder="/products/123 эсвэл https://..." value={formData.link} onChange={handleChange} style={{ width: '100%', padding: '12px 16px', border: '2px solid #e1e5e9', borderRadius: 8, fontSize: '15px', outline: 'none', transition: 'border-color 0.2s' }} />
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', fontSize: 'clamp(13px, 3vw, 14px)' }}>Гарчиг</label>
+              <input name="title" placeholder="Гарчиг" value={formData.title} onChange={handleChange} required style={{ 
+                width: '100%', 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)', 
+                border: '2px solid #e1e5e9', 
+                borderRadius: 8, 
+                fontSize: 'clamp(14px, 3.5vw, 15px)', 
+                outline: 'none', 
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }} />
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 'clamp(12px, 3vw, 16px)', fontSize: 'clamp(13px, 3vw, 14px)' }}>Дэд гарчиг</label>
+              <input name="subtitle" placeholder="Дэд гарчиг" value={formData.subtitle} onChange={handleChange} required style={{ 
+                width: '100%', 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)', 
+                border: '2px solid #e1e5e9', 
+                borderRadius: 8, 
+                fontSize: 'clamp(14px, 3.5vw, 15px)', 
+                outline: 'none', 
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }} />
+              <label style={{ fontWeight: 600, marginBottom: 8, display: 'block', marginTop: 'clamp(12px, 3vw, 16px)', fontSize: 'clamp(13px, 3vw, 14px)' }}>Холбоос</label>
+              <input name="link" placeholder="/products/123 эсвэл https://..." value={formData.link} onChange={handleChange} style={{ 
+                width: '100%', 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)', 
+                border: '2px solid #e1e5e9', 
+                borderRadius: 8, 
+                fontSize: 'clamp(14px, 3.5vw, 15px)', 
+                outline: 'none', 
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }} />
             </div>
-            <div style={{ gridColumn: '1 / span 2', display: 'flex', gap: 16, marginTop: 8 }}>
-              <button type="submit" disabled={isLoading} style={{ background: 'var(--color-accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 32px', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px', transition: 'background-color 0.2s', minWidth: '120px' }}>
+            <div style={{ 
+              gridColumn: '1 / span 2', 
+              display: 'flex', 
+              gap: 'clamp(12px, 3vw, 16px)', 
+              marginTop: 8,
+              justifyContent: 'center'
+            }}>
+              <button type="submit" disabled={isLoading} style={{ 
+                background: 'var(--color-accent)', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: 8, 
+                padding: 'clamp(10px, 2.5vw, 12px) clamp(24px, 6vw, 32px)', 
+                fontWeight: 'bold', 
+                cursor: 'pointer', 
+                fontSize: 'clamp(13px, 3vw, 15px)', 
+                transition: 'background-color 0.2s', 
+                minWidth: 'clamp(100px, 25vw, 120px)',
+                minHeight: '44px'
+              }}>
                 {isLoading ? 'Нэмж байна...' : 'Нэмэх'}
               </button>
             </div>
@@ -260,33 +441,118 @@ function CarouselAdmin() {
         )}
       </div>
 
-      <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(8,15,70,0.08)', padding: 32 }}>
-        <h3 style={{ fontWeight: 700, fontSize: 20, marginBottom: 24, color: 'var(--color-dark)' }}>Карусель жагсаалт</h3>
+      <div style={{ 
+        background: '#fff', 
+        borderRadius: 16, 
+        boxShadow: '0 2px 12px rgba(8,15,70,0.08)', 
+        padding: 'clamp(20px, 4vw, 32px)' 
+      }}>
+        <h3 style={{ 
+          fontWeight: 700, 
+          fontSize: 'clamp(18px, 4.5vw, 20px)', 
+          marginBottom: 'clamp(20px, 4vw, 32px)', 
+          color: 'var(--color-dark)',
+          textAlign: 'center'
+        }}>
+          Карусель жагсаалт
+        </h3>
         
         {isLoading ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: '#666' }}>
-            <div style={{ fontSize: 18 }}>Уншиж байна...</div>
+          <div style={{ textAlign: 'center', padding: 'clamp(32px, 8vw, 40px) clamp(16px, 4vw, 20px)', color: '#666' }}>
+            <div style={{ fontSize: 'clamp(16px, 4vw, 18px)' }}>Уншиж байна...</div>
           </div>
         ) : slides.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: '#666' }}>
-            <div style={{ fontSize: 18, marginBottom: 8 }}>Одоогоор карусель слайд байхгүй байна</div>
-            <div style={{ fontSize: 14 }}>Дээрх форм ашиглан анхны слайд нэмнэ үү</div>
+          <div style={{ textAlign: 'center', padding: 'clamp(32px, 8vw, 40px) clamp(16px, 4vw, 20px)', color: '#666' }}>
+            <div style={{ fontSize: 'clamp(16px, 4vw, 18px)', marginBottom: 8 }}>Одоогоор карусель слайд байхгүй байна</div>
+            <div style={{ fontSize: 'clamp(14px, 3.5vw, 16px)' }}>Дээрх форм ашиглан анхны слайд нэмнэ үү</div>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+            gap: 'clamp(16px, 3vw, 24px)' 
+          }}>
             {slides.map((slide) => (
-              <div key={slide._id} style={{ background: '#f9f9f9', border: '1.5px solid #eee', borderRadius: 12, boxShadow: '0 2px 8px rgba(8,15,70,0.04)', padding: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+              <div key={slide._id} style={{ 
+                background: '#f9f9f9', 
+                border: '1.5px solid #eee', 
+                borderRadius: 12, 
+                boxShadow: '0 2px 8px rgba(8,15,70,0.04)', 
+                padding: 'clamp(16px, 3vw, 20px)', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                gap: 'clamp(10px, 2.5vw, 12px)' 
+              }}>
                 {slide.image && (
-                  <img src={slide.image} alt={slide.title} style={{ width: 120, height: 60, objectFit: 'cover', borderRadius: 8, marginBottom: 8, border: '1.5px solid #e1e5e9' }} />
+                  <img src={slide.image} alt={slide.title} style={{ 
+                    width: 'clamp(100px, 25vw, 120px)', 
+                    height: 'clamp(50px, 12.5vw, 60px)', 
+                    objectFit: 'cover', 
+                    marginBottom: 8, 
+                    border: '1.5px solid #e1e5e9', 
+                    borderRadius: 8 
+                  }} />
                 )}
-                <div style={{ fontWeight: 700, fontSize: 17, color: '#222', marginBottom: 4, textAlign: 'center' }}>{slide.title || 'Гарчиггүй'}</div>
-                <div style={{ color: '#888', fontSize: 15, marginBottom: 8, textAlign: 'center' }}>{slide.subtitle || 'Дэд гарчиггүй'}</div>
+                <div style={{ 
+                  fontWeight: 700, 
+                  fontSize: 'clamp(14px, 3.5vw, 16px)', 
+                  color: '#222', 
+                  marginBottom: 4, 
+                  textAlign: 'center' 
+                }}>
+                  {slide.title || 'Гарчиггүй'}
+                </div>
+                <div style={{ 
+                  color: '#888', 
+                  fontSize: 'clamp(13px, 3vw, 15px)', 
+                  marginBottom: 8, 
+                  textAlign: 'center' 
+                }}>
+                  {slide.subtitle || 'Дэд гарчиггүй'}
+                </div>
                 {slide.link && (
-                  <div style={{ color: '#0ea5e9', fontSize: 14, marginBottom: 8, textAlign: 'center', wordBreak: 'break-all' }}>{slide.link}</div>
+                  <div style={{ 
+                    color: '#0ea5e9', 
+                    fontSize: 'clamp(12px, 2.5vw, 14px)', 
+                    marginBottom: 8, 
+                    textAlign: 'center', 
+                    wordBreak: 'break-all' 
+                  }}>
+                    {slide.link}
+                  </div>
                 )}
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <button onClick={() => handleDelete(slide._id)} style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, fontSize: 14, cursor: 'pointer', transition: 'background 0.2s' }}>Устгах</button>
-                  <button onClick={() => handleEdit(slide)} style={{ background: 'var(--color-accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, fontSize: 14, cursor: 'pointer', transition: 'background 0.2s' }}>Засах</button>
+                <div style={{ display: 'flex', gap: 'clamp(8px, 2vw, 10px)', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <button onClick={() => handleDelete(slide._id)} style={{ 
+                    background: '#ef4444', 
+                    color: '#fff', 
+                    border: 'none', 
+                    borderRadius: 6, 
+                    padding: 'clamp(6px, 1.5vw, 8px) clamp(14px, 3.5vw, 18px)', 
+                    fontWeight: 600, 
+                    fontSize: 'clamp(12px, 2.5vw, 13px)', 
+                    cursor: 'pointer', 
+                    transition: 'background 0.2s',
+                    minWidth: 'clamp(70px, 17.5vw, 80px)',
+                    minHeight: '36px'
+                  }}>
+                    Устгах
+                  </button>
+                  <button onClick={() => handleEdit(slide)} style={{ 
+                    background: 'var(--color-accent)', 
+                    color: '#fff', 
+                    border: 'none', 
+                    borderRadius: 6, 
+                    padding: 'clamp(6px, 1.5vw, 8px) clamp(14px, 3.5vw, 18px)', 
+                    fontWeight: 600, 
+                    fontSize: 'clamp(12px, 2.5vw, 13px)', 
+                    cursor: 'pointer', 
+                    transition: 'background-color 0.2s',
+                    minWidth: 'clamp(70px, 17.5vw, 80px)',
+                    minHeight: '36px'
+                  }}>
+                    Засах
+                  </button>
                 </div>
               </div>
             ))}
