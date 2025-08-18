@@ -35,15 +35,15 @@ export const API_ENDPOINTS = {
 export const SOCKET_CONFIG = {
   url: SOCKET_URL,
   options: {
-    transports: ['websocket', 'polling'],
-    autoConnect: true,
-    reconnection: true,
-    reconnectionAttempts: 5,
-    reconnectionDelay: 1000,
-    timeout: 20000,
+    transports: ['polling', 'websocket'], // Try polling first, then websocket
+    autoConnect: false, // Don't auto-connect
+    reconnection: false, // Disable reconnection to prevent infinite loops
+    timeout: 5000, // Shorter timeout
     forceNew: true,
     upgrade: true,
-    rememberUpgrade: false
+    rememberUpgrade: false,
+    maxReconnectionAttempts: 0, // No reconnection attempts
+    reconnectionDelay: 0
   }
 };
 

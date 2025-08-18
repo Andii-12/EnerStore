@@ -8,6 +8,8 @@ function AdminDashboard() {
   const [categoryCount, setCategoryCount] = useState(0);
   const [viewerCount, setViewerCount] = useState(0);
   const [socketStatus, setSocketStatus] = useState('disconnected');
+  const [isLoading, setIsLoading] = useState(true);
+  const [socketEnabled, setSocketEnabled] = useState(true);
 
   // Brand management state
   const [brands, setBrands] = useState([]);
@@ -20,74 +22,139 @@ function AdminDashboard() {
   const [editLogoPreview, setEditLogoPreview] = useState('');
 
   useEffect(() => {
+    let isMounted = true;
+    
     // Fetch basic data
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const [productsRes, categoriesRes] = await Promise.all([
           fetch(API_ENDPOINTS.PRODUCTS),
           fetch(API_ENDPOINTS.CATEGORIES)
         ]);
         
-        if (productsRes.ok) {
-          const products = await productsRes.json();
-          setProductCount(products.length);
-        }
-        
-        if (categoriesRes.ok) {
-          const categories = await categoriesRes.json();
-          setCategoryCount(categories.length);
+        if (isMounted) {
+          if (productsRes.ok) {
+            const products = await productsRes.json();
+            setProductCount(products.length);
+          }
+          
+          if (categoriesRes.ok) {
+            const categories = await categoriesRes.json();
+            setCategoryCount(categories.length);
+          }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchData();
 
-    // Socket.IO connection with better error handling
-    let socket;
-    try {
-      socket = io(SOCKET_CONFIG.url, {
-        ...SOCKET_CONFIG.options,
-        timeout: 10000,
-        forceNew: true
-      });
+    // Socket.IO connection with better error handling - make it optional
+    let socket = null;
+    let socketTimeout = null;
 
-      socket.on('connect', () => {
-        console.log('Socket connected:', socket.id);
-        setSocketStatus('connected');
-      });
+    const initializeSocket = () => {
+      if (!socketEnabled) return;
+      
+      try {
+        socket = io(SOCKET_CONFIG.url, {
+          ...SOCKET_CONFIG.options,
+          timeout: 3000, // Very short timeout
+          forceNew: true,
+          autoConnect: false
+        });
 
-      socket.on('disconnect', () => {
-        console.log('Socket disconnected');
-        setSocketStatus('disconnected');
-      });
+        // Set a timeout for socket connection
+        socketTimeout = setTimeout(() => {
+          if (socket && !socket.connected) {
+            console.log('Socket connection timeout, disabling real-time features');
+            setSocketStatus('timeout');
+            setSocketEnabled(false);
+            if (socket) {
+              socket.disconnect();
+              socket = null;
+            }
+          }
+        }, 2000);
 
-      socket.on('connect_error', (error) => {
-        console.error('Socket connection error:', error);
-        setSocketStatus('error');
-      });
+        socket.on('connect', () => {
+          console.log('Socket connected:', socket.id);
+          if (isMounted) {
+            setSocketStatus('connected');
+            clearTimeout(socketTimeout);
+          }
+        });
 
-      socket.on('viewerCount', (count) => {
-        setViewerCount(count);
-      });
+        socket.on('disconnect', () => {
+          console.log('Socket disconnected');
+          if (isMounted) {
+            setSocketStatus('disconnected');
+          }
+        });
 
-      // Fetch brands
-      axios.get(API_ENDPOINTS.BRANDS)
-        .then(res => setBrands(res.data))
-        .catch(err => console.error('Error fetching brands:', err));
+        socket.on('connect_error', (error) => {
+          console.log('Socket connection error (non-critical):', error.message);
+          if (isMounted) {
+            setSocketStatus('error');
+            setSocketEnabled(false);
+            clearTimeout(socketTimeout);
+            if (socket) {
+              socket.disconnect();
+              socket = null;
+            }
+          }
+        });
 
-    } catch (error) {
-      console.error('Socket initialization error:', error);
-      setSocketStatus('error');
-    }
+        socket.on('viewerCount', (count) => {
+          if (isMounted) {
+            setViewerCount(count);
+          }
+        });
+
+        // Try to connect
+        socket.connect();
+
+      } catch (error) {
+        console.log('Socket initialization failed (non-critical):', error.message);
+        if (isMounted) {
+          setSocketStatus('error');
+          setSocketEnabled(false);
+        }
+      }
+    };
+
+    // Initialize socket with a delay to prevent blocking the main UI
+    const socketDelay = setTimeout(initializeSocket, 200);
+
+    // Fetch brands
+    const fetchBrands = async () => {
+      try {
+        const res = await axios.get(API_ENDPOINTS.BRANDS);
+        if (isMounted) {
+          setBrands(res.data);
+        }
+      } catch (err) {
+        console.error('Error fetching brands:', err);
+      }
+    };
+
+    fetchBrands();
 
     return () => {
+      isMounted = false;
+      clearTimeout(socketDelay);
+      clearTimeout(socketTimeout);
       if (socket) {
         socket.disconnect();
       }
     };
-  }, []);
+  }, [socketEnabled]);
 
   const handleBrandInput = (e) => {
     setBrandForm({ ...brandForm, [e.target.name]: e.target.value });
@@ -175,6 +242,7 @@ function AdminDashboard() {
       case 'connected': return '#22c55e';
       case 'disconnected': return '#f59e0b';
       case 'error': return '#ef4444';
+      case 'timeout': return '#8b5cf6';
       default: return '#6b7280';
     }
   };
@@ -184,9 +252,22 @@ function AdminDashboard() {
       case 'connected': return 'Connected';
       case 'disconnected': return 'Disconnected';
       case 'error': return 'Error';
+      case 'timeout': return 'Timeout';
       default: return 'Unknown';
     }
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div style={{ background: '#f6f6f6', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: 'var(--color-dark)', marginBottom: 16 }}>Loading Dashboard...</div>
+          <div style={{ fontSize: 16, color: '#666' }}>Please wait while we fetch your data</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ background: '#f6f6f6', minHeight: '100vh', padding: 0 }}>
@@ -216,6 +297,19 @@ function AdminDashboard() {
           <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: 16, marginBottom: 24, color: '#dc2626' }}>
             <strong>Socket.IO Connection Issue:</strong> The real-time features may not work properly. 
             This is likely due to Railway's WebSocket configuration. The admin dashboard will still function for basic operations.
+          </div>
+        )}
+
+        {socketStatus === 'timeout' && (
+          <div style={{ background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 8, padding: 16, marginBottom: 24, color: '#92400e' }}>
+            <strong>Socket.IO Timeout:</strong> Real-time connection timed out. The dashboard will continue to work normally without live updates.
+          </div>
+        )}
+
+        {!socketEnabled && (
+          <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 8, padding: 16, marginBottom: 24, color: '#0c4a6e' }}>
+            <strong>Real-time Features Disabled:</strong> Socket.IO has been disabled due to connection issues. 
+            The dashboard is fully functional for all CRUD operations.
           </div>
         )}
 
