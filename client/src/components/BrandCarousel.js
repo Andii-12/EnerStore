@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { API_ENDPOINTS } from '../config/api';
 import './BrandCarousel.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,7 +16,7 @@ function BrandCarousel() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/brands')
+    fetch(API_ENDPOINTS.BRANDS)
       .then(res => res.json())
       .then(data => setBrands(data));
   }, []);

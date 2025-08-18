@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 import './NavBar.css';
 
 function NavBar() {
   const [menuItems, setMenuItems] = useState([]);
+  const location = useLocation();
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/header-menu-items')
+    fetch(API_ENDPOINTS.HEADER_MENU_ITEMS)
       .then(res => res.json())
       .then(data => setMenuItems(data));
   }, []);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_ENDPOINTS } from '../config/api';
 import './Carousel.css';
 
 function Carousel() {
@@ -8,7 +9,7 @@ function Carousel() {
   const [direction, setDirection] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/carousel')
+    fetch(API_ENDPOINTS.CAROUSEL)
       .then(res => res.json())
       .then(data => {
         setSlides(data);
