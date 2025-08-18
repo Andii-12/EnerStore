@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './MainHeader.css';
 import logo1 from './assets/logo2.png';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 
 function MainHeader() {
   const [showLogin, setShowLogin] = useState(false);
@@ -60,7 +61,7 @@ function MainHeader() {
     setLoginError('');
     if (loginType === 'company') {
       // Company login
-      const res = await fetch('http://localhost:5000/api/companies/login', {
+      const res = await fetch(API_ENDPOINTS.COMPANY_LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: loginEmail, password: loginPassword })
@@ -78,7 +79,7 @@ function MainHeader() {
       }
     } else {
       // User login
-      const res = await fetch('http://localhost:5000/api/customer-users/login', {
+      const res = await fetch(API_ENDPOINTS.CUSTOMER_LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: loginEmail, password: loginPassword })
@@ -121,7 +122,7 @@ function MainHeader() {
 
     setIsSearching(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/products/search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`${API_ENDPOINTS.PRODUCT_SEARCH}?q=${encodeURIComponent(query)}`);
       const data = await response.json();
       setSearchResults(data);
       setShowSearchResults(true);

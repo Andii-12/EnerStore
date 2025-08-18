@@ -4,13 +4,30 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+// CORS configuration for production
+const corsOptions = {
+  origin: process.env.CORS_ORIGINS 
+    ? process.env.CORS_ORIGINS.split(',') 
+    : ['http://localhost:3000'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
-const io = new Server(server, { cors: { origin: '*' } });
+const io = new Server(server, { 
+  cors: { 
+    origin: process.env.CORS_ORIGINS 
+      ? process.env.CORS_ORIGINS.split(',') 
+      : ['http://localhost:3000'],
+    credentials: true 
+  } 
+});
 
 let viewerCount = 0;
 io.on('connection', (socket) => {
@@ -22,15 +39,27 @@ io.on('connection', (socket) => {
   });
 });
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/enerstore', {
+// Connect to MongoDB Atlas
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/enerstore';
+mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+})
+.then(() => console.log('Connected to MongoDB Atlas'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Test route
 app.get('/', (req, res) => {
-  res.send('API Running');
+  res.send('EnerStore API Running');
+});
+
+// Health check endpoint for Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
 });
 
 const productRoutes = require('./routes/products');

@@ -25,6 +25,7 @@ import ProductDetail from './components/ProductDetail';
 import CartPage from './components/CartPage';
 import UserRegistration from './components/UserRegistration';
 import UserEdit from './components/UserEdit';
+import { API_ENDPOINTS } from './config/api';
 
 function formatPrice(price) {
   if (!price && price !== 0) return '';
@@ -285,13 +286,13 @@ function App() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
+    fetch(API_ENDPOINTS.PRODUCTS)
       .then(res => res.json())
       .then(data => setProducts(data));
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/categories')
+    fetch(API_ENDPOINTS.CATEGORIES)
       .then(res => res.json())
       .then(data => setCategories(data));
   }, []);

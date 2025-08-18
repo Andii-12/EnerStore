@@ -7,6 +7,7 @@ import ProductGrid from './ProductGrid';
 import './BrandCarousel.css';
 import { useLocation } from 'react-router-dom';
 import './AllProductsPage.css';
+import { API_ENDPOINTS } from '../config/api';
 
 function AllProductsPage() {
   const [categories, setCategories] = useState([]);
@@ -23,9 +24,9 @@ function AllProductsPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:5000/api/categories').then(res => res.json()),
-      fetch('http://localhost:5000/api/brands').then(res => res.json()),
-      fetch('http://localhost:5000/api/companies').then(res => res.json())
+      fetch(API_ENDPOINTS.CATEGORIES).then(res => res.json()),
+      fetch(API_ENDPOINTS.BRANDS).then(res => res.json()),
+      fetch(API_ENDPOINTS.COMPANIES).then(res => res.json())
     ]).then(([catData, brandData, companyData]) => {
       setCategories(catData.filter(cat => cat.name !== 'Бүх бараа'));
       setBrands(brandData);
@@ -44,7 +45,7 @@ function AllProductsPage() {
 
   useEffect(() => {
     if (!ready) return;
-    let url = 'http://localhost:5000/api/products';
+    let url = API_ENDPOINTS.PRODUCTS;
     const params = [];
     if (selectedCategory) {
       params.push(`category=${encodeURIComponent(selectedCategory)}`);
