@@ -86,7 +86,7 @@ function AllProductsPage() {
   const handleSidebarToggle = () => setSidebarOpen(v => !v);
 
   return (
-    <div style={{ background: '#f6f6f6', minHeight: '100vh' }}>
+    <div className="all-products-page">
       <Header />
       <MainHeader />
       <NavBar />
@@ -94,154 +94,112 @@ function AllProductsPage() {
         <button className="sidebar-toggle-btn" onClick={handleSidebarToggle}>
           {sidebarOpen ? '✕ Фильтер хаах' : '☰ Фильтер харах'}
         </button>
+        
         <aside className={`all-products-sidebar${sidebarOpen ? ' open' : ''}`}>
-          {/* Sidebar content (unchanged, but remove layout inline styles) */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '24px 32px 0 32px', gap: 12 }}>
+          {/* Clear Filters Button */}
+          <div className="sidebar-header">
             <button
               onClick={() => { setSelectedCategory(''); setSelectedBrand(''); setSelectedCompany(''); }}
-              style={{ background: '#f8f3ed', color: 'var(--color-accent)', border: 'none', borderRadius: 8, padding: '10px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginBottom: 8 }}
+              className="clear-filters-btn"
             >
               Фильтер цэвэрлэх
             </button>
           </div>
-          <div style={{ fontWeight: 700, fontSize: 18, margin: '32px 0 8px 32px', color: '#222' }}>Дэлгүүрүүд</div>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {companies.map(company => (
+          
+          {/* Companies Section */}
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">Дэлгүүрүүд</h3>
+            <nav className="sidebar-nav">
+              {companies.map(company => (
+                <button
+                  key={company._id}
+                  onClick={() => setSelectedCompany(company._id)}
+                  className={`sidebar-nav-item ${selectedCompany === company._id ? 'active' : ''}`}
+                >
+                  {company.logo && (
+                    <img 
+                      src={company.logo} 
+                      alt={company.name} 
+                      className="company-logo" 
+                    />
+                  )}
+                  {company.name}
+                </button>
+              ))}
+            </nav>
+          </div>
+          
+          {/* Categories Section */}
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">Ангилал</h3>
+            <nav className="sidebar-nav">
               <button
-                key={company._id}
-                onClick={() => setSelectedCompany(company._id)}
-                style={{
-                  background: selectedCompany === company._id ? '#f8f3ed' : 'none',
-                  color: selectedCompany === company._id ? 'var(--color-accent)' : '#222',
-                  border: 'none',
-                  textAlign: 'left',
-                  padding: '10px 32px',
-                  fontWeight: selectedCompany === company._id ? 700 : 500,
-                  fontSize: 15,
-                  cursor: 'pointer',
-                  borderLeft: selectedCompany === company._id ? '4px solid var(--color-accent)' : '4px solid transparent',
-                  outline: 'none',
-                  transition: 'background 0.18s, color 0.18s',
-                  width: '100%',
-                  marginBottom: 2,
-                  display: 'flex', alignItems: 'center', gap: 10
-                }}
+                onClick={() => setSelectedCategory('')}
+                className={`sidebar-nav-item ${selectedCategory === '' ? 'active' : ''}`}
               >
-                {company.logo && <img src={company.logo} alt={company.name} style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', background: '#fff', border: '1.5px solid #eee', marginRight: 8 }} />}
-                {company.name}
+                Бүх бараа
               </button>
-            ))}
-          </nav>
-          <div style={{ fontWeight: 700, fontSize: 18, margin: '32px 0 8px 32px', color: '#222' }}>Ангилал</div>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            <button
-              onClick={() => setSelectedCategory('')}
-              style={{
-                background: selectedCategory === '' ? '#f8f3ed' : 'none',
-                color: selectedCategory === '' ? 'var(--color-accent)' : '#222',
-                border: 'none',
-                textAlign: 'left',
-                padding: '12px 32px',
-                fontWeight: selectedCategory === '' ? 700 : 500,
-                fontSize: 15,
-                cursor: 'pointer',
-                borderLeft: selectedCategory === '' ? '4px solid var(--color-accent)' : '4px solid transparent',
-                outline: 'none',
-                transition: 'background 0.18s, color 0.18s',
-                width: '100%',
-                marginBottom: 2
-              }}
-            >
-              Бүх бараа
-            </button>
-            {categories.map(cat => (
+              {categories.map(cat => (
+                <button
+                  key={cat._id}
+                  onClick={() => setSelectedCategory(cat.name)}
+                  className={`sidebar-nav-item ${selectedCategory === cat.name ? 'active' : ''}`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </nav>
+          </div>
+          
+          {/* Brands Section */}
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">Брэнд</h3>
+            <nav className="sidebar-nav">
               <button
-                key={cat._id}
-                onClick={() => setSelectedCategory(cat.name)} // use name
-                style={{
-                  background: selectedCategory === cat.name ? '#f8f3ed' : 'none',
-                  color: selectedCategory === cat.name ? 'var(--color-accent)' : '#222',
-                  border: 'none',
-                  textAlign: 'left',
-                  padding: '12px 32px',
-                  fontWeight: selectedCategory === cat.name ? 700 : 500,
-                  fontSize: 15,
-                  cursor: 'pointer',
-                  borderLeft: selectedCategory === cat.name ? '4px solid var(--color-accent)' : '4px solid transparent',
-                  outline: 'none',
-                  transition: 'background 0.18s, color 0.18s',
-                  width: '100%',
-                  marginBottom: 2
-                }}
+                onClick={() => setSelectedBrand('')}
+                className={`sidebar-nav-item ${selectedBrand === '' ? 'active' : ''}`}
               >
-                {cat.name}
+                Бүх брэнд
               </button>
-            ))}
-          </nav>
-          <div style={{ fontWeight: 700, fontSize: 18, margin: '32px 0 8px 32px', color: '#222' }}>Брэнд</div>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            <button
-              onClick={() => setSelectedBrand('')}
-              style={{
-                background: selectedBrand === '' ? '#f8f3ed' : 'none',
-                color: selectedBrand === '' ? 'var(--color-accent)' : '#222',
-                border: 'none',
-                textAlign: 'left',
-                padding: '10px 32px',
-                fontWeight: selectedBrand === '' ? 700 : 500,
-                fontSize: 15,
-                cursor: 'pointer',
-                borderLeft: selectedBrand === '' ? '4px solid var(--color-accent)' : '4px solid transparent',
-                outline: 'none',
-                transition: 'background 0.18s, color 0.18s',
-                width: '100%',
-                marginBottom: 2
-              }}
-            >
-              Бүх брэнд
-            </button>
-            {brands.map(brand => (
-              <button
-                key={brand._id}
-                onClick={() => setSelectedBrand(brand.name)}
-                style={{
-                  background: selectedBrand === brand.name ? '#f8f3ed' : 'none',
-                  color: selectedBrand === brand.name ? 'var(--color-accent)' : '#222',
-                  border: 'none',
-                  textAlign: 'left',
-                  padding: '10px 32px',
-                  fontWeight: selectedBrand === brand.name ? 700 : 500,
-                  fontSize: 15,
-                  cursor: 'pointer',
-                  borderLeft: selectedBrand === brand.name ? '4px solid var(--color-accent)' : '4px solid transparent',
-                  outline: 'none',
-                  transition: 'background 0.18s, color 0.18s',
-                  width: '100%',
-                  marginBottom: 2
-                }}
-              >
-                {brand.name}
-              </button>
-            ))}
-          </nav>
+              {brands.map(brand => (
+                <button
+                  key={brand._id}
+                  onClick={() => setSelectedBrand(brand.name)}
+                  className={`sidebar-nav-item ${selectedBrand === brand.name ? 'active' : ''}`}
+                >
+                  {brand.name}
+                </button>
+              ))}
+            </nav>
+          </div>
         </aside>
+        
         <main className="all-products-main">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
-            <div style={{ fontWeight: 700, fontSize: 26, color: '#222' }}>
+          {/* Page Header */}
+          <div className="page-header">
+            <div className="page-title">
               {selectedCategory || 'Бүх бараа'}
             </div>
-            <div style={{ color: '#888', fontSize: 15 }}>
+            <div className="products-count">
               Нийт <b>{products.length}</b> бүтээгдэхүүн байна
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 18, gap: 12 }}>
-            <select value={sort} onChange={e => setSort(e.target.value)} style={{ padding: '8px 18px', borderRadius: 6, border: '1px solid #e5e7eb', fontWeight: 500, fontSize: 15, background: '#fff', color: '#222', outline: 'none', cursor: 'pointer' }}>
+          
+          {/* Sort Controls */}
+          <div className="sort-controls">
+            <select 
+              value={sort} 
+              onChange={e => setSort(e.target.value)} 
+              className="sort-select"
+            >
               <option value="newest">Шинэ нь эхэндээ</option>
               <option value="price-asc">Үнэ өсөхөөр</option>
               <option value="price-desc">Үнэ буурахаар</option>
             </select>
           </div>
-          <div style={{ background: '#fff', border: '1px solid #e5e7eb', padding: 24, minHeight: 400 }}>
+          
+          {/* Products Grid */}
+          <div className="products-container">
             <ProductGrid products={products} />
           </div>
         </main>
