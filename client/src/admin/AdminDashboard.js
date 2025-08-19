@@ -74,7 +74,7 @@ function AdminDashboard() {
 
   const initializeSocket = () => {
     try {
-      const socketInstance = io(process.env.REACT_APP_SOCKET_URL || 'https://enerstore-production.up.railway.app', {
+      const socketInstance = io(process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000', {
         timeout: 3000,
         transports: ['polling', 'websocket']
       });

@@ -27,7 +27,7 @@ import ProductDetail from './components/ProductDetail';
 import CartPage from './components/CartPage';
 import UserRegistration from './components/UserRegistration';
 import UserEdit from './components/UserEdit';
-import { API_ENDPOINTS } from './config/api';
+import { API_ENDPOINTS, getDynamicApiEndpoints, getApiBaseUrl } from './config/api';
 
 // Debug: Log API endpoints to see what's being used
 console.log('🔍 Debug: API Endpoints being used:', API_ENDPOINTS);
@@ -35,6 +35,10 @@ console.log('🔍 Debug: Environment variables:', {
   REACT_APP_API_URL: process.env.REACT_APP_API_URL,
   REACT_APP_SOCKET_URL: process.env.REACT_APP_SOCKET_URL
 });
+console.log('🔍 Debug: Default API URL:', 'http://localhost:5000');
+console.log('🔍 Debug: Fallback Railway URL:', 'https://enerstore-production.up.railway.app');
+console.log('🔍 Debug: Products endpoint:', API_ENDPOINTS.PRODUCTS);
+console.log('🔍 Debug: Categories endpoint:', API_ENDPOINTS.CATEGORIES);
 
 function formatPrice(price) {
   if (!price && price !== 0) return '';
@@ -619,15 +623,52 @@ function App() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch(API_ENDPOINTS.PRODUCTS)
-      .then(res => res.json())
-      .then(data => setProducts(data));
+    const initializeApp = async () => {
+      try {
+        // Get the best available API endpoints
+        const dynamicEndpoints = await getDynamicApiEndpoints();
+        const baseUrl = await getApiBaseUrl();
+        
+        console.log('🔍 Testing API connection...');
+        console.log('🔍 Using backend:', baseUrl);
+        console.log('🔍 Calling:', dynamicEndpoints.PRODUCTS);
+        
+        // Fetch products using dynamic endpoints
+        const productsRes = await fetch(dynamicEndpoints.PRODUCTS);
+        if (productsRes.ok) {
+          const data = await productsRes.json();
+          console.log('✅ API Data received:', data.length, 'products');
+          setProducts(data);
+        } else {
+          console.error('❌ API Response not ok:', productsRes.status);
+        }
+      } catch (error) {
+        console.error('❌ API Error:', error);
+        console.error('❌ Error details:', {
+          message: error.message,
+          stack: error.stack
+        });
+      }
+    };
+
+    initializeApp();
   }, []);
 
   useEffect(() => {
-    fetch(API_ENDPOINTS.CATEGORIES)
-      .then(res => res.json())
-      .then(data => setCategories(data));
+    const fetchCategories = async () => {
+      try {
+        const dynamicEndpoints = await getDynamicApiEndpoints();
+        const categoriesRes = await fetch(dynamicEndpoints.CATEGORIES);
+        if (categoriesRes.ok) {
+          const data = await categoriesRes.json();
+          setCategories(data);
+        }
+      } catch (error) {
+        console.error('❌ Categories fetch error:', error);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   return (
