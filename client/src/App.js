@@ -29,6 +29,13 @@ import UserRegistration from './components/UserRegistration';
 import UserEdit from './components/UserEdit';
 import { API_ENDPOINTS } from './config/api';
 
+// Debug: Log API endpoints to see what's being used
+console.log('🔍 Debug: API Endpoints being used:', API_ENDPOINTS);
+console.log('🔍 Debug: Environment variables:', {
+  REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+  REACT_APP_SOCKET_URL: process.env.REACT_APP_SOCKET_URL
+});
+
 function formatPrice(price) {
   if (!price && price !== 0) return '';
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
