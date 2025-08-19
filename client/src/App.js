@@ -114,7 +114,13 @@ function NewProductsSection({ products }) {
                 minHeight: 'clamp(250px, 60vw, 280px)', 
                 position: 'relative', 
                 cursor: 'pointer', 
-                transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s' 
+                transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s',
+                '@media (max-width: 600px)': {
+                  flexDirection: 'row',
+                  gap: 'clamp(16px, 4vw, 20px)',
+                  minHeight: 'auto',
+                  padding: 'clamp(20px, 5vw, 24px)'
+                }
               }}
               onClick={() => navigate(`/products/${product._id}`)}
             >
@@ -128,11 +134,24 @@ function NewProductsSection({ products }) {
                   objectFit: 'contain', 
                   borderRadius: 'clamp(6px, 1.5vw, 8px)', 
                   background: '#f8f8f8', 
-                  marginBottom: 'clamp(12px, 3vw, 16px)' 
+                  marginBottom: 'clamp(12px, 3vw, 16px)',
+                  '@media (max-width: 600px)': {
+                    width: 'clamp(100px, 25vw, 120px)',
+                    height: 'clamp(100px, 25vw, 120px)',
+                    marginBottom: 0,
+                    flexShrink: 0
+                  }
                 }} 
               />
               {/* Details */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ 
+                flex: 1, 
+                display: 'flex', 
+                flexDirection: 'column',
+                '@media (max-width: 600px)': {
+                  minWidth: 0
+                }
+              }}>
                 <div style={{ 
                   color: '#888', 
                   fontSize: 'clamp(12px, 3vw, 14px)', 
@@ -150,7 +169,11 @@ function NewProductsSection({ products }) {
                   display: '-webkit-box', 
                   WebkitLineClamp: 2, 
                   WebkitBoxOrient: 'vertical', 
-                  overflow: 'hidden' 
+                  overflow: 'hidden',
+                  '@media (max-width: 600px)': {
+                    fontSize: 'clamp(16px, 4vw, 18px)',
+                    marginBottom: 'clamp(8px, 2vw, 10px)'
+                  }
                 }}>
                   {product.name}
                 </div>
@@ -163,7 +186,12 @@ function NewProductsSection({ products }) {
                   WebkitLineClamp: 2, 
                   WebkitBoxOrient: 'vertical', 
                   overflow: 'hidden', 
-                  flex: 1 
+                  flex: 1,
+                  '@media (max-width: 600px)': {
+                    fontSize: 'clamp(14px, 3.5vw, 16px)',
+                    marginBottom: 'clamp(8px, 2vw, 10px)',
+                    WebkitLineClamp: 3
+                  }
                 }}>
                   {product.description}
                 </div>
@@ -174,7 +202,10 @@ function NewProductsSection({ products }) {
                     gap: 'clamp(6px, 1.5vw, 8px)', 
                     color: '#888', 
                     fontSize: 'clamp(11px, 2.5vw, 13px)', 
-                    marginBottom: 'clamp(6px, 1.5vw, 8px)' 
+                    marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                    '@media (max-width: 600px)': {
+                      marginBottom: 'clamp(8px, 2vw, 10px)'
+                    }
                   }}>
                     {product.company.logo && (
                       <img 
@@ -200,7 +231,16 @@ function NewProductsSection({ products }) {
                   </div>
                 )}
                 {product.originalPrice && product.price < product.originalPrice ? (
-                  <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
+                  <div style={{ 
+                    marginTop: 'auto', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'flex-start', 
+                    gap: 2,
+                    '@media (max-width: 600px)': {
+                      marginTop: 'clamp(8px, 2vw, 10px)'
+                    }
+                  }}>
                     <span style={{ 
                       color: '#aaa', 
                       fontWeight: 500, 
@@ -251,7 +291,11 @@ function NewProductsSection({ products }) {
                     color: 'var(--color-accent)', 
                     fontWeight: 700, 
                     fontSize: 'clamp(16px, 4vw, 20px)', 
-                    marginTop: 'auto' 
+                    marginTop: 'auto',
+                    '@media (max-width: 600px)': {
+                      marginTop: 'clamp(8px, 2vw, 10px)',
+                      fontSize: 'clamp(18px, 4.5vw, 22px)'
+                    }
                   }}>
                     {formatPrice(product.price)} ₮
                   </div>
@@ -373,7 +417,13 @@ function SaleProductsSection({ products }) {
                   minHeight: 'clamp(250px, 60vw, 280px)', 
                   position: 'relative', 
                   cursor: 'pointer', 
-                  transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s' 
+                  transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s',
+                  '@media (max-width: 600px)': {
+                    flexDirection: 'row',
+                    gap: 'clamp(16px, 4vw, 20px)',
+                    minHeight: 'auto',
+                    padding: 'clamp(20px, 5vw, 24px)'
+                  }
                 }}
                 onClick={() => navigate(`/products/${product._id}`)}
               >
@@ -387,11 +437,24 @@ function SaleProductsSection({ products }) {
                     objectFit: 'contain', 
                     borderRadius: 'clamp(6px, 1.5vw, 8px)', 
                     background: '#f8f8f8', 
-                    marginBottom: 'clamp(12px, 3vw, 16px)' 
+                    marginBottom: 'clamp(12px, 3vw, 16px)',
+                    '@media (max-width: 600px)': {
+                      width: 'clamp(100px, 25vw, 120px)',
+                      height: 'clamp(100px, 25vw, 120px)',
+                      marginBottom: 0,
+                      flexShrink: 0
+                    }
                   }} 
                 />
                 {/* Details */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ 
+                  flex: 1, 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  '@media (max-width: 600px)': {
+                    minWidth: 0
+                  }
+                }}>
                   <div style={{ 
                     color: '#888', 
                     fontSize: 'clamp(12px, 3vw, 14px)', 
@@ -409,7 +472,11 @@ function SaleProductsSection({ products }) {
                     display: '-webkit-box', 
                     WebkitLineClamp: 2, 
                     WebkitBoxOrient: 'vertical', 
-                    overflow: 'hidden' 
+                    overflow: 'hidden',
+                    '@media (max-width: 600px)': {
+                      fontSize: 'clamp(16px, 4vw, 18px)',
+                      marginBottom: 'clamp(8px, 2vw, 10px)'
+                    }
                   }}>
                     {product.name}
                   </div>
@@ -422,7 +489,12 @@ function SaleProductsSection({ products }) {
                     WebkitLineClamp: 2, 
                     WebkitBoxOrient: 'vertical', 
                     overflow: 'hidden', 
-                    flex: 1 
+                    flex: 1,
+                    '@media (max-width: 600px)': {
+                      fontSize: 'clamp(14px, 3.5vw, 16px)',
+                      marginBottom: 'clamp(8px, 2vw, 10px)',
+                      WebkitLineClamp: 3
+                    }
                   }}>
                     {product.description}
                   </div>
@@ -433,7 +505,10 @@ function SaleProductsSection({ products }) {
                       gap: 'clamp(6px, 1.5vw, 8px)', 
                       color: '#888', 
                       fontSize: 'clamp(11px, 2.5vw, 13px)', 
-                      marginBottom: 'clamp(6px, 1.5vw, 8px)' 
+                      marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                      '@media (max-width: 600px)': {
+                        marginBottom: 'clamp(8px, 2vw, 10px)'
+                      }
                     }}>
                       {product.company.logo && (
                         <img 
@@ -458,7 +533,16 @@ function SaleProductsSection({ products }) {
                       </span>
                     </div>
                   )}
-                  <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
+                  <div style={{ 
+                    marginTop: 'auto', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'flex-start', 
+                    gap: 2,
+                    '@media (max-width: 600px)': {
+                      marginTop: 'clamp(8px, 2vw, 10px)'
+                    }
+                  }}>
                     {isSale ? (
                       <>
                         <span style={{ 
@@ -501,7 +585,10 @@ function SaleProductsSection({ products }) {
                       <span style={{ 
                         color: 'var(--color-accent)', 
                         fontWeight: 700, 
-                        fontSize: 'clamp(16px, 4vw, 20px)' 
+                        fontSize: 'clamp(16px, 4vw, 20px)',
+                        '@media (max-width: 600px)': {
+                          fontSize: 'clamp(18px, 4.5vw, 22px)'
+                        }
                       }}>
                         {formatPrice(product.price)} ₮
                       </span>

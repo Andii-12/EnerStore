@@ -20,9 +20,11 @@ function AllProductsPage() {
   const [sort, setSort] = useState('newest');
   const [ready, setReady] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
       fetch(API_ENDPOINTS.CATEGORIES).then(res => res.json()),
       fetch(API_ENDPOINTS.BRANDS).then(res => res.json()),
@@ -45,6 +47,7 @@ function AllProductsPage() {
 
   useEffect(() => {
     if (!ready) return;
+    setLoading(true);
     let url = API_ENDPOINTS.PRODUCTS;
     const params = [];
     if (selectedCategory) {
@@ -67,6 +70,7 @@ function AllProductsPage() {
       .then(data => {
         if (!Array.isArray(data)) {
           setProducts([]);
+          setLoading(false);
           return;
         }
         let mapped = data.map(p => ({
@@ -79,6 +83,11 @@ function AllProductsPage() {
           mapped = mapped.filter(p => p.originalPrice && p.price < p.originalPrice && p.saleEnd && new Date(p.saleEnd) > now);
         }
         setProducts(mapped);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+        setLoading(false);
       });
   }, [ready, selectedCategory, selectedBrand, selectedCompany, sort]);
 
@@ -119,10 +128,12 @@ function AllProductsPage() {
       <MainHeader />
       <NavBar />
       <div className="all-products-layout">
+        {/* Mobile Sidebar Toggle */}
         <button className="sidebar-toggle-btn" onClick={handleSidebarToggle}>
           {sidebarOpen ? '✕ Фильтер хаах' : '☰ Фильтер харах'}
         </button>
         
+        {/* Sidebar */}
         <aside className={`all-products-sidebar${sidebarOpen ? ' open' : ''}`}>
           {/* Clear Filters Button */}
           <div className="sidebar-header">
@@ -202,6 +213,7 @@ function AllProductsPage() {
           </div>
         </aside>
         
+        {/* Main Content */}
         <main className="all-products-main">
           {/* Page Header */}
           <div className="page-header">
@@ -228,7 +240,7 @@ function AllProductsPage() {
           
           {/* Products Grid */}
           <div className="products-container">
-            <ProductGrid products={products} />
+            <ProductGrid products={products} loading={loading} />
           </div>
         </main>
       </div>
