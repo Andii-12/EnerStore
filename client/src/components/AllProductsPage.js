@@ -84,6 +84,41 @@ function AllProductsPage() {
 
   // Responsive sidebar toggle for mobile
   const handleSidebarToggle = () => setSidebarOpen(v => !v);
+  
+  // Close sidebar when clicking outside on mobile
+  const handleSidebarClose = () => {
+    if (window.innerWidth <= 600) {
+      setSidebarOpen(false);
+    }
+  };
+
+  // Close sidebar when filter is selected on mobile
+  const handleFilterSelect = (filterType, value) => {
+    if (filterType === 'category') {
+      setSelectedCategory(value);
+    } else if (filterType === 'brand') {
+      setSelectedBrand(value);
+    } else if (filterType === 'company') {
+      setSelectedCompany(value);
+    }
+    
+    // Close sidebar on mobile after filter selection
+    if (window.innerWidth <= 600) {
+      setTimeout(() => setSidebarOpen(false), 300);
+    }
+  };
+
+  // Clear all filters
+  const handleClearFilters = () => {
+    setSelectedCategory('');
+    setSelectedBrand('');
+    setSelectedCompany('');
+    
+    // Close sidebar on mobile after clearing filters
+    if (window.innerWidth <= 600) {
+      setTimeout(() => setSidebarOpen(false), 300);
+    }
+  };
 
   return (
     <div className="all-products-page">
@@ -95,11 +130,29 @@ function AllProductsPage() {
           {sidebarOpen ? '✕ Фильтер хаах' : '☰ Фильтер харах'}
         </button>
         
+        {/* Mobile Overlay Backdrop */}
+        {sidebarOpen && window.innerWidth <= 600 && (
+          <div 
+            className="mobile-overlay"
+            onClick={handleSidebarClose}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 1000,
+              cursor: 'pointer'
+            }}
+          />
+        )}
+        
         <aside className={`all-products-sidebar${sidebarOpen ? ' open' : ''}`}>
           {/* Clear Filters Button */}
           <div className="sidebar-header">
             <button
-              onClick={() => { setSelectedCategory(''); setSelectedBrand(''); setSelectedCompany(''); }}
+              onClick={handleClearFilters}
               className="clear-filters-btn"
             >
               Фильтер цэвэрлэх
@@ -113,7 +166,7 @@ function AllProductsPage() {
               {companies.map(company => (
                 <button
                   key={company._id}
-                  onClick={() => setSelectedCompany(company._id)}
+                  onClick={() => handleFilterSelect('company', company._id)}
                   className={`sidebar-nav-item ${selectedCompany === company._id ? 'active' : ''}`}
                 >
                   {company.logo && (
@@ -134,7 +187,7 @@ function AllProductsPage() {
             <h3 className="sidebar-title">Ангилал</h3>
             <nav className="sidebar-nav">
               <button
-                onClick={() => setSelectedCategory('')}
+                onClick={() => handleFilterSelect('category', '')}
                 className={`sidebar-nav-item ${selectedCategory === '' ? 'active' : ''}`}
               >
                 Бүх бараа
@@ -142,7 +195,7 @@ function AllProductsPage() {
               {categories.map(cat => (
                 <button
                   key={cat._id}
-                  onClick={() => setSelectedCategory(cat.name)}
+                  onClick={() => handleFilterSelect('category', cat.name)}
                   className={`sidebar-nav-item ${selectedCategory === cat.name ? 'active' : ''}`}
                 >
                   {cat.name}
@@ -156,7 +209,7 @@ function AllProductsPage() {
             <h3 className="sidebar-title">Брэнд</h3>
             <nav className="sidebar-nav">
               <button
-                onClick={() => setSelectedBrand('')}
+                onClick={() => handleFilterSelect('brand', '')}
                 className={`sidebar-nav-item ${selectedBrand === '' ? 'active' : ''}`}
               >
                 Бүх брэнд
@@ -164,7 +217,7 @@ function AllProductsPage() {
               {brands.map(brand => (
                 <button
                   key={brand._id}
-                  onClick={() => setSelectedBrand(brand.name)}
+                  onClick={() => handleFilterSelect('brand', brand.name)}
                   className={`sidebar-nav-item ${selectedBrand === brand.name ? 'active' : ''}`}
                 >
                   {brand.name}

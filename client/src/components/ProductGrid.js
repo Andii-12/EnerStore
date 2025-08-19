@@ -5,114 +5,118 @@ import { useState, useEffect } from 'react';
 
 function ProductGrid({ products }) {
   const navigate = useNavigate();
-  // Remove cart and favorite state and handlers
+  
+  const formatPrice = (price) => {
+    if (!price && price !== 0) return '';
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  const getSaleInfo = (product) => {
+    if (!product.originalPrice || product.price >= product.originalPrice) return null;
+    
+    const discountPercent = Math.round(100 - (product.price / product.originalPrice) * 100);
+    let daysLeft = null;
+    
+    if (product.saleEnd) {
+      const now = new Date();
+      const end = new Date(product.saleEnd);
+      const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+      daysLeft = diff > 0 ? diff : 0;
+    }
+    
+    return { discountPercent, daysLeft };
+  };
+
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: '28px',
-      width: '100%',
-      maxWidth: 1400,
-      margin: '0 auto',
-    }}>
-      {products.slice(0, 16).map(product => {
-        const onSale = product.originalPrice && product.price < product.originalPrice;
-        const salePercent = onSale ? Math.round(100 - (product.price / product.originalPrice) * 100) : 0;
-        const daysLeft = product.saleEnd ? (() => {
-          const now = new Date();
-          const end = new Date(product.saleEnd);
-          const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
-          return diff > 0 ? diff : 0;
-        })() : null;
+    <div className="product-grid">
+      {products.map(product => {
+        const saleInfo = getSaleInfo(product);
+        const onSale = saleInfo !== null;
+        
         return (
           <div
             className="product-card"
             key={product._id}
-            style={{
-              background: '#fff',
-              border: '1.5px solid #f0f0f0',
-              borderRadius: 12,
-              boxShadow: '0 2px 8px rgba(8,15,70,0.06)',
-              padding: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'stretch',
-              minHeight: 380,
-              position: 'relative',
-              cursor: 'pointer',
-              transition: 'box-shadow 0.18s, border 0.18s',
-              width: '100%',
-              maxWidth: 320,
-              margin: '0 auto',
-              overflow: 'hidden',
-            }}
             onClick={() => navigate(`/products/${product._id}`)}
           >
-            {/* Top row: brand logo and discount badge */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '12px 12px 0 12px', minHeight: 36 }}>
-              {product.brandLogo && (
-                <img src={product.brandLogo} alt={product.brand || 'brand'} style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', background: '#fff', border: '1.5px solid #eee' }} />
-              )}
-              {onSale && (
-                <div style={{ background: '#22c55e', color: '#fff', fontWeight: 700, fontSize: 15, borderRadius: 6, padding: '2px 12px', marginLeft: 'auto' }}>-{salePercent}%</div>
-              )}
-            </div>
-            {/* Product image */}
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 140, margin: '8px 0 0 0' }}>
+            {/* Product Image Container */}
+            <div className="product-image-container">
               <img
                 src={product.image || product.thumbnail}
                 alt={product.name}
-                style={{ width: 160, height: 120, objectFit: 'contain', borderRadius: 8, background: '#f8f8f8' }}
+                className="product-image"
               />
-            </div>
-            {/* Sale bar */}
-            {onSale && daysLeft !== null && daysLeft > 0 && (
-              <div style={{ background: '#22c55e', color: '#fff', fontWeight: 600, fontSize: 15, borderRadius: 4, padding: '4px 10px', margin: '12px 12px 0 12px', textAlign: 'center' }}>
-                Хямдрал дуусахад {daysLeft} өдөр
-              </div>
-            )}
-            {/* Specs */}
-            <div style={{ color: '#888', fontSize: 15, fontWeight: 500, margin: '12px 12px 0 12px', minHeight: 18 }}>
-              {product.processor || product.spec || ''}
-            </div>
-            {/* Name */}
-            <div style={{ fontWeight: 700, fontSize: 17, color: '#222', margin: '8px 12px 0 12px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minHeight: 24 }}>
-              {product.name}
-            </div>
-            {/* Description */}
-            {product.description && (
-              <div style={{ color: '#666', fontSize: 14, margin: '6px 12px 0 12px', minHeight: 18, maxHeight: 22, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {product.description.length > 60 ? product.description.slice(0, 60) + '...' : product.description}
-              </div>
-            )}
-            {/* Price */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '12px 12px 0 12px', minHeight: 28, justifyContent: onSale ? 'space-between' : 'flex-start' }}>
-              {onSale ? (
-                <>
-                  <span style={{ color: '#888', fontWeight: 600, fontSize: 16, textDecoration: 'line-through' }}>
-                    {new Intl.NumberFormat('mn-MN').format(product.originalPrice)} ₮
-                  </span>
-                  <span style={{ color: '#f8991b', fontWeight: 700, fontSize: 22, marginLeft: 'auto' }}>
-                    {new Intl.NumberFormat('mn-MN').format(product.price)} ₮
-                  </span>
-                </>
-              ) : (
-                <span style={{ color: '#f8991b', fontWeight: 700, fontSize: 22 }}>
-                  {new Intl.NumberFormat('mn-MN').format(product.price)} ₮
-                </span>
+              {/* Sale Badge */}
+              {onSale && (
+                <div className="sale-badge">
+                  -{saleInfo.discountPercent}%
+                </div>
               )}
             </div>
-            {/* Publisher (company) logo and name */}
-            {product.companyLogo || product.companyName ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '14px 12px 10px 12px', minHeight: 28 }}>
-                {product.companyLogo && (
-                  <img src={product.companyLogo} alt={product.companyName || 'company'} style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', background: '#fff', border: '1.5px solid #eee' }} />
-                )}
-                {product.companyName && (
-                  <span style={{ color: '#222', fontWeight: 600, fontSize: 15 }}>{product.companyName}</span>
+            
+            {/* Product Info */}
+            <div className="product-info">
+              {/* Product Specs */}
+              {(product.processor || product.spec) && (
+                <div className="product-specs">
+                  {product.processor || product.spec}
+                </div>
+              )}
+              
+              {/* Product Name */}
+              <div className="product-name">
+                {product.name}
+              </div>
+              
+              {/* Product Description */}
+              {product.description && (
+                <div className="product-description">
+                  {product.description}
+                </div>
+              )}
+              
+              {/* Company Info */}
+              {product.company && (product.company.logo || product.company.name) && (
+                <div className="company-info">
+                  {product.company.logo && (
+                    <img 
+                      src={product.company.logo} 
+                      alt={product.company.name} 
+                      className="company-logo" 
+                    />
+                  )}
+                  <span className="company-name">
+                    {product.company.name}
+                  </span>
+                </div>
+              )}
+              
+              {/* Price Section */}
+              <div className="price-section">
+                {onSale ? (
+                  <>
+                    <span className="original-price">
+                      {formatPrice(product.originalPrice)} ₮
+                    </span>
+                    <div className="current-price">
+                      {formatPrice(product.price)} ₮
+                      <span className="discount-percent">
+                        -{saleInfo.discountPercent}%
+                      </span>
+                    </div>
+                    {saleInfo.daysLeft > 0 && (
+                      <div className="sale-countdown">
+                        Хямдрал дуусахад {saleInfo.daysLeft} өдөр
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="current-price">
+                    {formatPrice(product.price)} ₮
+                  </div>
                 )}
               </div>
-            ) : null}
+            </div>
           </div>
         );
       })}

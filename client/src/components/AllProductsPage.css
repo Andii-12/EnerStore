@@ -269,8 +269,8 @@
     position: fixed;
     left: -100%;
     top: 0;
-    width: 80vw;
-    max-width: 300px;
+    width: 85vw;
+    max-width: 320px;
     height: 100vh;
     overflow-y: auto;
     z-index: 1001;
@@ -290,7 +290,7 @@
   .sidebar-toggle-btn {
     display: block;
     margin: 0 0 16px 0;
-    padding: 16px 20px;
+    padding: 18px 20px;
     font-size: 16px;
     font-weight: 600;
     background: linear-gradient(135deg, #f8f3ed 0%, #f0e6d9 100%);
@@ -304,6 +304,7 @@
     position: relative;
     box-shadow: 0 4px 12px rgba(248, 153, 27, 0.2);
     border: 1px solid #f0e6d9;
+    min-height: 56px;
   }
   
   .sidebar-toggle-btn:hover {
@@ -346,13 +347,14 @@
   }
   
   .sort-select {
-    padding: 12px 18px;
+    padding: 14px 20px;
     font-size: 15px;
     border-radius: 10px;
     border: 2px solid #e5e7eb;
     background: #fff;
     font-weight: 600;
     min-width: 180px;
+    min-height: 48px;
   }
   
   .sort-select:focus {
@@ -374,12 +376,14 @@
   }
   
   .clear-filters-btn {
-    padding: 12px 20px;
+    padding: 14px 20px;
     font-size: 15px;
     border-radius: 10px;
     font-weight: 700;
     background: linear-gradient(135deg, #f8f3ed 0%, #f0e6d9 100%);
     border: 1px solid #f0e6d9;
+    min-height: 48px;
+    width: 100%;
   }
   
   .sidebar-section {
@@ -393,10 +397,11 @@
   }
   
   .sidebar-nav-item {
-    padding: 14px 20px;
+    padding: 16px 20px;
     font-size: 15px;
     margin-bottom: 2px;
     font-weight: 500;
+    min-height: 48px;
   }
   
   .company-logo {
@@ -413,16 +418,17 @@
   }
   
   .all-products-sidebar {
-    width: 85vw;
-    max-width: 280px;
+    width: 90vw;
+    max-width: 300px;
     border-radius: 0 12px 12px 0;
   }
   
   .sidebar-toggle-btn {
-    padding: 18px 20px;
+    padding: 20px 20px;
     font-size: 17px;
     border-radius: 14px;
     margin-bottom: 12px;
+    min-height: 60px;
   }
   
   .all-products-main {
@@ -452,13 +458,20 @@
   }
   
   .sidebar-nav-item {
-    padding: 12px 16px;
+    padding: 14px 16px;
     font-size: 14px;
+    min-height: 52px;
   }
   
   .company-logo {
     width: 20px;
     height: 20px;
+  }
+  
+  .sort-select {
+    min-height: 52px;
+    padding: 16px 20px;
+    font-size: 16px;
   }
 }
 
@@ -506,5 +519,132 @@
   .all-products-sidebar {
     max-height: 80vh;
     overflow-y: auto;
+  }
+}
+
+/* Mobile overlay backdrop */
+@media (max-width: 600px) {
+  .all-products-sidebar::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .all-products-sidebar.open::before {
+    opacity: 1;
+  }
+}
+
+/* Improved mobile animations */
+@media (max-width: 600px) {
+  .all-products-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .all-products-sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* Mobile overlay styles */
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  cursor: pointer;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Enhanced mobile sidebar animations */
+@media (max-width: 600px) {
+  .all-products-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .all-products-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  /* Mobile sidebar scrollbar styling */
+  .all-products-sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .all-products-sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  .all-products-sidebar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+  
+  .all-products-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+}
+
+/* Mobile filter button improvements */
+@media (max-width: 600px) {
+  .sidebar-toggle-btn {
+    position: sticky;
+    top: 0;
+    z-index: 1002;
+    background: linear-gradient(135deg, #f8f3ed 0%, #f0e6d9 100%);
+    border: 1px solid #f0e6d9;
+    box-shadow: 0 2px 8px rgba(248, 153, 27, 0.15);
+  }
+  
+  .sidebar-toggle-btn:active {
+    background: linear-gradient(135deg, #f0e6d9 0%, #e8dccf 100%);
+    transform: scale(0.98);
+    transition: all 0.1s ease;
+  }
+}
+
+/* Mobile content spacing improvements */
+@media (max-width: 600px) {
+  .products-container {
+    margin: 0 4px;
+  }
+  
+  .page-header {
+    margin-bottom: 16px;
+  }
+  
+  .sort-controls {
+    margin-bottom: 16px;
+  }
+}
+
+/* Mobile landscape optimizations */
+@media (max-width: 900px) and (orientation: landscape) {
+  .all-products-sidebar {
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  
+  .sidebar-toggle-btn {
+    margin-bottom: 12px;
   }
 } 
