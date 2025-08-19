@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import Header from './components/Header';
 import MainHeader from './components/MainHeader';
-import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import Carousel from './components/Carousel';
 import CategoryGrid from './components/CategoryGrid';
@@ -594,7 +593,6 @@ function MainSite({ products, categories }) {
     <div style={{ background: '#f6f6f6', minHeight: '100vh' }}>
       <Header />
       <MainHeader />
-      <NavBar />
       <div className="home-content">
         <div className="home-main-section home-card">
           <Carousel />

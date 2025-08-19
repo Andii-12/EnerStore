@@ -22,4 +22,164 @@
 
 .header-links span:hover {
   color: var(--color-accent);
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 1200px) {
+  .header-top {
+    padding: 4px 24px;
+  }
+  
+  .header-contact span {
+    margin-right: 16px;
+  }
+  
+  .header-links span {
+    margin-left: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .header-top {
+    padding: 4px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .header-contact span {
+    margin-right: 12px;
+  }
+  
+  .header-links span {
+    margin-left: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-top {
+    padding: 4px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .header-contact span {
+    margin-right: 10px;
+  }
+  
+  .header-links span {
+    margin-left: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-top {
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  
+  .header-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+  
+  .header-contact span {
+    margin-right: 0;
+    margin-bottom: 2px;
+  }
+  
+  .header-links {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+  }
+  
+  .header-links span {
+    margin-left: 0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  
+  .header-links span:active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+@media (max-width: 480px) {
+  .header-top {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+  
+  .header-contact span {
+    font-size: 0.75rem;
+  }
+  
+  .header-links span {
+    font-size: 0.75rem;
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-top {
+    padding: 4px 6px;
+    gap: 6px;
+  }
+  
+  .header-contact {
+    gap: 2px;
+  }
+  
+  .header-links {
+    gap: 12px;
+  }
+  
+  .header-links span {
+    padding: 2px 4px;
+    font-size: 0.7rem;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .header-links span:hover {
+    color: var(--color-light);
+  }
+  
+  .header-links span:active {
+    color: var(--color-accent);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 900px) and (orientation: landscape) {
+  .header-top {
+    flex-direction: row;
+    gap: 0;
+    padding: 4px 16px;
+  }
+  
+  .header-contact {
+    flex-direction: row;
+    gap: 0;
+    align-items: center;
+  }
+  
+  .header-contact span {
+    margin-right: 12px;
+    margin-bottom: 0;
+  }
+  
+  .header-links {
+    flex-direction: row;
+    gap: 16px;
+  }
+  
+  .header-links span {
+    margin-left: 0;
+  }
 } 
