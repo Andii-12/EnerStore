@@ -5,6 +5,7 @@ import MainHeader from './MainHeader';
 import NavBar from './NavBar';
 import Footer from './Footer';
 import { API_ENDPOINTS } from '../config/api';
+import './ProductDetail.css';
 
 const paymentOptions = [
   { name: 'Голомт банк', desc: 'Хэрэглээний зээл' },
@@ -81,7 +82,7 @@ function ProductDetail() {
     return () => clearInterval(timer);
   }, [product]);
 
-  if (!product) return <div style={{ padding: 40 }}>Түр хүлээнэ үү...</div>;
+  if (!product) return <div className="loading-container">Түр хүлээнэ үү...</div>;
 
   const images = [product.image, ...(product.images || [])].filter(Boolean);
   const isFav = favorites.find(p => p._id === product._id);
@@ -124,75 +125,42 @@ function ProductDetail() {
   const renderProductCard = p => (
     <div
       key={p._id}
-      style={{
-        width: 180,
-        background: '#fff',
-        border: '1px solid #eee',
-        borderRadius: 8,
-        boxShadow: hoveredCard === p._id ? '0 6px 24px rgba(0,0,0,0.10)' : '0 2px 8px rgba(8,15,70,0.06)',
-        marginRight: 18,
-        cursor: 'pointer',
-        padding: 10,
-        transform: hoveredCard === p._id ? 'scale(1.035)' : 'scale(1)',
-        transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s',
-      }}
+      className="product-card-small"
       onClick={() => navigate(`/products/${p._id}`)}
       onMouseEnter={() => setHoveredCard(p._id)}
       onMouseLeave={() => setHoveredCard(null)}
     >
-      <img src={p.image || p.thumbnail} alt={p.name} style={{ width: '100%', height: 100, objectFit: 'contain', borderRadius: 6, background: '#f8f8f8', marginBottom: 8 }} />
-      <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4, color: '#222', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.name}</div>
-      <div style={{ color: '#f8991b', fontWeight: 700, fontSize: 16 }}>{p.price?.toLocaleString()} ₮</div>
+      <img src={p.image || p.thumbnail} alt={p.name} className="product-card-image" />
+      <div className="product-card-name">{p.name}</div>
+      <div className="product-card-price">{p.price?.toLocaleString()} ₮</div>
     </div>
   );
 
   const renderSimilarProductCard = p => (
     <div
       key={p._id}
-      style={{
-        width: 180,
-        background: '#fff',
-        border: '1px solid #eee',
-        borderRadius: 8,
-        boxShadow: hoveredSimilar === p._id ? '0 6px 24px rgba(0,0,0,0.10)' : '0 2px 8px rgba(8,15,70,0.06)',
-        marginRight: 18,
-        cursor: 'pointer',
-        padding: 10,
-        transform: hoveredSimilar === p._id ? 'scale(1.035)' : 'scale(1)',
-        transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s',
-      }}
+      className="product-card-small"
       onClick={() => navigate(`/products/${p._id}`)}
       onMouseEnter={() => setHoveredSimilar(p._id)}
       onMouseLeave={() => setHoveredSimilar(null)}
     >
-      <img src={p.image || p.thumbnail} alt={p.name} style={{ width: '100%', height: 100, objectFit: 'contain', borderRadius: 6, background: '#f8f8f8', marginBottom: 8 }} />
-      <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4, color: '#222', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.name}</div>
-      <div style={{ color: '#f8991b', fontWeight: 700, fontSize: 16 }}>{p.price?.toLocaleString()} ₮</div>
+      <img src={p.image || p.thumbnail} alt={p.name} className="product-card-image" />
+      <div className="product-card-name">{p.name}</div>
+      <div className="product-card-price">{p.price?.toLocaleString()} ₮</div>
     </div>
   );
 
   const renderLastSeenProductCard = p => (
     <div
       key={p._id}
-      style={{
-        width: 180,
-        background: '#fff',
-        border: '1px solid #eee',
-        borderRadius: 8,
-        boxShadow: hoveredLastSeen === p._id ? '0 6px 24px rgba(0,0,0,0.10)' : '0 2px 8px rgba(8,15,70,0.06)',
-        marginRight: 18,
-        cursor: 'pointer',
-        padding: 10,
-        transform: hoveredLastSeen === p._id ? 'scale(1.035)' : 'scale(1)',
-        transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s',
-      }}
+      className="product-card-small"
       onClick={() => navigate(`/products/${p._id}`)}
       onMouseEnter={() => setHoveredLastSeen(p._id)}
       onMouseLeave={() => setHoveredLastSeen(null)}
     >
-      <img src={p.image || p.thumbnail} alt={p.name} style={{ width: '100%', height: 100, objectFit: 'contain', borderRadius: 6, background: '#f8f8f8', marginBottom: 8 }} />
-      <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4, color: '#222', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.name}</div>
-      <div style={{ color: '#f8991b', fontWeight: 700, fontSize: 16 }}>{p.price?.toLocaleString()} ₮</div>
+      <img src={p.image || p.thumbnail} alt={p.name} className="product-card-image" />
+      <div className="product-card-name">{p.name}</div>
+      <div className="product-card-price">{p.price?.toLocaleString()} ₮</div>
     </div>
   );
 
@@ -201,545 +169,116 @@ function ProductDetail() {
       <Header />
       <MainHeader />
       <NavBar />
-      <div style={{ 
-        maxWidth: 1200, 
-        margin: '32px auto', 
-        background: '#fff', 
-        borderRadius: 12, 
-        boxShadow: '0 2px 12px rgba(8,15,70,0.06)', 
-        padding: 32, 
-        display: 'flex', 
-        gap: 32,
-        '@media (max-width: 768px)': {
-          flexDirection: 'column',
-          margin: '16px 12px',
-          padding: '20px',
-          gap: '20px'
-        },
-        '@media (max-width: 480px)': {
-          margin: '12px 8px',
-          padding: '16px',
-          gap: '16px'
-        }
-      }}>
+      <div className="product-detail-container">
         {/* Left: Images */}
-        <div style={{ 
-          flex: '0 0 500px', 
-          display: 'flex', 
-          flexDirection: 'row', 
-          gap: 16, 
-          alignItems: 'flex-start',
-          '@media (max-width: 768px)': {
-            flex: 'none',
-            width: '100%',
-            flexDirection: 'column',
-            gap: '12px'
-          }
-        }}>
+        <div className="product-images-section">
           {/* Image List */}
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: 8, 
-            flexShrink: 0,
-            '@media (max-width: 768px)': {
-              flexDirection: 'row',
-              gap: '8px',
-              overflowX: 'auto',
-              paddingBottom: '8px'
-            }
-          }}>
+          <div className="image-thumbnails">
             {images.map((img, idx) => (
               <img
                 key={idx}
                 src={img}
                 alt={`thumb-${idx}`}
-                style={{ 
-                  width: 80, 
-                  height: 80, 
-                  objectFit: 'contain', 
-                  borderRadius: 6, 
-                  border: selectedImage === idx ? '2px solid #f8991b' : '1px solid #eee', 
-                  cursor: 'pointer', 
-                  background: '#fff',
-                  '@media (max-width: 768px)': {
-                    width: '60px',
-                    height: '60px',
-                    flexShrink: 0
-                  }
-                }}
+                className={`thumbnail-image ${selectedImage === idx ? 'selected' : ''}`}
                 onClick={() => setSelectedImage(idx)}
               />
             ))}
           </div>
           {/* Main Image */}
-          <div style={{ 
-            flex: 1, 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            '@media (max-width: 768px)': {
-              width: '100%'
-            }
-          }}>
-            <div style={{ 
-              width: 400, 
-              height: 400, 
-              background: '#f8f8f8', 
-              borderRadius: 8, 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              '@media (max-width: 768px)': {
-                width: '100%',
-                height: '300px'
-              },
-              '@media (max-width: 480px)': {
-                height: '250px'
-              }
-            }}>
+          <div className="main-image-container">
+            <div className="main-image-wrapper">
               <img 
                 src={images[selectedImage]} 
                 alt={product.name} 
-                style={{ 
-                  maxWidth: 380, 
-                  maxHeight: 380,
-                  '@media (max-width: 768px)': {
-                    maxWidth: '90%',
-                    maxHeight: '90%'
-                  }
-                }} 
+                className="main-image"
               />
             </div>
           </div>
         </div>
         {/* Right: Info */}
-        <div style={{ 
-          flex: 1,
-          '@media (max-width: 768px)': {
-            width: '100%'
-          }
-        }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 12, 
-            marginBottom: 8, 
-            flexWrap: 'wrap',
-            '@media (max-width: 768px)': {
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              gap: '8px'
-            }
-          }}>
-            <span style={{ 
-              fontSize: 22, 
-              fontWeight: 700,
-              '@media (max-width: 768px)': {
-                fontSize: '20px'
-              },
-              '@media (max-width: 480px)': {
-                fontSize: '18px'
-              }
-            }}>{product.name}</span>
+        <div className="product-info-section">
+          <div className="product-header">
+            <span className="product-title">{product.name}</span>
             {product.brand && product.brand.name && (
-              <span style={{ 
-                background: '#f3f4f6', 
-                color: '#374151', 
-                padding: '4px 12px', 
-                borderRadius: 6, 
-                fontSize: 14, 
-                fontWeight: 600,
-                '@media (max-width: 480px)': {
-                  fontSize: '12px',
-                  padding: '3px 8px'
-                }
-              }}>{product.brand.name}</span>
+              <span className="brand-badge">{product.brand.name}</span>
             )}
-            <span style={{ 
-              color: '#888', 
-              fontSize: 15, 
-              marginLeft: 8,
-              '@media (max-width: 768px)': {
-                marginLeft: 0,
-                fontSize: '14px'
-              }
-            }}>Барааны код: <b>#{product._id?.slice(-5)}</b></span>
+            <span className="product-code">Барааны код: <b>#{product._id?.slice(-5)}</b></span>
           </div>
-          <div style={{ 
-            display: 'flex', 
-            gap: 8, 
-            marginBottom: 16, 
-            flexWrap: 'wrap',
-            '@media (max-width: 768px)': {
-              gap: '6px',
-              marginBottom: '12px'
-            }
-          }}>
-            <button onClick={toggleFavorite} style={{ 
-              background: '#fff', 
-              border: '1px solid #eee', 
-              borderRadius: 6, 
-              padding: '6px 18px', 
-              fontWeight: 600, 
-              cursor: 'pointer', 
-              fontSize: 18,
-              '@media (max-width: 768px)': {
-                padding: '8px 16px',
-                fontSize: '16px'
-              },
-              '@media (max-width: 480px)': {
-                padding: '6px 12px',
-                fontSize: '14px'
-              }
-            }}>
+          <div className="product-actions">
+            <button onClick={toggleFavorite} className="action-button">
               {isFav ? '❤️ Хадгалсан' : '🤍 Хадгалах'}
             </button>
-            <button style={{ 
-              background: '#fff', 
-              border: '1px solid #eee', 
-              borderRadius: 6, 
-              padding: '6px 18px', 
-              fontWeight: 600, 
-              cursor: 'pointer', 
-              fontSize: 18,
-              '@media (max-width: 768px)': {
-                padding: '8px 16px',
-                fontSize: '16px'
-              },
-              '@media (max-width: 480px)': {
-                padding: '6px 12px',
-                fontSize: '14px'
-              }
-            }}>Хуваалцах</button>
+            <button className="action-button">Хуваалцах</button>
           </div>
           {/* Price and Sale Info */}
-          <div style={{ marginBottom: 8 }}>
+          <div className="price-section">
             {product.originalPrice && product.price < product.originalPrice && product.saleEnd && (() => {
               const now = new Date();
               const end = new Date(product.saleEnd);
               const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
               return diff > 0;
             })() ? (
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 16,
-                '@media (max-width: 768px)': {
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  gap: '8px'
-                }
-              }}>
-                <span style={{ 
-                  color: '#aaa', 
-                  fontWeight: 500, 
-                  fontSize: 18, 
-                  textDecoration: 'line-through',
-                  '@media (max-width: 480px)': {
-                    fontSize: '16px'
-                  }
-                }}>
+              <div className="sale-price-container">
+                <span className="original-price">
                   {product.originalPrice?.toLocaleString()} ₮
                 </span>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: 'clamp(6px, 1.5vw, 8px)', 
-                  flexWrap: 'wrap',
-                  '@media (max-width: 768px)': {
-                    gap: '8px'
-                  }
-                }}>
-                  <span style={{ 
-                    fontSize: 28, 
-                    fontWeight: 700, 
-                    color: '#f8991b',
-                    '@media (max-width: 768px)': {
-                      fontSize: '24px'
-                    },
-                    '@media (max-width: 480px)': {
-                      fontSize: '22px'
-                    }
-                  }}>
+                <div className="current-price-container">
+                  <span className="current-price">
                     {product.price?.toLocaleString()} ₮
                   </span>
-                  <span style={{ 
-                    color: '#22c55e', 
-                    fontWeight: 700, 
-                    fontSize: 18, 
-                    background: 'rgba(34,197,94,0.10)', 
-                    borderRadius: 8, 
-                    padding: '2px 10px',
-                    '@media (max-width: 480px)': {
-                      fontSize: '16px',
-                      padding: '2px 8px'
-                    }
-                  }}>
+                  <span className="discount-badge">
                     -{Math.round(100 - (product.price / product.originalPrice) * 100)}%
                   </span>
                 </div>
                 {saleCountdown && (
-                  <span style={{ 
-                    color: '#f59e42', 
-                    fontWeight: 600, 
-                    fontSize: 15, 
-                    marginLeft: 8,
-                    '@media (max-width: 768px)': {
-                      marginLeft: 0,
-                      fontSize: '14px'
-                    }
-                  }}>
+                  <span className="sale-countdown">
                     {saleCountdown}
                   </span>
                 )}
               </div>
             ) : (
-              <span style={{ 
-                fontSize: 28, 
-                fontWeight: 700, 
-                color: '#f8991b',
-                '@media (max-width: 768px)': {
-                  fontSize: '24px'
-                },
-                '@media (max-width: 480px)': {
-                  fontSize: '22px'
-                }
-              }}>{product.price?.toLocaleString()} ₮</span>
+              <span className="current-price">{product.price?.toLocaleString()} ₮</span>
             )}
           </div>
-          <div style={{ 
-            color: '#888', 
-            fontSize: 15, 
-            marginBottom: 8,
-            '@media (max-width: 480px)': {
-              fontSize: '14px'
-            }
-          }}>{product.piece > 0 ? `${product.piece} ширхэг байна` : 'Бэлэн бараа дууссан'}</div>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 12, 
-            marginBottom: 16,
-            '@media (max-width: 768px)': {
-              gap: '10px',
-              marginBottom: '12px'
-            }
-          }}>
-            <button onClick={() => setQuantity(q => Math.max(1, q - 1))} style={{ 
-              width: 32, 
-              height: 32, 
-              borderRadius: 8, 
-              border: '1px solid #eee', 
-              background: '#fff', 
-              fontWeight: 700, 
-              fontSize: 18,
-              '@media (max-width: 480px)': {
-                width: '28px',
-                height: '28px',
-                fontSize: '16px'
-              }
-            }}>-</button>
-            <span style={{ 
-              fontSize: 18, 
-              fontWeight: 600,
-              '@media (max-width: 480px)': {
-                fontSize: '16px'
-              }
-            }}>{quantity}</span>
-            <button onClick={() => setQuantity(q => q + 1)} style={{ 
-              width: 32, 
-              height: 32, 
-              borderRadius: 8, 
-              border: '1px solid #eee', 
-              background: '#fff', 
-              fontWeight: 700, 
-              fontSize: 18,
-              '@media (max-width: 480px)': {
-                width: '28px',
-                height: '28px',
-                fontSize: '16px'
-              }
-            }}>+</button>
-            <span style={{ 
-              color: '#888', 
-              fontSize: 15, 
-              marginLeft: 12,
-              '@media (max-width: 768px)': {
-                marginLeft: '8px',
-                fontSize: '14px'
-              }
-            }}>Сагсанд байгаа: {isInCart ? isInCart.quantity : 0}</span>
+          <div className="stock-info">{product.piece > 0 ? `${product.piece} ширхэг байна` : 'Бэлэн бараа дууссан'}</div>
+          <div className="quantity-section">
+            <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="quantity-btn">-</button>
+            <span className="quantity-display">{quantity}</span>
+            <button onClick={() => setQuantity(q => q + 1)} className="quantity-btn">+</button>
+            <span className="cart-info">Сагсанд байгаа: {isInCart ? isInCart.quantity : 0}</span>
           </div>
-          <div style={{ 
-            display: 'flex', 
-            gap: 12, 
-            marginBottom: 16,
-            '@media (max-width: 768px)': {
-              flexDirection: 'column',
-              gap: '8px'
-            }
-          }}>
-            <button style={{ 
-              flex: 1, 
-              background: '#fff', 
-              color: '#f8991b', 
-              border: '2px solid #f8991b', 
-              borderRadius: 8, 
-              padding: '14px 0', 
-              fontWeight: 700, 
-              fontSize: 16, 
-              cursor: 'pointer',
-              '@media (max-width: 768px)': {
-                padding: '12px 0',
-                fontSize: '15px'
-              }
-            }} onClick={addToCart}>Сагсанд хийх</button>
-            <button style={{ 
-              flex: 1, 
-              background: '#f8991b', 
-              color: '#fff', 
-              border: 'none', 
-              borderRadius: 8, 
-              padding: '14px 0', 
-              fontWeight: 700, 
-              fontSize: 16, 
-              cursor: 'pointer',
-              '@media (max-width: 768px)': {
-                padding: '12px 0',
-                fontSize: '15px'
-              }
-            }} onClick={() => { addToCart(); navigate('/cart'); }}>Худалдан авах</button>
+          <div className="purchase-buttons">
+            <button className="add-to-cart-btn" onClick={addToCart}>Сагсанд хийх</button>
+            <button className="buy-now-btn" onClick={() => { addToCart(); navigate('/cart'); }}>Худалдан авах</button>
           </div>
-          <div style={{ 
-            color: '#222', 
-            fontSize: 15, 
-            marginBottom: 8,
-            '@media (max-width: 480px)': {
-              fontSize: '14px'
-            }
-          }}>Бэлэн бараа 08-48 цагт хүргэгдэнэ</div>
+          <div className="delivery-info">Бэлэн бараа 08-48 цагт хүргэгдэнэ</div>
           
-          <div style={{ 
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            gap: 12, 
-            marginBottom: 24,
-            '@media (max-width: 768px)': {
-              gap: '8px',
-              marginBottom: '20px'
-            }
-          }}>
+          <div className="payment-options">
             {paymentOptions.map(opt => (
-              <div key={opt.name} style={{ 
-                background: '#f3f4f6', 
-                borderRadius: 8, 
-                padding: '10px 18px', 
-                minWidth: 180, 
-                fontWeight: 600, 
-                color: '#222', 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'flex-start',
-                '@media (max-width: 768px)': {
-                  minWidth: 'auto',
-                  flex: '1 1 calc(50% - 4px)',
-                  padding: '8px 12px'
-                },
-                '@media (max-width: 480px)': {
-                  flex: '1 1 100%',
-                  padding: '10px 16px'
-                }
-              }}>
-                <span style={{ 
-                  fontSize: 16,
-                  '@media (max-width: 480px)': {
-                    fontSize: '15px'
-                  }
-                }}>{opt.name}</span>
-                <span style={{ 
-                  fontSize: 13, 
-                  color: '#888', 
-                  fontWeight: 400,
-                  '@media (max-width: 480px)': {
-                    fontSize: '12px'
-                  }
-                }}>{opt.desc}</span>
+              <div key={opt.name} className="payment-option">
+                <span className="payment-name">{opt.name}</span>
+                <span className="payment-desc">{opt.desc}</span>
               </div>
             ))}
           </div>
           {/* Specs grid */}
-          <div style={{ 
-            borderTop: '1px solid #eee', 
-            marginTop: 24, 
-            paddingTop: 18,
-            '@media (max-width: 768px)': {
-              marginTop: '20px',
-              paddingTop: '16px'
-            }
-          }}>
-            <div style={{ 
-              display: 'flex', 
-              gap: 8, 
-              marginBottom: 18,
-              '@media (max-width: 768px)': {
-                gap: '6px',
-                marginBottom: '16px'
-              }
-            }}>
-              <button onClick={() => setTab('specs')} style={{ 
-                background: tab === 'specs' ? '#f8991b' : '#f3f4f6', 
-                color: tab === 'specs' ? '#fff' : '#222', 
-                border: 'none', 
-                borderRadius: 8, 
-                padding: '8px 18px', 
-                fontWeight: 700, 
-                fontSize: 15, 
-                cursor: 'pointer',
-                '@media (max-width: 480px)': {
-                  padding: '6px 12px',
-                  fontSize: '14px'
-                }
-              }}>Техникийн үзүүлэлт</button>
-              <button onClick={() => setTab('desc')} style={{ 
-                background: tab === 'desc' ? '#f8991b' : '#f3f4f6', 
-                color: tab === 'desc' ? '#fff' : '#222', 
-                border: 'none', 
-                borderRadius: 8, 
-                padding: '8px 18px', 
-                fontWeight: 700, 
-                fontSize: 15, 
-                cursor: 'pointer',
-                '@media (max-width: 480px)': {
-                  padding: '6px 12px',
-                  fontSize: '14px'
-                }
-              }}>Танилцуулга</button>
+          <div className="product-tabs">
+            <div className="tab-buttons">
+              <button onClick={() => setTab('specs')} className={`tab-btn ${tab === 'specs' ? 'active' : ''}`}>
+                Техникийн үзүүлэлт
+              </button>
+              <button onClick={() => setTab('desc')} className={`tab-btn ${tab === 'desc' ? 'active' : ''}`}>
+                Танилцуулга
+              </button>
             </div>
             {tab === 'specs' && (
-              <div>
+              <div className="tab-content">
                 {product.specifications ? (
-                  <div style={{ 
-                    color: '#444', 
-                    fontSize: 16, 
-                    lineHeight: 1.6, 
-                    whiteSpace: 'pre-line',
-                    '@media (max-width: 480px)': {
-                      fontSize: '15px'
-                    }
-                  }}>
+                  <div className="specifications-text">
                     {product.specifications}
                   </div>
                 ) : (
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(2, 1fr)', 
-                    gap: 12,
-                    '@media (max-width: 768px)': {
-                      gridTemplateColumns: '1fr',
-                      gap: '8px'
-                    }
-                  }}>
+                  <div className="specs-grid">
                     {product.brand && product.brand.name && <div><b>Брэнд:</b> {product.brand.name}</div>}
                     {product.processor && <div><b>Процессор:</b> {product.processor}</div>}
                     {product.gpu && <div><b>График карт:</b> {product.gpu}</div>}
@@ -753,98 +292,27 @@ function ProductDetail() {
               </div>
             )}
             {tab === 'desc' && (
-              <div style={{ 
-                color: '#444', 
-                fontSize: 16, 
-                lineHeight: 1.6,
-                '@media (max-width: 480px)': {
-                  fontSize: '15px'
-                }
-              }}>{product.description || 'Тайлбар байхгүй.'}</div>
+              <div className="tab-content">
+                <div className="description-text">{product.description || 'Тайлбар байхгүй.'}</div>
+              </div>
             )}
           </div>
         </div>
       </div>
       {/* Similar Products */}
       {similarProducts.length > 0 && (
-        <div style={{ 
-          maxWidth: 1200, 
-          margin: '32px auto 0 auto', 
-          background: '#fff', 
-          borderRadius: 12, 
-          boxShadow: '0 2px 12px rgba(8,15,70,0.06)', 
-          padding: 24,
-          '@media (max-width: 768px)': {
-            margin: '20px 12px 0 12px',
-            padding: '20px',
-            borderRadius: '10px'
-          },
-          '@media (max-width: 480px)': {
-            margin: '16px 8px 0 8px',
-            padding: '16px',
-            borderRadius: '8px'
-          }
-        }}>
-          <h2 style={{ 
-            fontSize: 20, 
-            fontWeight: 700, 
-            marginBottom: 16,
-            '@media (max-width: 480px)': {
-              fontSize: '18px',
-              marginBottom: '12px'
-            }
-          }}>Ижил төстэй бүтээгдэхүүнүүд</h2>
-          <div style={{ 
-            display: 'flex', 
-            overflowX: 'auto', 
-            paddingBottom: 8,
-            gap: '12px',
-            '@media (max-width: 768px)': {
-              gap: '8px'
-            }
-          }}>
+        <div className="related-products-section">
+          <h2 className="section-title">Ижил төстэй бүтээгдэхүүнүүд</h2>
+          <div className="products-scroll">
             {similarProducts.map(renderSimilarProductCard)}
           </div>
         </div>
       )}
       {/* Last Seen Products */}
       {lastSeenProducts.length > 0 && (
-        <div style={{ 
-          maxWidth: 1200, 
-          margin: '32px auto 0 auto', 
-          background: '#fff', 
-          borderRadius: 12, 
-          boxShadow: '0 2px 12px rgba(8,15,70,0.06)', 
-          padding: 24,
-          '@media (max-width: 768px)': {
-            margin: '20px 12px 0 12px',
-            padding: '20px',
-            borderRadius: '10px'
-          },
-          '@media (max-width: 480px)': {
-            margin: '16px 8px 0 8px',
-            padding: '16px',
-            borderRadius: '8px'
-          }
-        }}>
-          <h2 style={{ 
-            fontSize: 20, 
-            fontWeight: 700, 
-            marginBottom: 16,
-            '@media (max-width: 480px)': {
-              fontSize: '18px',
-              marginBottom: '12px'
-            }
-          }}>Сүүлд үзсэн бүтээгдэхүүнүүд</h2>
-          <div style={{ 
-            display: 'flex', 
-            overflowX: 'auto', 
-            paddingBottom: 8,
-            gap: '12px',
-            '@media (max-width: 768px)': {
-              gap: '8px'
-            }
-          }}>
+        <div className="related-products-section">
+          <h2 className="section-title">Сүүлд үзсэн бүтээгдэхүүнүүд</h2>
+          <div className="products-scroll">
             {lastSeenProducts.map(renderLastSeenProductCard)}
           </div>
         </div>
