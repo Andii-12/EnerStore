@@ -375,6 +375,7 @@
     background: #f8f3ed;
     margin: 0 0 20px 0;
     border-radius: 0 0 16px 0;
+    position: relative;
   }
   
   .clear-filters-btn {
@@ -658,28 +659,9 @@
   }
 }
 
-/* Mobile close button styling */
+/* Mobile close button styling - REMOVED since we don't need it */
 @media (max-width: 600px) {
   .sidebar-header::after {
-    content: '✕';
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 24px;
-    color: #666;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-  }
-  
-  .sidebar-header::after:hover {
-    background: rgba(0, 0, 0, 0.1);
-    color: #333;
+    display: none;
   }
 } 
