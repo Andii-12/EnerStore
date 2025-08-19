@@ -85,13 +85,6 @@ function AllProductsPage() {
   // Responsive sidebar toggle for mobile
   const handleSidebarToggle = () => setSidebarOpen(v => !v);
   
-  // Close sidebar when clicking outside on mobile
-  const handleSidebarClose = () => {
-    if (window.innerWidth <= 600) {
-      setSidebarOpen(false);
-    }
-  };
-
   // Close sidebar when filter is selected on mobile
   const handleFilterSelect = (filterType, value) => {
     if (filterType === 'category') {
@@ -129,24 +122,6 @@ function AllProductsPage() {
         <button className="sidebar-toggle-btn" onClick={handleSidebarToggle}>
           {sidebarOpen ? '✕ Фильтер хаах' : '☰ Фильтер харах'}
         </button>
-        
-        {/* Mobile Overlay Backdrop */}
-        {sidebarOpen && window.innerWidth <= 600 && (
-          <div 
-            className="mobile-overlay"
-            onClick={handleSidebarClose}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.5)',
-              zIndex: 1000,
-              cursor: 'pointer'
-            }}
-          />
-        )}
         
         <aside className={`all-products-sidebar${sidebarOpen ? ' open' : ''}`}>
           {/* Clear Filters Button */}

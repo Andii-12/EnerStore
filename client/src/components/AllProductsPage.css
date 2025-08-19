@@ -254,7 +254,7 @@
   }
 }
 
-/* Mobile Overlay Sidebar */
+/* Mobile Overlay Sidebar - FIXED */
 @media (max-width: 600px) {
   .all-products-layout {
     flex-direction: column;
@@ -269,15 +269,14 @@
     position: fixed;
     left: -100%;
     top: 0;
-    width: 85vw;
-    max-width: 320px;
-    height: 100vh;
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
     overflow-y: auto;
     z-index: 1001;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    box-shadow: none; /* Remove shadow since it's full screen */
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: #fff;
-    border-radius: 0 16px 16px 0;
+    border-radius: 0; /* No border radius for full screen */
     margin: 0;
     padding: 0 0 24px 0;
     border: none;
@@ -370,43 +369,68 @@
     background: #fafafa;
   }
   
-  /* Mobile Sidebar Content */
+  /* Mobile Sidebar Content - IMPROVED */
   .sidebar-header {
     padding: 20px 20px 0 20px;
+    background: #f8f3ed;
+    margin: 0 0 20px 0;
+    border-radius: 0 0 16px 0;
   }
   
   .clear-filters-btn {
-    padding: 14px 20px;
-    font-size: 15px;
-    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 16px;
+    border-radius: 12px;
     font-weight: 700;
-    background: linear-gradient(135deg, #f8f3ed 0%, #f0e6d9 100%);
-    border: 1px solid #f0e6d9;
-    min-height: 48px;
+    background: #f8991b;
+    color: #fff;
+    border: none;
+    min-height: 52px;
     width: 100%;
+    box-shadow: 0 4px 12px rgba(248, 153, 27, 0.3);
   }
   
   .sidebar-section {
     margin: 24px 0 0 0;
+    padding: 0 20px;
   }
   
   .sidebar-title {
-    margin: 0 0 12px 20px;
-    font-size: 17px;
+    margin: 0 0 16px 0;
+    font-size: 18px;
     color: #1a1a1a;
+    font-weight: 800;
+    padding: 0 0 8px 0;
+    border-bottom: 2px solid #f0e6d9;
   }
   
   .sidebar-nav-item {
-    padding: 16px 20px;
-    font-size: 15px;
-    margin-bottom: 2px;
+    padding: 18px 20px;
+    font-size: 16px;
+    margin-bottom: 4px;
     font-weight: 500;
-    min-height: 48px;
+    min-height: 56px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+  
+  .sidebar-nav-item:hover {
+    background: rgba(248, 153, 27, 0.1);
+    border-color: #f0e6d9;
+  }
+  
+  .sidebar-nav-item.active {
+    background: #f8f3ed;
+    color: #f8991b;
+    font-weight: 700;
+    border-color: #f8991b;
+    border-left: none;
   }
   
   .company-logo {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -418,9 +442,7 @@
   }
   
   .all-products-sidebar {
-    width: 90vw;
-    max-width: 300px;
-    border-radius: 0 12px 12px 0;
+    width: 100vw;
   }
   
   .sidebar-toggle-btn {
@@ -453,19 +475,19 @@
   }
   
   .sidebar-title {
-    margin: 0 0 10px 16px;
-    font-size: 16px;
+    margin: 0 0 12px 0;
+    font-size: 17px;
   }
   
   .sidebar-nav-item {
-    padding: 14px 16px;
-    font-size: 14px;
+    padding: 16px 16px;
+    font-size: 15px;
     min-height: 52px;
   }
   
   .company-logo {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
   
   .sort-select {
@@ -522,23 +544,10 @@
   }
 }
 
-/* Mobile overlay backdrop */
+/* Mobile overlay backdrop - REMOVED since sidebar is now full screen */
 @media (max-width: 600px) {
   .all-products-sidebar::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .all-products-sidebar.open::before {
-    opacity: 1;
+    display: none;
   }
 }
 
@@ -554,7 +563,7 @@
   }
 }
 
-/* Mobile overlay styles */
+/* Mobile overlay styles - UPDATED */
 .mobile-overlay {
   position: fixed;
   top: 0;
@@ -586,17 +595,17 @@
   
   /* Mobile sidebar scrollbar styling */
   .all-products-sidebar::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
   
   .all-products-sidebar::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 3px;
+    border-radius: 4px;
   }
   
   .all-products-sidebar::-webkit-scrollbar-thumb {
     background: #c1c1c1;
-    border-radius: 3px;
+    border-radius: 4px;
   }
   
   .all-products-sidebar::-webkit-scrollbar-thumb:hover {
@@ -646,5 +655,31 @@
   
   .sidebar-toggle-btn {
     margin-bottom: 12px;
+  }
+}
+
+/* Mobile close button styling */
+@media (max-width: 600px) {
+  .sidebar-header::after {
+    content: '✕';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+  }
+  
+  .sidebar-header::after:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
   }
 } 
