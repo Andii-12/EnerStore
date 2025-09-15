@@ -164,6 +164,30 @@ function OrdersAdmin() {
     <div style={{ padding: '20px', maxWidth: '1400px', margin: '0 auto' }}>
       <h2 style={{ marginBottom: '20px', color: '#333' }}>Захиалгын удирдлага</h2>
       
+      {/* Process Section */}
+      <div style={{ 
+        background: '#fff3cd', 
+        border: '1px solid #ffeaa7', 
+        borderRadius: '8px', 
+        padding: '16px', 
+        marginBottom: '24px' 
+      }}>
+        <div style={{ 
+          color: '#856404', 
+          fontSize: '14px', 
+          fontWeight: '600',
+          marginBottom: '8px' 
+        }}>
+          Анхаарах зүйл !
+        </div>
+        <div style={{ 
+          color: '#856404', 
+          fontSize: '13px' 
+        }}>
+          Нэвтэрч орсон хэрэглэгчийн хаяг болон дугаараа шалгана уу энэ хаяг болон дугаараар хүргэлт хийгдэнэ !
+        </div>
+      </div>
+      
       {/* Statistics Cards */}
       {stats && (
         <div style={{ 

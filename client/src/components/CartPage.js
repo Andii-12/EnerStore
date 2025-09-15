@@ -3,6 +3,7 @@ import Header from './Header';
 import MainHeader from './MainHeader';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 import './CartPage.css';
 
 function CartPage() {
@@ -42,6 +43,71 @@ function CartPage() {
     const randomOrderNumber = Math.floor(10000 + Math.random() * 90000).toString();
     setOrderNumber(randomOrderNumber);
     setShowBankModal(true);
+  };
+
+  const handleOrderConfirm = async () => {
+    try {
+      // Get current user from localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      
+      if (!user) {
+        alert('Нэвтрэх шаардлагатай');
+        return;
+      }
+
+      // Prepare order data
+      const orderData = {
+        orderNumber: orderNumber,
+        customer: user._id,
+        customerInfo: {
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+          phone: user.phone,
+          address: user.address?.street || '',
+          city: user.address?.city || '',
+          postalCode: user.address?.zipCode || ''
+        },
+        items: cart.map(item => ({
+          product: item._id,
+          productName: item.name,
+          productImage: item.image || item.thumbnail || '',
+          quantity: item.quantity,
+          price: item.price,
+          totalPrice: item.price * item.quantity
+        })),
+        subtotal: total,
+        shippingCost: 0,
+        tax: 0,
+        total: total,
+        status: 'pending',
+        paymentStatus: 'pending',
+        paymentMethod: 'bank_transfer',
+        notes: `Гүйлгээний утга: ${orderNumber}`,
+        adminNotes: `Захиалгын дугаар: ${orderNumber}`
+      };
+
+      // Send order to backend
+      const response = await fetch(`${API_ENDPOINTS.ORDERS}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      if (response.ok) {
+        // Order created successfully
+        setShowBankModal(false);
+        updateCart([]); // Clear cart
+        alert('Захиалга амжилттай хийгдлээ!');
+      } else {
+        const errorData = await response.json();
+        alert('Захиалга хийхэд алдаа гарлаа: ' + (errorData.error || 'Тодорхойгүй алдаа'));
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      alert('Серверт холбогдоход алдаа гарлаа');
+    }
   };
 
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -267,11 +333,7 @@ function CartPage() {
             
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
-                onClick={() => {
-                  setShowBankModal(false);
-                  // Clear cart after successful order
-                  updateCart([]);
-                }}
+                onClick={handleOrderConfirm}
                 style={{
                   flex: 1,
                   background: '#28a745',
