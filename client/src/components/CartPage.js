@@ -7,6 +7,8 @@ import './CartPage.css';
 
 function CartPage() {
   const [cart, setCart] = useState([]);
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [orderNumber, setOrderNumber] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,6 +37,13 @@ function CartPage() {
     updateCart([]);
   };
 
+  const handleBuyNow = () => {
+    // Generate random 5-digit order number
+    const randomOrderNumber = Math.floor(10000 + Math.random() * 90000).toString();
+    setOrderNumber(randomOrderNumber);
+    setShowBankModal(true);
+  };
+
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   return (
@@ -42,18 +51,6 @@ function CartPage() {
       <Header />
       <MainHeader />
       <div className="cart-container">
-        {/* Stepper */}
-        <div className="cart-stepper">
-          {['Сагс', 'Хаяг', 'Төлбөр', 'Дуусгах'].map((step, idx) => (
-            <div key={step} className="stepper-step">
-              <div className={`stepper-circle ${idx === 0 ? 'active' : ''}`}>
-                {idx === 0 ? '✓' : ''}
-              </div>
-              <span className={`stepper-text ${idx === 0 ? 'active' : ''}`}>{step}</span>
-              {idx < 3 && <div className="stepper-line" />}
-            </div>
-          ))}
-        </div>
         
         <div className="cart-layout">
           {/* Cart List */}
@@ -129,18 +126,187 @@ function CartPage() {
             <div className="shipping-info">
               Хүргэлтийн үнэ: <span className="shipping-price">0₮</span>
             </div>
+            <div className="down-payment-info">
+              Урьдчилгаа 60% төлнө: <span className="down-payment-price">{Math.round(total * 0.6).toLocaleString()}₮</span>
+            </div>
             <div className="summary-divider" />
             <div className="total-amount">
               Нийт дүн <span className="total-price">{total.toLocaleString()}₮</span>
             </div>
-            <button className="action-btn buy-now-btn">ХУДАЛДАН АВАХ</button>
-            <button className="action-btn credit-btn">Зээлээр авах</button>
-            <div className="divider-text">Эсвэл</div>
-            <button className="action-btn invoice-btn">Нэхэмжлэл авах</button>
-            <button className="action-btn quote-btn">Үнийн санал авах</button>
+            <button className="action-btn buy-now-btn" onClick={handleBuyNow}>ХУДАЛДАН АВАХ</button>
           </div>
         </div>
       </div>
+      
+      {/* Bank Transfer Modal */}
+      {showBankModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '12px',
+            padding: '32px',
+            maxWidth: '500px',
+            width: '90%',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+            textAlign: 'center'
+          }}>
+            <div style={{ marginBottom: '24px' }}>
+              <h2 style={{ margin: '0 0 8px 0', color: '#333', fontSize: '24px', fontWeight: '700' }}>
+                Төлбөрийн мэдээлэл
+              </h2>
+              <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
+                Дараах банкны данс руу шилжүүлэг хийж захиалгаа баталгаажуулна уу
+              </p>
+            </div>
+            
+            {/* Order Number */}
+            <div style={{
+              background: '#e3f2fd',
+              border: '2px solid #2196f3',
+              borderRadius: '8px',
+              padding: '16px',
+              marginBottom: '20px',
+              textAlign: 'center'
+            }}>
+              <div style={{ color: '#1976d2', fontSize: '14px', marginBottom: '8px', fontWeight: '600' }}>
+                Захиалгын дугаар:
+              </div>
+              <div style={{
+                background: '#fff',
+                border: '2px solid #2196f3',
+                borderRadius: '6px',
+                padding: '12px',
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#1976d2',
+                fontFamily: 'monospace',
+                letterSpacing: '2px'
+              }}>
+                {orderNumber}
+              </div>
+              <div style={{ color: '#666', fontSize: '12px', marginTop: '8px' }}>
+                Гүйлгээний утга дээр бичнэ үү !
+              </div>
+            </div>
+            
+            <div style={{
+              background: '#f8f9fa',
+              border: '2px solid #e9ecef',
+              borderRadius: '8px',
+              padding: '20px',
+              marginBottom: '24px'
+            }}>
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ color: '#666', fontSize: '14px', marginBottom: '4px' }}>
+                  Банкны дансны дугаар:
+                </div>
+                <div style={{
+                  background: '#fff',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  padding: '12px',
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  color: '#333',
+                  fontFamily: 'monospace',
+                  letterSpacing: '1px'
+                }}>
+                  BAN 37000500 5133562350
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ color: '#666', fontSize: '14px', marginBottom: '4px' }}>
+                  Байгууллагын нэр:
+                </div>
+                <div style={{
+                  background: '#fff',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  padding: '12px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: '#333'
+                }}>
+                  Enerstore LLC
+                </div>
+              </div>
+              
+              <div>
+                <div style={{ color: '#666', fontSize: '14px', marginBottom: '4px' }}>
+                  Төлөх дүн:
+                </div>
+                <div style={{
+                  background: '#fff',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  padding: '12px',
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  color: '#f8991b'
+                }}>
+                  {Math.round(total * 0.6).toLocaleString()}₮
+                </div>
+                <div style={{ color: '#888', fontSize: '12px', marginTop: '4px' }}>
+                  (Урьдчилгаа 60%)
+                </div>
+              </div>
+            </div>
+            
+            
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => {
+                  setShowBankModal(false);
+                  // Clear cart after successful order
+                  updateCart([]);
+                }}
+                style={{
+                  flex: 1,
+                  background: '#28a745',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Захиалга хийсэн
+              </button>
+              <button
+                onClick={() => setShowBankModal(false)}
+                style={{
+                  flex: 1,
+                  background: '#6c757d',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Цуцлах
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <Footer />
     </div>
   );

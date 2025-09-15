@@ -7,13 +7,6 @@ import Footer from './Footer';
 import { API_ENDPOINTS } from '../config/api';
 import './ProductDetail.css';
 
-const paymentOptions = [
-  { name: 'Голомт банк', desc: 'Хэрэглээний зээл' },
-  { name: 'StorePay', desc: 'Төлбөрөө 4 хувааж төл' },
-  { name: 'Omniway', desc: 'Төлбөрөө 2-4 хувааж төл' },
-  { name: 'Pocket', desc: 'Урьдчилгаагүй шуурхай' },
-  { name: 'Sono', desc: 'Хүү ТЭГ, шимтгэл ТЭГ.' },
-];
 
 function ProductDetail() {
   const { id } = useParams();
@@ -30,6 +23,11 @@ function ProductDetail() {
   const [hoveredSimilar, setHoveredSimilar] = useState(null);
   const [hoveredLastSeen, setHoveredLastSeen] = useState(null);
   const [saleCountdown, setSaleCountdown] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
 
   useEffect(() => {
     fetch(`${API_ENDPOINTS.PRODUCTS}/${id}`)
@@ -44,6 +42,10 @@ function ProductDetail() {
   useEffect(() => {
     setFavorites(JSON.parse(localStorage.getItem('favorites') || '[]'));
     setCart(JSON.parse(localStorage.getItem('cart') || '[]'));
+    
+    // Check for logged in user
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) setLoggedInUser(user);
   }, [id]);
 
   // Last seen logic
@@ -101,7 +103,37 @@ function ProductDetail() {
     window.dispatchEvent(new Event('storage'));
   };
 
+  const handleLogin = async () => {
+    setLoginError('');
+    try {
+      const res = await fetch(API_ENDPOINTS.CUSTOMER_LOGIN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword })
+      });
+      if (res.ok) {
+        const user = await res.json();
+        localStorage.setItem('user', JSON.stringify(user));
+        setLoggedInUser(user);
+        setShowLoginModal(false);
+        setLoginEmail('');
+        setLoginPassword('');
+        setLoginError('');
+      } else {
+        const data = await res.json();
+        setLoginError(data.error || 'Имэйл эсвэл нууц үг буруу байна.');
+      }
+    } catch (error) {
+      setLoginError('Серверт холбогдоход алдаа гарлаа.');
+    }
+  };
+
   const addToCart = () => {
+    if (!loggedInUser) {
+      setShowLoginModal(true);
+      return;
+    }
+    
     let c = JSON.parse(localStorage.getItem('cart') || '[]');
     const exists = c.find(p => p._id === product._id);
     if (!exists) {
@@ -112,6 +144,16 @@ function ProductDetail() {
     localStorage.setItem('cart', JSON.stringify(c));
     setCart(c);
     window.dispatchEvent(new Event('storage'));
+  };
+
+  const handleBuyNow = () => {
+    if (!loggedInUser) {
+      setShowLoginModal(true);
+      return;
+    }
+    
+    addToCart();
+    navigate('/cart');
   };
 
   // Similar products: same category, not current, up to 6
@@ -249,18 +291,9 @@ function ProductDetail() {
           </div>
           <div className="purchase-buttons">
             <button className="add-to-cart-btn" onClick={addToCart}>Сагсанд хийх</button>
-            <button className="buy-now-btn" onClick={() => { addToCart(); navigate('/cart'); }}>Худалдан авах</button>
+            <button className="buy-now-btn" onClick={handleBuyNow}>Худалдан авах</button>
           </div>
-          <div className="delivery-info">Бэлэн бараа 08-48 цагт хүргэгдэнэ</div>
-          
-          <div className="payment-options">
-            {paymentOptions.map(opt => (
-              <div key={opt.name} className="payment-option">
-                <span className="payment-name">{opt.name}</span>
-                <span className="payment-desc">{opt.desc}</span>
-              </div>
-            ))}
-          </div>
+          <div className="delivery-info">Таны бараа 24-48 цагийн дотор бэлэн болно</div>
           {/* Specs grid */}
           <div className="product-tabs">
             <div className="tab-buttons">
@@ -317,6 +350,154 @@ function ProductDetail() {
           </div>
         </div>
       )}
+      
+      {/* Login Modal */}
+      {showLoginModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '12px',
+            padding: '32px',
+            maxWidth: '400px',
+            width: '90%',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <h2 style={{ margin: '0 0 8px 0', color: '#333', fontSize: '24px', fontWeight: '700' }}>
+                Нэвтрэх
+              </h2>
+              <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
+                Захиалга хийхийн тулд нэвтрэх шаардлагатай
+              </p>
+            </div>
+            
+            {loginError && (
+              <div style={{
+                background: '#f8d7da',
+                color: '#721c24',
+                padding: '12px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                fontSize: '14px'
+              }}>
+                {loginError}
+              </div>
+            )}
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333' }}>
+                Имэйл
+              </label>
+              <input
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="Имэйл хаягаа оруулна уу"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+            
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333' }}>
+                Нууц үг
+              </label>
+              <input
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Нууц үгээ оруулна уу"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={handleLogin}
+                style={{
+                  flex: 1,
+                  background: '#f8991b',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Нэвтрэх
+              </button>
+              <button
+                onClick={() => {
+                  setShowLoginModal(false);
+                  setLoginError('');
+                  setLoginEmail('');
+                  setLoginPassword('');
+                }}
+                style={{
+                  flex: 1,
+                  background: '#6c757d',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Цуцлах
+              </button>
+            </div>
+            
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+              <span style={{ color: '#666', fontSize: '14px' }}>Бүртгэлгүй юу? </span>
+              <button
+                onClick={() => {
+                  setShowLoginModal(false);
+                  navigate('/register');
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#f8991b',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                Бүртгүүлэх
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <Footer />
     </>
   );
