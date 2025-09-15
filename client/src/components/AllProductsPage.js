@@ -111,10 +111,37 @@ function AllProductsPage() {
   const handleFilterSelect = (filterType, value) => {
     if (filterType === 'category') {
       setSelectedCategory(value);
+      // Update URL with category parameter
+      const params = new URLSearchParams(location.search);
+      if (value) {
+        params.set('category', value);
+      } else {
+        params.delete('category');
+      }
+      const newUrl = `${location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+      window.history.pushState({}, '', newUrl);
     } else if (filterType === 'brand') {
       setSelectedBrand(value);
+      // Update URL with brand parameter
+      const params = new URLSearchParams(location.search);
+      if (value) {
+        params.set('brand', value);
+      } else {
+        params.delete('brand');
+      }
+      const newUrl = `${location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+      window.history.pushState({}, '', newUrl);
     } else if (filterType === 'company') {
       setSelectedCompany(value);
+      // Update URL with company parameter
+      const params = new URLSearchParams(location.search);
+      if (value) {
+        params.set('company', value);
+      } else {
+        params.delete('company');
+      }
+      const newUrl = `${location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+      window.history.pushState({}, '', newUrl);
     }
     
     // Close sidebar on mobile after filter selection
@@ -128,6 +155,10 @@ function AllProductsPage() {
     setSelectedCategory('');
     setSelectedBrand('');
     setSelectedCompany('');
+    
+    // Clear URL parameters
+    const newUrl = location.pathname;
+    window.history.pushState({}, '', newUrl);
     
     // Close sidebar on mobile after clearing filters
     if (window.innerWidth <= 600) {
