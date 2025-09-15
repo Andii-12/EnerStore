@@ -39,11 +39,13 @@ router.get('/', async (req, res) => {
     const filter = {};
     if (req.query.category) {
       const categories = req.query.category.split(',');
+      console.log('🔍 Filtering by categories:', categories);
       // Match by category name in both legacy category field and new categories array
       filter.$or = [
         { categories: { $in: categories } },
         { category: { $in: categories } }
       ];
+      console.log('🔍 Filter query:', JSON.stringify(filter));
     }
     if (req.query.brand) {
       // Handle both brand name and brand ID
@@ -70,9 +72,16 @@ router.get('/', async (req, res) => {
       filter.price = { $lt: '$originalPrice' };
       filter.saleEnd = { $gt: now };
     }
+    
+    console.log('🔍 Final filter:', JSON.stringify(filter));
     const products = await Product.find(filter).populate('company', 'name logo').populate('brand', 'name logo').sort(sort);
+    console.log('📦 Found products:', products.length);
+    if (products.length > 0) {
+      console.log('📦 Sample product categories:', products[0].categories, products[0].category);
+    }
     res.json(products);
   } catch (err) {
+    console.error('❌ Error in products route:', err);
     res.status(500).json({ error: err.message });
   }
 });

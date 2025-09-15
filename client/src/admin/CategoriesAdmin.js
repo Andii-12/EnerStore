@@ -10,7 +10,11 @@ function CategoriesAdmin() {
   useEffect(() => {
     fetch(API_ENDPOINTS.CATEGORIES)
       .then(res => res.json())
-      .then(data => setCategories(data));
+      .then(data => {
+        // Sort categories alphabetically by name
+        const sortedCategories = data.sort((a, b) => a.name.localeCompare(b.name, 'mn'));
+        setCategories(sortedCategories);
+      });
   }, []);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
@@ -36,7 +40,9 @@ function CategoriesAdmin() {
     });
     if (res.ok) {
       const newCategory = await res.json();
-      setCategories([...categories, newCategory]);
+      // Add new category and sort the list
+      const updatedCategories = [...categories, newCategory].sort((a, b) => a.name.localeCompare(b.name, 'mn'));
+      setCategories(updatedCategories);
       setForm({ name: '', image: '' });
       setImagePreview('');
     }
@@ -62,7 +68,10 @@ function CategoriesAdmin() {
     });
     if (res.ok) {
       const updatedCategory = await res.json();
-      setCategories(categories.map(category => category._id === editId ? updatedCategory : category));
+      // Update category and sort the list
+      const updatedCategories = categories.map(category => category._id === editId ? updatedCategory : category)
+        .sort((a, b) => a.name.localeCompare(b.name, 'mn'));
+      setCategories(updatedCategories);
       setEditId(null);
       setForm({ name: '', image: '' });
       setImagePreview('');
