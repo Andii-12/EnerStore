@@ -24,7 +24,6 @@ import AllProductsPage from './components/AllProductsPage';
 import BrandCarousel from './components/BrandCarousel';
 import './components/BrandCarousel.css';
 import './responsive.css';
-import TestAPI from './TestAPI';
 import ProductDetail from './components/ProductDetail';
 import CartPage from './components/CartPage';
 import UserRegistration from './components/UserRegistration';
@@ -648,17 +647,8 @@ function App() {
         console.log('🔍 Using backend:', baseUrl);
         console.log('🔍 Calling:', dynamicEndpoints.PRODUCTS);
         
-        // Fetch products from Railway with proper headers
-        const productsRes = await fetch(dynamicEndpoints.PRODUCTS, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Origin': 'http://localhost:3000'
-          },
-          mode: 'cors',
-          credentials: 'omit'
-        });
+        // Fetch products from Railway
+        const productsRes = await fetch(dynamicEndpoints.PRODUCTS);
         
         console.log('🔍 Response status:', productsRes.status);
         console.log('🔍 Response headers:', Object.fromEntries(productsRes.headers.entries()));
@@ -688,16 +678,7 @@ function App() {
     const fetchCategories = async () => {
       try {
         const dynamicEndpoints = await getDynamicApiEndpoints();
-        const categoriesRes = await fetch(dynamicEndpoints.CATEGORIES, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Origin': 'http://localhost:3000'
-          },
-          mode: 'cors',
-          credentials: 'omit'
-        });
+        const categoriesRes = await fetch(dynamicEndpoints.CATEGORIES);
         
         if (categoriesRes.ok) {
           const data = await categoriesRes.json();
@@ -744,12 +725,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/register" element={<UserRegistration />} />
         <Route path="/user/edit" element={<UserEdit />} />
-        <Route path="/" element={
-          <div>
-            <TestAPI />
-            <MainSite products={products} categories={categories} />
-          </div>
-        } />
+        <Route path="/" element={<MainSite products={products} categories={categories} />} />
       </Routes>
     </Router>
   );

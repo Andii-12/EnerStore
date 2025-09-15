@@ -1,17 +1,7 @@
 // API Configuration
-// Use Railway API directly with CORS handling
 const RAILWAY_URL = 'https://enerstore-production.up.railway.app';
-const API_BASE_URL = RAILWAY_URL; // Always use Railway for now
+const API_BASE_URL = RAILWAY_URL;
 const SOCKET_URL = RAILWAY_URL;
-
-// CORS workaround for development
-const corsHeaders = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-};
 
 // Always use Railway API
 export const getApiBaseUrl = async () => {
@@ -88,5 +78,4 @@ export default {
   SOCKET_URL,
   API_ENDPOINTS,
   SOCKET_CONFIG,
-  corsHeaders,
 }; 
