@@ -15,6 +15,8 @@ import CategoriesAdmin from './admin/CategoriesAdmin';
 import CarouselAdmin from './admin/CarouselAdmin';
 import AdminLayout from './admin/AdminLayout';
 import CompaniesAdmin from './admin/CompaniesAdmin';
+import BrandsAdmin from './admin/BrandsAdmin';
+import OrdersAdmin from './admin/OrdersAdmin';
 import UsersAdmin from './admin/UsersAdmin';
 import HeaderMenuAdmin from './admin/HeaderMenuAdmin';
 import { AdminAuthProvider } from './admin/AdminAuthContext';
@@ -718,6 +720,8 @@ function App() {
           <Route path="categories" element={<CategoriesAdmin />} />
           <Route path="carousel" element={<CarouselAdmin />} />
           <Route path="companies" element={<CompaniesAdmin />} />
+          <Route path="brands" element={<BrandsAdmin />} />
+          <Route path="orders" element={<OrdersAdmin />} />
           <Route path="users" element={<UsersAdmin />} />
           <Route path="header-menu" element={<HeaderMenuAdmin />} />
         </Route>

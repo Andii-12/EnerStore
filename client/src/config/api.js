@@ -37,6 +37,9 @@ export const API_ENDPOINTS = {
   
   // Carousel
   CAROUSEL: `${API_BASE_URL}/api/carousel`,
+  
+  // Orders
+  ORDERS: `${API_BASE_URL}/api/orders`,
 };
 
 // Dynamic API endpoints - always use Railway
@@ -55,6 +58,7 @@ export const getDynamicApiEndpoints = async () => {
     ADMIN_LOGIN: `${baseUrl}/api/admin/login`,
     HEADER_MENU_ITEMS: `${baseUrl}/api/header-menu-items`,
     CAROUSEL: `${baseUrl}/api/carousel`,
+    ORDERS: `${baseUrl}/api/orders`,
   };
 };
 

@@ -140,6 +140,9 @@ app.use('/api/carousel', carouselRoutes);
 const brandRoutes = require('./routes/brands');
 app.use('/api/brands', brandRoutes);
 
+const orderRoutes = require('./routes/orders');
+app.use('/api/orders', orderRoutes);
+
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);

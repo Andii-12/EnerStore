@@ -240,6 +240,27 @@ function AdminLayout() {
               </Link>
               
               <Link
+                to="/admin/orders"
+                onClick={closeMobileMenu}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'clamp(8px, 2vw, 12px)',
+                  padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)',
+                  borderRadius: 8,
+                  textDecoration: 'none',
+                  color: isActive('/admin/orders') ? '#fff' : '#333',
+                  background: isActive('/admin/orders') ? 'var(--color-accent)' : 'transparent',
+                  fontWeight: isActive('/admin/orders') ? 600 : 500,
+                  marginBottom: 'clamp(4px, 1vw, 8px)',
+                  transition: 'all 0.2s',
+                  fontSize: 'clamp(14px, 3.5vw, 16px)'
+                }}
+              >
+                📋 Захиалга
+              </Link>
+              
+              <Link
                 to="/admin/companies"
                 onClick={closeMobileMenu}
                 style={{
