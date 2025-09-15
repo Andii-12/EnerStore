@@ -85,7 +85,6 @@ function AdminLayout() {
             color: '#666', 
             textAlign: 'right',
             display: 'none',
-            '@media (min-width: 768px)': { display: 'block' }
           }}>
             {adminUser?.username}
           </div>
@@ -123,7 +122,6 @@ function AdminLayout() {
               background: 'rgba(0, 0, 0, 0.5)',
               zIndex: 999,
               display: 'block',
-              '@media (min-width: 768px)': { display: 'none' }
             }}
           />
         )}
@@ -141,12 +139,6 @@ function AdminLayout() {
           transition: 'left 0.3s ease',
           overflowY: 'auto',
           boxShadow: '2px 0 8px rgba(8,15,70,0.08)',
-          '@media (min-width: 768px)': {
-            position: 'static',
-            left: 'auto',
-            transform: 'none',
-            boxShadow: 'none'
-          }
         }}>
           <nav style={{ padding: 'clamp(16px, 4vw, 24px) 0' }}>
             <div style={{ padding: '0 clamp(16px, 4vw, 24px)' }}>
@@ -338,7 +330,6 @@ function AdminLayout() {
         <div style={{ 
           flex: 1, 
           marginLeft: 0,
-          '@media (min-width: 768px)': { marginLeft: 'clamp(250px, 30vw, 280px)' }
         }}>
           <Outlet />
         </div>

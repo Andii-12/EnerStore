@@ -5,11 +5,15 @@ require('dotenv').config();
 
 const app = express();
 
-// CORS configuration for production
+// CORS configuration for production and development
 const corsOptions = {
   origin: process.env.CORS_ORIGINS 
     ? process.env.CORS_ORIGINS.split(',') 
-    : ['http://localhost:3000'],
+    : [
+        'http://localhost:3000',
+        'https://enerstore.vercel.app',
+        'https://enerstore-production.up.railway.app'
+      ],
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -26,7 +30,11 @@ const io = new Server(server, {
   cors: { 
     origin: process.env.CORS_ORIGINS 
       ? process.env.CORS_ORIGINS.split(',') 
-      : ['http://localhost:3000'],
+      : [
+          'http://localhost:3000',
+          'https://enerstore.vercel.app',
+          'https://enerstore-production.up.railway.app'
+        ],
     credentials: true,
     methods: ["GET", "POST"]
   },

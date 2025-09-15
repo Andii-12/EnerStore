@@ -41,11 +41,7 @@ function Header() {
         <div className="header-contact" style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: 'clamp(2px, 1vw, 4px)',
-          '@media (min-width: 768px)': {
-            flexDirection: 'row',
-            gap: 'clamp(16px, 4vw, 24px)'
-          }
+          gap: 'clamp(2px, 1vw, 4px)'
         }}>
           <span style={{ 
             fontSize: 'clamp(11px, 2.5vw, 14px)', 

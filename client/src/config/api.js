@@ -1,35 +1,22 @@
 // API Configuration
-// Supports both local development and Railway deployment
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+// Use Railway API directly with CORS handling
+const RAILWAY_URL = 'https://enerstore-production.up.railway.app';
+const API_BASE_URL = RAILWAY_URL; // Always use Railway for now
+const SOCKET_URL = RAILWAY_URL;
 
-// Fallback to Railway if local server is not available
-const FALLBACK_RAILWAY_URL = 'https://enerstore-production.up.railway.app';
+// CORS workaround for development
+const corsHeaders = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+};
 
-// Smart API configuration that can fallback to Railway
+// Always use Railway API
 export const getApiBaseUrl = async () => {
-  // If environment variable is set, use it
-  if (process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL;
-  }
-  
-  // Try local server first
-  try {
-    const response = await fetch('http://localhost:5000/health', { 
-      method: 'GET',
-      timeout: 3000 
-    });
-    if (response.ok) {
-      console.log('✅ Local server available, using localhost:5000');
-      return 'http://localhost:5000';
-    }
-  } catch (error) {
-    console.log('⚠️ Local server not available, falling back to Railway');
-  }
-  
-  // Fallback to Railway
-  console.log('🌐 Using Railway backend:', FALLBACK_RAILWAY_URL);
-  return FALLBACK_RAILWAY_URL;
+  console.log('🌐 Using Railway backend:', RAILWAY_URL);
+  return RAILWAY_URL;
 };
 
 export const API_ENDPOINTS = {
@@ -62,7 +49,7 @@ export const API_ENDPOINTS = {
   CAROUSEL: `${API_BASE_URL}/api/carousel`,
 };
 
-// Dynamic API endpoints that can switch between local and Railway
+// Dynamic API endpoints - always use Railway
 export const getDynamicApiEndpoints = async () => {
   const baseUrl = await getApiBaseUrl();
   return {
@@ -101,4 +88,5 @@ export default {
   SOCKET_URL,
   API_ENDPOINTS,
   SOCKET_CONFIG,
+  corsHeaders,
 }; 

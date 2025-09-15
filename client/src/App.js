@@ -23,6 +23,8 @@ import CompanyDashboard from './components/CompanyDashboard';
 import AllProductsPage from './components/AllProductsPage';
 import BrandCarousel from './components/BrandCarousel';
 import './components/BrandCarousel.css';
+import './responsive.css';
+import TestAPI from './TestAPI';
 import ProductDetail from './components/ProductDetail';
 import CartPage from './components/CartPage';
 import UserRegistration from './components/UserRegistration';
@@ -35,8 +37,7 @@ console.log('🔍 Debug: Environment variables:', {
   REACT_APP_API_URL: process.env.REACT_APP_API_URL,
   REACT_APP_SOCKET_URL: process.env.REACT_APP_SOCKET_URL
 });
-console.log('🔍 Debug: Default API URL:', 'http://localhost:5000');
-console.log('🔍 Debug: Fallback Railway URL:', 'https://enerstore-production.up.railway.app');
+console.log('🔍 Debug: Using Railway API:', 'https://enerstore-production.up.railway.app');
 console.log('🔍 Debug: Products endpoint:', API_ENDPOINTS.PRODUCTS);
 console.log('🔍 Debug: Categories endpoint:', API_ENDPOINTS.CATEGORIES);
 
@@ -95,9 +96,6 @@ function NewProductsSection({ products }) {
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
           gap: 'clamp(16px, 3vw, 24px)',
-          '@media (max-width: 768px)': {
-            gridTemplateColumns: '1fr'
-          }
         }}>
           {newProducts.map(product => (
             <div
@@ -115,12 +113,6 @@ function NewProductsSection({ products }) {
                 position: 'relative', 
                 cursor: 'pointer', 
                 transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s',
-                '@media (max-width: 600px)': {
-                  flexDirection: 'row',
-                  gap: 'clamp(16px, 4vw, 20px)',
-                  minHeight: 'auto',
-                  padding: 'clamp(20px, 5vw, 24px)'
-                }
               }}
               onClick={() => navigate(`/products/${product._id}`)}
             >
@@ -135,12 +127,6 @@ function NewProductsSection({ products }) {
                   borderRadius: 'clamp(6px, 1.5vw, 8px)', 
                   background: '#f8f8f8', 
                   marginBottom: 'clamp(12px, 3vw, 16px)',
-                  '@media (max-width: 600px)': {
-                    width: 'clamp(100px, 25vw, 120px)',
-                    height: 'clamp(100px, 25vw, 120px)',
-                    marginBottom: 0,
-                    flexShrink: 0
-                  }
                 }} 
               />
               {/* Details */}
@@ -148,9 +134,6 @@ function NewProductsSection({ products }) {
                 flex: 1, 
                 display: 'flex', 
                 flexDirection: 'column',
-                '@media (max-width: 600px)': {
-                  minWidth: 0
-                }
               }}>
                 <div style={{ 
                   color: '#888', 
@@ -170,10 +153,6 @@ function NewProductsSection({ products }) {
                   WebkitLineClamp: 2, 
                   WebkitBoxOrient: 'vertical', 
                   overflow: 'hidden',
-                  '@media (max-width: 600px)': {
-                    fontSize: 'clamp(16px, 4vw, 18px)',
-                    marginBottom: 'clamp(8px, 2vw, 10px)'
-                  }
                 }}>
                   {product.name}
                 </div>
@@ -187,11 +166,6 @@ function NewProductsSection({ products }) {
                   WebkitBoxOrient: 'vertical', 
                   overflow: 'hidden', 
                   flex: 1,
-                  '@media (max-width: 600px)': {
-                    fontSize: 'clamp(14px, 3.5vw, 16px)',
-                    marginBottom: 'clamp(8px, 2vw, 10px)',
-                    WebkitLineClamp: 3
-                  }
                 }}>
                   {product.description}
                 </div>
@@ -203,9 +177,6 @@ function NewProductsSection({ products }) {
                     color: '#888', 
                     fontSize: 'clamp(11px, 2.5vw, 13px)', 
                     marginBottom: 'clamp(6px, 1.5vw, 8px)',
-                    '@media (max-width: 600px)': {
-                      marginBottom: 'clamp(8px, 2vw, 10px)'
-                    }
                   }}>
                     {product.company.logo && (
                       <img 
@@ -237,9 +208,6 @@ function NewProductsSection({ products }) {
                     flexDirection: 'column', 
                     alignItems: 'flex-start', 
                     gap: 2,
-                    '@media (max-width: 600px)': {
-                      marginTop: 'clamp(8px, 2vw, 10px)'
-                    }
                   }}>
                     <span style={{ 
                       color: '#aaa', 
@@ -292,10 +260,6 @@ function NewProductsSection({ products }) {
                     fontWeight: 700, 
                     fontSize: 'clamp(16px, 4vw, 20px)', 
                     marginTop: 'auto',
-                    '@media (max-width: 600px)': {
-                      marginTop: 'clamp(8px, 2vw, 10px)',
-                      fontSize: 'clamp(18px, 4.5vw, 22px)'
-                    }
                   }}>
                     {formatPrice(product.price)} ₮
                   </div>
@@ -393,9 +357,6 @@ function SaleProductsSection({ products }) {
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
           gap: 'clamp(16px, 3vw, 24px)',
-          '@media (max-width: 768px)': {
-            gridTemplateColumns: '1fr'
-          }
         }}>
           {saleProducts.map(product => {
             const now = new Date();
@@ -418,12 +379,6 @@ function SaleProductsSection({ products }) {
                   position: 'relative', 
                   cursor: 'pointer', 
                   transition: 'box-shadow 0.18s, border 0.18s, transform 0.18s',
-                  '@media (max-width: 600px)': {
-                    flexDirection: 'row',
-                    gap: 'clamp(16px, 4vw, 20px)',
-                    minHeight: 'auto',
-                    padding: 'clamp(20px, 5vw, 24px)'
-                  }
                 }}
                 onClick={() => navigate(`/products/${product._id}`)}
               >
@@ -438,12 +393,6 @@ function SaleProductsSection({ products }) {
                     borderRadius: 'clamp(6px, 1.5vw, 8px)', 
                     background: '#f8f8f8', 
                     marginBottom: 'clamp(12px, 3vw, 16px)',
-                    '@media (max-width: 600px)': {
-                      width: 'clamp(100px, 25vw, 120px)',
-                      height: 'clamp(100px, 25vw, 120px)',
-                      marginBottom: 0,
-                      flexShrink: 0
-                    }
                   }} 
                 />
                 {/* Details */}
@@ -451,9 +400,6 @@ function SaleProductsSection({ products }) {
                   flex: 1, 
                   display: 'flex', 
                   flexDirection: 'column',
-                  '@media (max-width: 600px)': {
-                    minWidth: 0
-                  }
                 }}>
                   <div style={{ 
                     color: '#888', 
@@ -473,10 +419,6 @@ function SaleProductsSection({ products }) {
                     WebkitLineClamp: 2, 
                     WebkitBoxOrient: 'vertical', 
                     overflow: 'hidden',
-                    '@media (max-width: 600px)': {
-                      fontSize: 'clamp(16px, 4vw, 18px)',
-                      marginBottom: 'clamp(8px, 2vw, 10px)'
-                    }
                   }}>
                     {product.name}
                   </div>
@@ -490,11 +432,6 @@ function SaleProductsSection({ products }) {
                     WebkitBoxOrient: 'vertical', 
                     overflow: 'hidden', 
                     flex: 1,
-                    '@media (max-width: 600px)': {
-                      fontSize: 'clamp(14px, 3.5vw, 16px)',
-                      marginBottom: 'clamp(8px, 2vw, 10px)',
-                      WebkitLineClamp: 3
-                    }
                   }}>
                     {product.description}
                   </div>
@@ -506,9 +443,6 @@ function SaleProductsSection({ products }) {
                       color: '#888', 
                       fontSize: 'clamp(11px, 2.5vw, 13px)', 
                       marginBottom: 'clamp(6px, 1.5vw, 8px)',
-                      '@media (max-width: 600px)': {
-                        marginBottom: 'clamp(8px, 2vw, 10px)'
-                      }
                     }}>
                       {product.company.logo && (
                         <img 
@@ -539,9 +473,6 @@ function SaleProductsSection({ products }) {
                     flexDirection: 'column', 
                     alignItems: 'flex-start', 
                     gap: 2,
-                    '@media (max-width: 600px)': {
-                      marginTop: 'clamp(8px, 2vw, 10px)'
-                    }
                   }}>
                     {isSale ? (
                       <>
@@ -586,9 +517,6 @@ function SaleProductsSection({ products }) {
                         color: 'var(--color-accent)', 
                         fontWeight: 700, 
                         fontSize: 'clamp(16px, 4vw, 20px)',
-                        '@media (max-width: 600px)': {
-                          fontSize: 'clamp(18px, 4.5vw, 22px)'
-                        }
                       }}>
                         {formatPrice(product.price)} ₮
                       </span>
@@ -712,22 +640,37 @@ function App() {
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        // Get the best available API endpoints
+        // Get Railway API endpoints
         const dynamicEndpoints = await getDynamicApiEndpoints();
         const baseUrl = await getApiBaseUrl();
         
-        console.log('🔍 Testing API connection...');
+        console.log('🔍 Fetching data from Railway...');
         console.log('🔍 Using backend:', baseUrl);
         console.log('🔍 Calling:', dynamicEndpoints.PRODUCTS);
         
-        // Fetch products using dynamic endpoints
-        const productsRes = await fetch(dynamicEndpoints.PRODUCTS);
+        // Fetch products from Railway with proper headers
+        const productsRes = await fetch(dynamicEndpoints.PRODUCTS, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Origin': 'http://localhost:3000'
+          },
+          mode: 'cors',
+          credentials: 'omit'
+        });
+        
+        console.log('🔍 Response status:', productsRes.status);
+        console.log('🔍 Response headers:', Object.fromEntries(productsRes.headers.entries()));
+        
         if (productsRes.ok) {
           const data = await productsRes.json();
           console.log('✅ API Data received:', data.length, 'products');
           setProducts(data);
         } else {
+          const errorText = await productsRes.text();
           console.error('❌ API Response not ok:', productsRes.status);
+          console.error('❌ Response text:', errorText);
         }
       } catch (error) {
         console.error('❌ API Error:', error);
@@ -745,10 +688,24 @@ function App() {
     const fetchCategories = async () => {
       try {
         const dynamicEndpoints = await getDynamicApiEndpoints();
-        const categoriesRes = await fetch(dynamicEndpoints.CATEGORIES);
+        const categoriesRes = await fetch(dynamicEndpoints.CATEGORIES, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Origin': 'http://localhost:3000'
+          },
+          mode: 'cors',
+          credentials: 'omit'
+        });
+        
         if (categoriesRes.ok) {
           const data = await categoriesRes.json();
           setCategories(data);
+        } else {
+          const errorText = await categoriesRes.text();
+          console.error('❌ Categories API Response not ok:', categoriesRes.status);
+          console.error('❌ Categories Response text:', errorText);
         }
       } catch (error) {
         console.error('❌ Categories fetch error:', error);
@@ -787,7 +744,12 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/register" element={<UserRegistration />} />
         <Route path="/user/edit" element={<UserEdit />} />
-        <Route path="/" element={<MainSite products={products} categories={categories} />} />
+        <Route path="/" element={
+          <div>
+            <TestAPI />
+            <MainSite products={products} categories={categories} />
+          </div>
+        } />
       </Routes>
     </Router>
   );
