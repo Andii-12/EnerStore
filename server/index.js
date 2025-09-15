@@ -14,6 +14,7 @@ const corsOptions = {
     const allowedOrigins = [
       'http://localhost:3000',
       'https://enerstore.vercel.app',
+      'https://ener-store-6csp.vercel.app',
       'https://enerstore-production.up.railway.app'
     ];
     
@@ -42,6 +43,7 @@ const io = new Server(server, {
     origin: [
       'http://localhost:3000',
       'https://enerstore.vercel.app',
+      'https://ener-store-6csp.vercel.app',
       'https://enerstore-production.up.railway.app'
     ],
     credentials: true,
