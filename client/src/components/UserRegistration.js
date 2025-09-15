@@ -78,7 +78,7 @@ function UserRegistration() {
     setMessage('');
 
     try {
-      const response = await fetch(API_ENDPOINTS.CUSTOMER_USERS, {
+      const response = await fetch(`${API_ENDPOINTS.CUSTOMER_USERS}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
