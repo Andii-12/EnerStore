@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 const Brand = require('../models/Brand');
+const Category = require('../models/Category');
 const mongoose = require('mongoose');
 
 // Search products
@@ -38,14 +39,22 @@ router.get('/', async (req, res) => {
     const filter = {};
     if (req.query.category) {
       const categories = req.query.category.split(',');
-      // Match by category name only
+      // Match by category name in both legacy category field and new categories array
       filter.$or = [
         { categories: { $in: categories } },
         { category: { $in: categories } }
       ];
     }
     if (req.query.brand) {
-      filter.brand = req.query.brand;
+      // Handle both brand name and brand ID
+      if (mongoose.Types.ObjectId.isValid(req.query.brand)) {
+        const brandDoc = await Brand.findById(req.query.brand);
+        if (brandDoc) {
+          filter.brand = brandDoc.name;
+        }
+      } else {
+        filter.brand = req.query.brand;
+      }
     }
     if (req.query.company) {
       filter.company = req.query.company;
@@ -54,6 +63,13 @@ router.get('/', async (req, res) => {
     if (req.query.sort === 'price-asc') sort = { price: 1 };
     if (req.query.sort === 'price-desc') sort = { price: -1 };
     if (req.query.sort === 'newest') sort = { createdAt: -1 };
+    if (req.query.sort === 'sale') {
+      // For sale products, filter by products with originalPrice > price and valid saleEnd
+      const now = new Date();
+      filter.originalPrice = { $exists: true, $gt: 0 };
+      filter.price = { $lt: '$originalPrice' };
+      filter.saleEnd = { $gt: now };
+    }
     const products = await Product.find(filter).populate('company', 'name logo').populate('brand', 'name logo').sort(sort);
     res.json(products);
   } catch (err) {
@@ -70,6 +86,22 @@ router.post('/', async (req, res) => {
       const brandDoc = await Brand.findById(brand);
       if (brandDoc) brandName = brandDoc.name;
     }
+    
+    // Convert category IDs to category names if needed
+    let categoryNames = [];
+    if (categories && Array.isArray(categories)) {
+      for (const catId of categories) {
+        if (mongoose.Types.ObjectId.isValid(catId)) {
+          const categoryDoc = await Category.findById(catId);
+          if (categoryDoc) {
+            categoryNames.push(categoryDoc.name);
+          }
+        } else {
+          categoryNames.push(catId); // Already a name
+        }
+      }
+    }
+    
     const product = new Product({
       name,
       price,
@@ -78,7 +110,8 @@ router.post('/', async (req, res) => {
       image: thumbnail || '', // Always set image field for frontend
       thumbnail,
       images,
-      categories,
+      categories: categoryNames, // Store category names
+      category: categoryNames[0] || '', // Also set legacy category field for backward compatibility
       company: companyId,
       soldCount: soldCount || 0,
       piece: piece || 0,
@@ -112,6 +145,22 @@ router.post('/sell', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { name, price, description, specifications, thumbnail, images, categories, companyId, saleEnd, originalPrice, piece, brand } = req.body;
+    
+    // Convert category IDs to category names if needed
+    let categoryNames = [];
+    if (categories && Array.isArray(categories)) {
+      for (const catId of categories) {
+        if (mongoose.Types.ObjectId.isValid(catId)) {
+          const categoryDoc = await Category.findById(catId);
+          if (categoryDoc) {
+            categoryNames.push(categoryDoc.name);
+          }
+        } else {
+          categoryNames.push(catId); // Already a name
+        }
+      }
+    }
+    
     const update = {
       name,
       price,
@@ -120,7 +169,8 @@ router.put('/:id', async (req, res) => {
       image: thumbnail || '', // Always set image field for frontend
       thumbnail,
       images,
-      categories,
+      categories: categoryNames, // Store category names
+      category: categoryNames[0] || '', // Also set legacy category field for backward compatibility
     };
     let brandNameUpdate = brand;
     if (brand && mongoose.Types.ObjectId.isValid(brand)) {

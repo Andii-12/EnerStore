@@ -682,7 +682,9 @@ function App() {
         
         if (categoriesRes.ok) {
           const data = await categoriesRes.json();
-          setCategories(data);
+          // Sort categories alphabetically
+          const sortedCategories = data.sort((a, b) => a.name.localeCompare(b.name, 'mn'));
+          setCategories(sortedCategories);
         } else {
           const errorText = await categoriesRes.text();
           console.error('❌ Categories API Response not ok:', categoriesRes.status);

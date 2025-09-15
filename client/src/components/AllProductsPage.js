@@ -30,7 +30,11 @@ function AllProductsPage() {
       fetch(API_ENDPOINTS.BRANDS).then(res => res.json()),
       fetch(API_ENDPOINTS.COMPANIES).then(res => res.json())
     ]).then(([catData, brandData, companyData]) => {
-      setCategories(catData.filter(cat => cat.name !== 'Бүх бараа'));
+      // Sort categories alphabetically
+      const sortedCategories = catData
+        .filter(cat => cat.name !== 'Бүх бараа')
+        .sort((a, b) => a.name.localeCompare(b.name, 'mn'));
+      setCategories(sortedCategories);
       setBrands(brandData);
       setCompanies(companyData);
       // Set initial category, brand, company from URL
@@ -65,10 +69,18 @@ function AllProductsPage() {
     if (params.length) {
       url += '?' + params.join('&');
     }
+    
+    console.log('🔍 Fetching products with URL:', url);
+    console.log('🔍 Selected category:', selectedCategory);
+    console.log('🔍 Selected brand:', selectedBrand);
+    console.log('🔍 Selected company:', selectedCompany);
+    
     fetch(url)
       .then(res => res.json())
       .then(data => {
+        console.log('📦 Raw API response:', data);
         if (!Array.isArray(data)) {
+          console.log('❌ API response is not an array:', data);
           setProducts([]);
           setLoading(false);
           return;
@@ -82,11 +94,12 @@ function AllProductsPage() {
           const now = new Date();
           mapped = mapped.filter(p => p.originalPrice && p.price < p.originalPrice && p.saleEnd && new Date(p.saleEnd) > now);
         }
+        console.log('📦 Processed products:', mapped.length);
         setProducts(mapped);
         setLoading(false);
       })
       .catch(error => {
-        console.error('Error fetching products:', error);
+        console.error('❌ Error fetching products:', error);
         setLoading(false);
       });
   }, [ready, selectedCategory, selectedBrand, selectedCompany, sort]);
