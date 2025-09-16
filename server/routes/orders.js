@@ -78,7 +78,10 @@ router.get('/:id', async (req, res) => {
 // Create a new order
 router.post('/', async (req, res) => {
   try {
+    console.log('📦 Order creation request received:', JSON.stringify(req.body, null, 2));
+    
     const {
+      orderNumber,
       customer,
       customerInfo,
       items,
@@ -90,6 +93,35 @@ router.post('/', async (req, res) => {
       adminNotes = ''
     } = req.body;
     
+    // Validate required fields
+    if (!orderNumber) {
+      return res.status(400).json({ error: 'Order number is required' });
+    }
+    
+    // Check if order number already exists
+    const existingOrder = await Order.findOne({ orderNumber });
+    if (existingOrder) {
+      console.log('❌ Order number already exists:', orderNumber);
+      return res.status(400).json({ error: 'Order number already exists. Please try again.' });
+    }
+    
+    if (!customer) {
+      return res.status(400).json({ error: 'Customer ID is required' });
+    }
+    
+    // Validate customer exists
+    console.log('🔍 Looking for customer with ID:', customer);
+    const customerExists = await CustomerUser.findById(customer);
+    if (!customerExists) {
+      console.log('❌ Customer not found with ID:', customer);
+      return res.status(400).json({ error: 'Customer not found' });
+    }
+    console.log('✅ Customer found:', customerExists.firstName, customerExists.lastName);
+    
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Items array is required and must not be empty' });
+    }
+    
     // Calculate total
     const total = subtotal + shippingCost + tax;
     
@@ -98,6 +130,16 @@ router.post('/', async (req, res) => {
     const validatedItems = [];
     
     for (const item of items) {
+      console.log('🔍 Processing item:', item);
+      
+      if (!item.product) {
+        return res.status(400).json({ error: 'Product ID is required for each item' });
+      }
+      
+      if (!item.quantity || item.quantity < 1) {
+        return res.status(400).json({ error: 'Valid quantity is required for each item' });
+      }
+      
       const product = await Product.findById(item.product);
       if (!product) {
         return res.status(400).json({ error: `Product ${item.product} not found` });
@@ -126,6 +168,7 @@ router.post('/', async (req, res) => {
     }
     
     const order = new Order({
+      orderNumber,
       customer,
       customerInfo,
       items: validatedItems,
@@ -138,16 +181,24 @@ router.post('/', async (req, res) => {
       adminNotes
     });
     
+    console.log('💾 Saving order to database...');
     await order.save();
+    console.log('✅ Order saved successfully with ID:', order._id);
     
     // Populate the response
     const populatedOrder = await Order.findById(order._id)
-      .populate('customer', 'name email phone')
+      .populate('customer', 'firstName lastName email phone')
       .populate('items.product', 'name image price');
     
+    console.log('📤 Sending response to client');
     res.status(201).json(populatedOrder);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('❌ Error creating order:', err);
+    console.error('❌ Error stack:', err.stack);
+    res.status(500).json({ 
+      error: 'Internal server error while creating order',
+      details: process.env.NODE_ENV === 'development' ? err.message : 'Please try again later'
+    });
   }
 });
 

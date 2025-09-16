@@ -10,6 +10,7 @@ function CartPage() {
   const [cart, setCart] = useState([]);
   const [showBankModal, setShowBankModal] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,19 +40,64 @@ function CartPage() {
   };
 
   const handleBuyNow = () => {
-    // Generate random 5-digit order number
-    const randomOrderNumber = Math.floor(10000 + Math.random() * 90000).toString();
+    // Generate random order number with letters and numbers
+    const generateOrderNumber = () => {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const numbers = '0123456789';
+      let result = '';
+      
+      // Add 2 random letters
+      for (let i = 0; i < 2; i++) {
+        result += letters.charAt(Math.floor(Math.random() * letters.length));
+      }
+      
+      // Add 3 random numbers
+      for (let i = 0; i < 3; i++) {
+        result += numbers.charAt(Math.floor(Math.random() * numbers.length));
+      }
+      
+      // Add timestamp suffix to make it more unique
+      const timestamp = Date.now().toString().slice(-4);
+      result += timestamp;
+      
+      return result;
+    };
+    
+    const randomOrderNumber = generateOrderNumber();
     setOrderNumber(randomOrderNumber);
     setShowBankModal(true);
   };
 
   const handleOrderConfirm = async () => {
+    if (isSubmitting) return; // Prevent multiple submissions
+    
     try {
+      setIsSubmitting(true);
+      
       // Get current user from localStorage
       const user = JSON.parse(localStorage.getItem('user'));
       
       if (!user) {
         alert('Нэвтрэх шаардлагатай');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      console.log('👤 User data:', user);
+      console.log('🆔 User ID:', user._id);
+
+      if (!orderNumber) {
+        alert('Захиалгын дугаар байхгүй байна. Дахин оролдоно уу.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Calculate total inside the function
+      const orderTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+      if (orderTotal <= 0) {
+        alert('Сагс хоосон байна');
+        setIsSubmitting(false);
         return;
       }
 
@@ -75,10 +121,10 @@ function CartPage() {
           price: item.price,
           totalPrice: item.price * item.quantity
         })),
-        subtotal: total,
+        subtotal: orderTotal,
         shippingCost: 0,
         tax: 0,
-        total: total,
+        total: orderTotal,
         status: 'pending',
         paymentStatus: 'pending',
         paymentMethod: 'bank_transfer',
@@ -99,6 +145,7 @@ function CartPage() {
         // Order created successfully
         setShowBankModal(false);
         updateCart([]); // Clear cart
+        setOrderNumber(''); // Reset order number
         alert('Захиалга амжилттай хийгдлээ!');
       } else {
         const errorData = await response.json();
@@ -106,7 +153,9 @@ function CartPage() {
       }
     } catch (error) {
       console.error('Error creating order:', error);
-      alert('Серверт холбогдоход алдаа гарлаа');
+      alert('Серверт холбогдоход алдаа гарлаа: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -334,19 +383,21 @@ function CartPage() {
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
                 onClick={handleOrderConfirm}
+                disabled={isSubmitting}
                 style={{
                   flex: 1,
-                  background: '#28a745',
+                  background: isSubmitting ? '#6c757d' : '#28a745',
                   color: 'white',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '12px',
                   fontSize: '16px',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  opacity: isSubmitting ? 0.7 : 1
                 }}
               >
-                Захиалга хийсэн
+                {isSubmitting ? 'Хүлээнэ үү...' : 'Захиалга хийх'}
               </button>
               <button
                 onClick={() => setShowBankModal(false)}
