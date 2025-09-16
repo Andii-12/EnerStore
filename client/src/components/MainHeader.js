@@ -243,6 +243,15 @@ function MainHeader() {
                       ✏️ Профайл засах
                     </button>
                     <button
+                      onClick={() => {
+                        navigate('/user-orders');
+                        setShowProfileMenu(false);
+                      }}
+                      className="profile-menu-item"
+                    >
+                      📦 Захиалга
+                    </button>
+                    <button
                       onClick={handleLogout}
                       className="profile-menu-item logout"
                     >

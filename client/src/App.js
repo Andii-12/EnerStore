@@ -30,6 +30,7 @@ import ProductDetail from './components/ProductDetail';
 import CartPage from './components/CartPage';
 import UserRegistration from './components/UserRegistration';
 import UserEdit from './components/UserEdit';
+import UserOrders from './components/UserOrders';
 import { API_ENDPOINTS, getDynamicApiEndpoints, getApiBaseUrl } from './config/api';
 
 // Debug: Log API endpoints to see what's being used
@@ -731,6 +732,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/register" element={<UserRegistration />} />
         <Route path="/user/edit" element={<UserEdit />} />
+        <Route path="/user-orders" element={<UserOrders />} />
         <Route path="/" element={<MainSite products={products} categories={categories} />} />
       </Routes>
     </Router>

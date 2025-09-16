@@ -11,6 +11,7 @@ function CartPage() {
   const [showBankModal, setShowBankModal] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -146,7 +147,11 @@ function CartPage() {
         setShowBankModal(false);
         updateCart([]); // Clear cart
         setOrderNumber(''); // Reset order number
-        alert('Захиалга амжилттай хийгдлээ!');
+        setShowSuccessMessage(true);
+        // Auto redirect after 3 seconds
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
       } else {
         const errorData = await response.json();
         alert('Захиалга хийхэд алдаа гарлаа: ' + (errorData.error || 'Тодорхойгүй алдаа'));
@@ -416,6 +421,89 @@ function CartPage() {
                 Цуцлах
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Success Message Modal */}
+      {showSuccessMessage && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '12px',
+            padding: '40px',
+            maxWidth: '500px',
+            width: '90%',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              fontSize: '48px',
+              marginBottom: '20px'
+            }}>
+              ✅
+            </div>
+            <h2 style={{
+              margin: '0 0 16px 0',
+              color: '#28a745',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>
+              Захиалга амжилттай хийгдлээ!
+            </h2>
+            <p style={{
+              margin: '0 0 24px 0',
+              color: '#333',
+              fontSize: '16px',
+              lineHeight: '1.5'
+            }}>
+              Таны захиалга 24-48 цагийн дотор бэлэн болно
+            </p>
+            <div style={{
+              background: '#f8f9fa',
+              border: '1px solid #e9ecef',
+              borderRadius: '8px',
+              padding: '16px',
+              marginBottom: '24px'
+            }}>
+              <div style={{
+                color: '#666',
+                fontSize: '14px',
+                marginBottom: '8px'
+              }}>
+                Та 3 секундын дараа нүүр хуудас руу шилжих болно...
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setShowSuccessMessage(false);
+                navigate('/');
+              }}
+              style={{
+                background: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                minWidth: '120px'
+              }}
+            >
+              Одоо очих
+            </button>
           </div>
         </div>
       )}

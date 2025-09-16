@@ -100,6 +100,33 @@ function OrdersAdmin() {
     setSelectedOrder(null);
   };
 
+  const handleDeleteOrder = async (orderId, orderNumber) => {
+    if (!window.confirm(`Та энэ захиалгыг устгахдаа итгэлтэй байна уу?\n\nЗахиалгын дугаар: ${orderNumber}\n\nЭнэ үйлдлийг буцаах боломжгүй!`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_ENDPOINTS.ORDERS}/${orderId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (response.ok) {
+        // Remove order from state
+        setOrders(orders.filter(order => order._id !== orderId));
+        // Refresh stats
+        fetchStats();
+        alert('Захиалга амжилттай устгагдлаа');
+      } else {
+        const errorData = await response.json();
+        alert('Захиалга устгахад алдаа гарлаа: ' + (errorData.error || 'Тодорхойгүй алдаа'));
+      }
+    } catch (error) {
+      console.error('Error deleting order:', error);
+      alert('Серверт холбогдоход алдаа гарлаа');
+    }
+  };
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('mn-MN', {
       year: 'numeric',
@@ -121,14 +148,21 @@ function OrdersAdmin() {
   const getStatusColor = (status) => {
     const colors = {
       pending: '#ffc107',
-      confirmed: '#17a2b8',
       processing: '#007bff',
-      shipped: '#6f42c1',
-      delivered: '#28a745',
-      cancelled: '#dc3545',
-      refunded: '#6c757d'
+      shipped: '#28a745',
+      cancelled: '#dc3545'
     };
     return colors[status] || '#6c757d';
+  };
+
+  const getStatusLabel = (status) => {
+    const labels = {
+      pending: 'Хүлээгдэж буй',
+      processing: 'Батлагдсан',
+      shipped: 'Хүргэгдсэн',
+      cancelled: 'Цуцлагдсан'
+    };
+    return labels[status] || status;
   };
 
   const getPaymentStatusColor = (status) => {
@@ -144,12 +178,9 @@ function OrdersAdmin() {
   const statusOptions = [
     { value: '', label: 'Бүх статус' },
     { value: 'pending', label: 'Хүлээгдэж буй' },
-    { value: 'confirmed', label: 'Баталгаажсан' },
-    { value: 'processing', label: 'Бэлтгэгдэж буй' },
+    { value: 'processing', label: 'Батлагдсан' },
     { value: 'shipped', label: 'Хүргэгдсэн' },
-    { value: 'delivered', label: 'Хүргэгдсэн' },
-    { value: 'cancelled', label: 'Цуцлагдсан' },
-    { value: 'refunded', label: 'Буцаан олгосон' }
+    { value: 'cancelled', label: 'Цуцлагдсан' }
   ];
 
   const paymentStatusOptions = [
@@ -415,7 +446,7 @@ function OrdersAdmin() {
                   <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>
                     Огноо
                   </th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>
+                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #ddd', width: '150px' }}>
                     Үйлдэл
                   </th>
                 </tr>
@@ -491,20 +522,38 @@ function OrdersAdmin() {
                       </div>
                     </td>
                     <td style={{ padding: '12px' }}>
-                      <button
-                        onClick={() => handleViewOrder(order)}
-                        style={{
-                          background: '#007bff',
-                          color: 'white',
-                          border: 'none',
-                          padding: '6px 12px',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontSize: '12px'
-                        }}
-                      >
-                        Дэлгэрэнгүй
-                      </button>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <button
+                          onClick={() => handleViewOrder(order)}
+                          style={{
+                            background: '#007bff',
+                            color: 'white',
+                            border: 'none',
+                            padding: '6px 12px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            minWidth: '80px'
+                          }}
+                        >
+                          Дэлгэрэнгүй
+                        </button>
+                        <button
+                          onClick={() => handleDeleteOrder(order._id, order.orderNumber)}
+                          style={{
+                            background: '#dc3545',
+                            color: 'white',
+                            border: 'none',
+                            padding: '6px 12px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            minWidth: '80px'
+                          }}
+                        >
+                          Устгах
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -541,19 +590,41 @@ function OrdersAdmin() {
               <h3 style={{ margin: 0, color: '#333' }}>
                 Захиалгын дэлгэрэнгүй - {selectedOrder.orderNumber}
               </h3>
-              <button
-                onClick={handleCloseModal}
-                style={{
-                  background: '#dc3545',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Хаах
-              </button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  onClick={() => {
+                    if (window.confirm(`Та энэ захиалгыг устгахдаа итгэлтэй байна уу?\n\nЗахиалгын дугаар: ${selectedOrder.orderNumber}\n\nЭнэ үйлдлийг буцаах боломжгүй!`)) {
+                      handleDeleteOrder(selectedOrder._id, selectedOrder.orderNumber);
+                      handleCloseModal();
+                    }
+                  }}
+                  style={{
+                    background: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  Устгах
+                </button>
+                <button
+                  onClick={handleCloseModal}
+                  style={{
+                    background: '#6c757d',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  Хаах
+                </button>
+              </div>
             </div>
             
             <div style={{ marginBottom: '20px' }}>

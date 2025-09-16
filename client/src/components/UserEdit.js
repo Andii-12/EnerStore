@@ -214,7 +214,7 @@ function UserEdit() {
         )}
 
         {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap' }}>
           <button
             onClick={() => setActiveTab('profile')}
             style={{
