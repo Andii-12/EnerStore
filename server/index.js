@@ -131,8 +131,6 @@ app.use('/api/companies', companyRoutes);
 const customerUserRoutes = require('./routes/customerUsers');
 app.use('/api/customer-users', customerUserRoutes);
 
-const headerMenuItemRoutes = require('./routes/headerMenuItems');
-app.use('/api/header-menu-items', headerMenuItemRoutes);
 
 const carouselRoutes = require('./routes/carousel');
 app.use('/api/carousel', carouselRoutes);

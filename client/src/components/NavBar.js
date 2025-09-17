@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { API_ENDPOINTS } from '../config/api';
 import './NavBar.css';
 
 function NavBar() {
-  const [menuItems, setMenuItems] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    fetch(API_ENDPOINTS.HEADER_MENU_ITEMS)
-      .then(res => res.json())
-      .then(data => setMenuItems(data));
-  }, []);
+  // Static menu items
+  const menuItems = [
+    { id: 1, label: 'Нүүр', link: '/' },
+    { id: 2, label: 'Бүтээгдэхүүн', link: '/products' },
+    { id: 3, label: 'Ангилал', link: '/categories' },
+    { id: 4, label: 'Брэнд', link: '/brands' },
+    { id: 5, label: 'Тухай', link: '/about' },
+    { id: 6, label: 'Холбоо барих', link: '/contact' }
+  ];
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -36,13 +38,13 @@ function NavBar() {
       {/* Desktop Navigation */}
       <nav className="desktop-nav">
         {menuItems.map(item => (
-          <span 
-            key={item._id} 
-            onClick={() => window.location.href = item.link}
+          <Link 
+            key={item.id} 
+            to={item.link}
             className="nav-item"
           >
             {item.label}
-          </span>
+          </Link>
         ))}
       </nav>
 
@@ -67,16 +69,14 @@ function NavBar() {
         </div>
         <div className="sidebar-menu">
           {menuItems.map(item => (
-            <button
-              key={item._id}
-              onClick={() => { 
-                window.location.href = item.link;
-                setIsMobileMenuOpen(false);
-              }}
+            <Link
+              key={item.id}
+              to={item.link}
+              onClick={() => setIsMobileMenuOpen(false)}
               className="sidebar-menu-item"
             >
               {item.label}
-            </button>
+            </Link>
           ))}
         </div>
       </div>

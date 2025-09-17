@@ -32,8 +32,6 @@ export const API_ENDPOINTS = {
   ADMIN: `${API_BASE_URL}/api/admin`,
   ADMIN_LOGIN: `${API_BASE_URL}/api/admin/login`,
   
-  // Header Menu
-  HEADER_MENU_ITEMS: `${API_BASE_URL}/api/header-menu-items`,
   
   // Carousel
   CAROUSEL: `${API_BASE_URL}/api/carousel`,
@@ -56,7 +54,6 @@ export const getDynamicApiEndpoints = async () => {
     CUSTOMER_LOGIN: `${baseUrl}/api/customer-users/login`,
     ADMIN: `${baseUrl}/api/admin`,
     ADMIN_LOGIN: `${baseUrl}/api/admin/login`,
-    HEADER_MENU_ITEMS: `${baseUrl}/api/header-menu-items`,
     CAROUSEL: `${baseUrl}/api/carousel`,
     ORDERS: `${baseUrl}/api/orders`,
   };

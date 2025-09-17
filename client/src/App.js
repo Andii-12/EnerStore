@@ -18,7 +18,6 @@ import CompaniesAdmin from './admin/CompaniesAdmin';
 import BrandsAdmin from './admin/BrandsAdmin';
 import OrdersAdmin from './admin/OrdersAdmin';
 import UsersAdmin from './admin/UsersAdmin';
-import HeaderMenuAdmin from './admin/HeaderMenuAdmin';
 import { AdminAuthProvider } from './admin/AdminAuthContext';
 import AdminRoute from './admin/AdminRoute';
 import CompanyDashboard from './components/CompanyDashboard';
@@ -72,7 +71,7 @@ function NewProductsSection({ products }) {
           <h2 style={{ 
             fontWeight: 700, 
             fontSize: 'clamp(20px, 5vw, 2rem)', 
-            color: 'var(--color-dark)', 
+            color: 'var(--heading-color)', 
             margin: 0 
           }}>Шинэ бараа</h2>
           <button
@@ -97,7 +96,9 @@ function NewProductsSection({ products }) {
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-          gap: 'clamp(16px, 3vw, 24px)',
+          gap: 'clamp(20px, 4vw, 32px)',
+          maxWidth: '1400px',
+          margin: '0 auto'
         }}>
           {newProducts.map(product => (
             <div
@@ -333,7 +334,7 @@ function SaleProductsSection({ products }) {
           <h2 style={{ 
             fontWeight: 700, 
             fontSize: 'clamp(20px, 5vw, 2rem)', 
-            color: 'var(--color-dark)', 
+            color: 'var(--heading-color)', 
             margin: 0 
           }}>Хямдралтай бараа</h2>
           <button
@@ -358,7 +359,9 @@ function SaleProductsSection({ products }) {
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-          gap: 'clamp(16px, 3vw, 24px)',
+          gap: 'clamp(20px, 4vw, 32px)',
+          maxWidth: '1400px',
+          margin: '0 auto'
         }}>
           {saleProducts.map(product => {
             const now = new Date();
@@ -546,13 +549,15 @@ function BestSellerSection({ products }) {
         fontWeight: 700, 
         fontSize: 'clamp(20px, 5vw, 2rem)', 
         marginBottom: 'clamp(20px, 4vw, 24px)', 
-        color: 'var(--color-dark)' 
+        color: 'var(--heading-color)' 
       }}>Best Seller</h2>
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-        gap: 'clamp(16px, 3vw, 32px)', 
-        justifyContent: 'flex-start' 
+        gap: 'clamp(20px, 4vw, 32px)', 
+        justifyContent: 'flex-start',
+        maxWidth: '1400px',
+        margin: '0 auto'
       }}>
         {bestSellers.map(product => (
           <div key={product._id} style={{ 
@@ -581,7 +586,7 @@ function BestSellerSection({ products }) {
               fontSize: 'clamp(14px, 3.5vw, 16px)', 
               marginBottom: 'clamp(4px, 1vw, 6px)', 
               textAlign: 'center', 
-              color: 'var(--color-dark)' 
+              color: 'var(--heading-color)' 
             }}>
               {product.name}
             </div>
@@ -593,7 +598,7 @@ function BestSellerSection({ products }) {
               {product.price} ₮
             </div>
             <div style={{ 
-              color: '#888', 
+              color: 'var(--muted)', 
               fontSize: 'clamp(11px, 2.5vw, 13px)', 
               marginTop: 'clamp(2px, 1vw, 4px)' 
             }}>
@@ -724,7 +729,6 @@ function App() {
           <Route path="brands" element={<BrandsAdmin />} />
           <Route path="orders" element={<OrdersAdmin />} />
           <Route path="users" element={<UsersAdmin />} />
-          <Route path="header-menu" element={<HeaderMenuAdmin />} />
         </Route>
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/products" element={<AllProductsPage />} />

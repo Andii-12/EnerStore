@@ -3,10 +3,13 @@
   justify-content: space-between;
   align-items: center;
   background: var(--color-dark);
-  padding: 4px 32px;
-  font-size: 0.95rem;
+  padding: 8px 32px;
+  font-size: 0.9rem;
   color: var(--color-light);
   border-bottom: 1px solid #eee;
+  font-weight: 500;
+  position: relative;
+  z-index: 2200;
 }
 
 .header-contact span {

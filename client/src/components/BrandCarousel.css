@@ -3,10 +3,10 @@
   max-width: 1400px;
   margin: 0 auto 32px auto;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(8,15,70,0.06);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(8,15,70,0.08);
   padding: 24px 0 18px 0;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
 }
 
 .brand-carousel-title {
@@ -44,16 +44,16 @@
   flex: 1 1 110px;
   margin: 0 2px;
   padding: 12px 8px;
-  background: #f8f8f8;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(8,15,70,0.04);
+  background: #fafafa;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(8,15,70,0.06);
   transition: box-shadow 0.18s, transform 0.18s;
   cursor: pointer;
 }
 
 .brand-carousel-item:hover {
-  box-shadow: 0 4px 16px rgba(8,15,70,0.10);
-  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 18px rgba(8,15,70,0.12);
+  transform: translateY(-2px) scale(1.03);
 }
 
 .brand-carousel-logo {

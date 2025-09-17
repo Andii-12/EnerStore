@@ -2,8 +2,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 36px 32px;
-  padding: 32px 0 16px 0;
+  gap: 28px 24px;
+  padding: 24px 0 12px 0;
   background: var(--color-light);
 }
 
@@ -12,23 +12,23 @@
   flex-direction: column;
   align-items: center;
   width: 140px;
-  height: 170px;
+  height: 164px;
   cursor: pointer;
   transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
-  border-radius: 18px;
-  padding: 18px 0 12px 0;
+  border-radius: 16px;
+  padding: 16px 0 12px 0;
   color: var(--color-dark);
   background: #fff;
-  box-shadow: 0 2px 12px rgba(8,15,70,0.07);
-  border: 1.5px solid #f3f3f3;
+  box-shadow: 0 2px 10px rgba(8,15,70,0.06);
+  border: 1px solid #f0f0f0;
   position: relative;
 }
 
 .category-item:hover {
   background: var(--color-accent);
   color: #fff;
-  transform: translateY(-6px) scale(1.045);
-  box-shadow: 0 4px 18px rgba(248,153,27,0.18);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(248,153,27,0.22);
   border-color: var(--color-accent);
 }
 

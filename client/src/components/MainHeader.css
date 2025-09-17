@@ -1,8 +1,11 @@
 /* Main Header Container */
 .main-header-container {
   background: #fff;
-  border-bottom: 1px solid #eee;
-  position: relative;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 2100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 /* Desktop Header */
@@ -42,12 +45,18 @@
 
 .search-bar {
   width: 100%;
-  padding: 10px 16px;
+  padding: 12px 18px;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   outline: none;
   box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-bar:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(248, 153, 27, 0.1);
 }
 
 .search-results {

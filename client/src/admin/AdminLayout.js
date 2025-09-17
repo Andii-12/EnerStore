@@ -323,26 +323,6 @@ function AdminLayout() {
                 🖼️ Карусель
               </Link>
               
-              <Link
-                to="/admin/header-menu"
-                onClick={closeMobileMenu}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 'clamp(8px, 2vw, 12px)',
-                  padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)',
-                  borderRadius: 8,
-                  textDecoration: 'none',
-                  color: isActive('/admin/header-menu') ? '#fff' : '#333',
-                  background: isActive('/admin/header-menu') ? 'var(--color-accent)' : 'transparent',
-                  fontWeight: isActive('/admin/header-menu') ? 600 : 500,
-                  marginBottom: 'clamp(4px, 1vw, 8px)',
-                  transition: 'all 0.2s',
-                  fontSize: 'clamp(14px, 3.5vw, 16px)'
-                }}
-              >
-                📋 Цэс
-              </Link>
             </div>
           </nav>
         </div>

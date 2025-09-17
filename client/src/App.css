@@ -5,6 +5,9 @@
   --color-accent: #f8991b;
   --color-dark: #1a1a1a;
   --color-light: #f6f6f6;
+  --color-border: #e5e7eb;
+  --heading-color: #111111;
+  --muted: #666666;
 }
 
 /* Base Styles */
@@ -20,25 +23,42 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--color-light);
+  color: var(--color-dark);
+  line-height: 1.6;
+}
+
+/* Global headings */
+h1, h2, h3 {
+  margin: 0 0 clamp(12px, 3vw, 16px) 0;
+  color: var(--heading-color);
+  line-height: 1.25;
+}
+
+h2 {
+  font-weight: 700;
+  font-size: clamp(20px, 5vw, 2rem);
 }
 
 /* Home Content Layout */
 .home-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 clamp(16px, 4vw, 32px);
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .home-main-section {
-  margin-bottom: clamp(24px, 6vw, 48px);
+  margin-bottom: clamp(32px, 8vw, 64px);
+  padding: 0 clamp(16px, 4vw, 32px);
 }
 
 .home-card {
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: clamp(12px, 3vw, 18px);
   box-shadow: 0 2px 12px rgba(8,15,70,0.06);
-  padding: clamp(20px, 4vw, 32px);
+  padding: clamp(24px, 5vw, 40px);
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* Product Card Styles */
@@ -57,8 +77,8 @@ body {
 }
 
 .new-product-card:hover {
-  box-shadow: 0 6px 24px rgba(0,0,0,0.10);
-  border-color: var(--color-accent);
+  box-shadow: 0 8px 24px rgba(8,15,70,0.10);
+  border-color: #f0ad4e;
   transform: translateY(-2px);
 }
 
@@ -179,23 +199,25 @@ body {
 /* Mobile grid improvements */
 @media (max-width: 600px) {
   .home-content {
-    padding: 0 clamp(12px, 3vw, 16px);
+    padding: 0;
   }
   
   .home-main-section {
     margin-bottom: clamp(16px, 4vw, 24px);
+    padding: 0 clamp(12px, 3vw, 16px);
   }
   
   .home-card {
     padding: clamp(16px, 4vw, 20px);
     border-radius: clamp(12px, 3vw, 16px);
+    margin: 0 clamp(4px, 1vw, 8px);
   }
 }
 
 /* Mobile content spacing improvements */
 @media (max-width: 600px) {
   .home-content {
-    margin: 0 clamp(4px, 1vw, 8px);
+    margin: 0;
   }
   
   .home-main-section {
@@ -205,12 +227,9 @@ body {
 
 /* Mobile landscape optimizations */
 @media (max-width: 900px) and (orientation: landscape) {
-  .home-content {
-    padding: 0 clamp(8px, 2vw, 16px);
-  }
-  
   .home-main-section {
     margin-bottom: clamp(12px, 3vw, 20px);
+    padding: 0 clamp(8px, 2vw, 16px);
   }
   
   .home-card {

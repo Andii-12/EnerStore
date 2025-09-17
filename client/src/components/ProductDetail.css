@@ -10,14 +10,15 @@
 
 /* Main Container */
 .product-detail-container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 32px auto;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(8,15,70,0.06);
-  padding: 32px;
+  padding: 32px clamp(16px, 4vw, 32px);
   display: flex;
   gap: 32px;
+  width: 100%;
 }
 
 /* Images Section */

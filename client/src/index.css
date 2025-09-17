@@ -9,6 +9,7 @@
   --color-border: #e5e7eb;
   --color-shadow: rgba(8,15,70,0.06);
   --color-shadow-hover: rgba(8,15,70,0.12);
+  --heading-color: #111;
   
   /* Mobile-first spacing */
   --spacing-xs: clamp(4px, 1vw, 6px);
@@ -69,6 +70,11 @@ body {
   color: var(--color-dark);
   line-height: 1.6;
   font-size: var(--font-base);
+}
+
+h1, h2, h3 {
+  color: var(--heading-color);
+  line-height: 1.25;
 }
 
 code {
