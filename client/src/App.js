@@ -640,6 +640,74 @@ function MainSite({ products, categories }) {
   );
 }
 
+// Lightweight pages for static menu routes
+function CategoriesPage({ categories }) {
+  return (
+    <div style={{ background: '#f6f6f6', minHeight: '100vh' }}>
+      <Header />
+      <MainHeader />
+      <NavBar />
+      <div className="home-main-section home-card" style={{ maxWidth: 1400, margin: '0 auto' }}>
+        <CategoryGrid categories={categories} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+function BrandsPage() {
+  return (
+    <div style={{ background: '#f6f6f6', minHeight: '100vh' }}>
+      <Header />
+      <MainHeader />
+      <NavBar />
+      <div className="home-main-section" style={{ maxWidth: 1400, margin: '0 auto' }}>
+        <BrandCarousel />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+function AboutPage() {
+  return (
+    <div style={{ background: '#f6f6f6', minHeight: '100vh' }}>
+      <Header />
+      <MainHeader />
+      <NavBar />
+      <div style={{ maxWidth: 1000, margin: '32px auto', padding: 'clamp(20px,4vw,32px)', background: '#fff', border: '1px solid var(--color-border)', borderRadius: 12, boxShadow: '0 2px 12px rgba(8,15,70,0.06)' }}>
+        <h1 style={{ marginTop: 0, marginBottom: 12, color: 'var(--heading-color)', letterSpacing: '-0.01em' }}>Бидний тухай</h1>
+        <p style={{ color: '#555', margin: 0, lineHeight: 1.7 }}>EnerStore нь хэрэглэгчдэд чанартай бүтээгдэхүүнийг шударга үнээр, хурдан хүргэх зорилготой цахим дэлгүүр юм.</p>
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+function ContactPage() {
+  return (
+    <div style={{ background: '#f6f6f6', minHeight: '100vh' }}>
+      <Header />
+      <MainHeader />
+      <NavBar />
+      <div style={{ maxWidth: 1000, margin: '32px auto', padding: 'clamp(20px,4vw,32px)', background: '#fff', border: '1px solid var(--color-border)', borderRadius: 12, boxShadow: '0 2px 12px rgba(8,15,70,0.06)' }}>
+        <h1 style={{ marginTop: 0, marginBottom: 12, color: 'var(--heading-color)', letterSpacing: '-0.01em' }}>Холбоо барих</h1>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 16 }}>
+          <div className="card" style={{ padding: 16 }}>
+            <div style={{ fontWeight: 600, marginBottom: 6, color: 'var(--heading-color)' }}>И-мэйл</div>
+            <div style={{ color: '#555' }}>support@enerstore.mn</div>
+          </div>
+          <div className="card" style={{ padding: 16 }}>
+            <div style={{ fontWeight: 600, marginBottom: 6, color: 'var(--heading-color)' }}>Утас</div>
+            <div style={{ color: '#555' }}>+976 9999-9999</div>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
 function App() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -732,6 +800,10 @@ function App() {
         </Route>
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/products" element={<AllProductsPage />} />
+        <Route path="/categories" element={<CategoriesPage categories={categories} />} />
+        <Route path="/brands" element={<BrandsPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/company/dashboard" element={<CompanyDashboard />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/register" element={<UserRegistration />} />

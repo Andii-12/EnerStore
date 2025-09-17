@@ -37,15 +37,18 @@ function NavBar() {
 
       {/* Desktop Navigation */}
       <nav className="desktop-nav">
-        {menuItems.map(item => (
-          <Link 
-            key={item.id} 
-            to={item.link}
-            className="nav-item"
-          >
-            {item.label}
-          </Link>
-        ))}
+        {menuItems.map(item => {
+          const isActive = location.pathname === item.link;
+          return (
+            <Link 
+              key={item.id} 
+              to={item.link}
+              className={`nav-item ${isActive ? 'active' : ''}`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
 
       {/* Mobile Menu Overlay */}
@@ -68,16 +71,19 @@ function NavBar() {
           </button>
         </div>
         <div className="sidebar-menu">
-          {menuItems.map(item => (
-            <Link
-              key={item.id}
-              to={item.link}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="sidebar-menu-item"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {menuItems.map(item => {
+            const isActive = location.pathname === item.link;
+            return (
+              <Link
+                key={item.id}
+                to={item.link}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`sidebar-menu-item ${isActive ? 'active' : ''}`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
